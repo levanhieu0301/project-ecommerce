@@ -15,6 +15,12 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 
+app.get('/admin/dashboard', (req: Request, res: Response) => {
+  res.render("admin/pages/dashboard", {
+    title: "Tổng quan"
+  })
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
