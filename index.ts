@@ -7,19 +7,13 @@ app.set('views', path.join(__dirname, "views"))
 app.set('view engine', 'pug')
 // Nhúng file tĩnh 
 app.use(express.static(path.join(__dirname, 'public')));
+// Router client
+import clientRoute from "./routes/client/index.route"
+app.use('/', clientRoute)
+// Router admin
+import adminRoute from "./routes/admin/index.route"
+app.use('/', adminRoute)
 
-app.get('/', (req: Request, res: Response) => {
-  res.render("client/pages/index", {
-    title: "Trang chủ"
-  })
-})
-
-
-app.get('/admin/dashboard', (req: Request, res: Response) => {
-  res.render("admin/pages/dashboard", {
-    title: "Tổng quan"
-  })
-})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
