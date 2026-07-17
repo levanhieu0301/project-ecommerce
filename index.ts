@@ -12,7 +12,7 @@ import clientRoute from "./routes/client/index.route"
 app.use('/', clientRoute)
 // Router admin
 import adminRoute from "./routes/admin/index.route"
-app.use('/', adminRoute)
+app.use('/admin', adminRoute)
 
 
 app.listen(port, () => {
