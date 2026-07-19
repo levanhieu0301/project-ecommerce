@@ -1,5 +1,6 @@
 import  { Request, Response } from "express"
 import CategoryBlog from "../../models/category-blog.model"
+import { treeCategory } from "../../helpers/treeCategory.helper"
 
 export const category = (req: Request, res: Response) => {
   res.render("admin/pages/article-category", {
@@ -8,9 +9,11 @@ export const category = (req: Request, res: Response) => {
 }
 export const categoryCreate = async  (req: Request, res: Response) => {
     const categoryList = await CategoryBlog.find({});
+    const categoryTree: any = treeCategory(categoryList)
+
   res.render("admin/pages/article-create-category", {
     pageTitle: "Tạo danh mục bài viết",
-    categoryList: categoryList
+    categoryList: categoryTree
   })
 }
 

@@ -1,4 +1,5 @@
 extends ../layouts/default.pug
+include ../mixins/option.pug
 
 block main
   .card
@@ -17,9 +18,8 @@ block main
             .mb-3
               label.form-label(for="parent") Danh mục cha
               select.form-select(id="parent" name="parent")
-                option(value="") Chọn danh mục cha
-                each item in categoryList
-                  option(value=item.id) #{item.name}
+                option(value="") --Chọn danh mục--
+                +option(categoryList)
           .col-md-12.col-lg-12
             .mb-3
               label.form-label(for="description") Mô tả
