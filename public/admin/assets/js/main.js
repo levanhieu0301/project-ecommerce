@@ -47,6 +47,7 @@ if(articleCreateCategoryForm) {
       const name = event.target.name.value;
       const parent = event.target.parent.value;
       const description = event.target.description.value;
+      const status = event.target.status.value;
       const slug = event.target.slug.value;
 
       // Tạo formData
@@ -54,6 +55,7 @@ if(articleCreateCategoryForm) {
       formData.append("name", name);
       formData.append("parent", parent);
       formData.append("slug", slug);
+      formData.append("status", status);
       formData.append("description", description);
 
       fetch(`/${pathAdmin}/article/category/create`, {

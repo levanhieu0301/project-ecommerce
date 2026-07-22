@@ -1,6 +1,7 @@
 import  { Request, Response } from "express"
 import CategoryBlog from "../../models/category-blog.model"
 import { treeCategory } from "../../helpers/treeCategory.helper"
+import slugify from "slugify"
 
 export const category = (req: Request, res: Response) => {
   res.render("admin/pages/article-category", {
@@ -18,23 +19,35 @@ export const categoryCreate = async  (req: Request, res: Response) => {
 }
 
 export const categoryCreatePost = async (req: Request, res: Response) => {
-  
-  const existSlug = await CategoryBlog.findOne({
-    slug: req.body.slug
-  })
+  try {
+    const existSlug = await CategoryBlog.findOne({
+      slug: req.body.slug
+    })
+    if(existSlug) {
+      res.json({
+        code: "error",
+        message: "Đường dẫn đã tồn tại!"
+      })
+      return;
+    }
+    req.body.search = slugify(`${req.body.name}`, {
+      replacement: " ",
+      lower: true
+    });
 
-  if(existSlug) {
+    const newRecord = new CategoryBlog(req.body);
+    await newRecord.save();
+
+    res.json({
+      code: "success",
+      message: "Tạo danh mục thành công!"
+    })
+    
+  } catch (error) {
     res.json({
       code: "error",
-      message: "Đường dẫn đã tồn tại!"
+      message: "Dữ liệu không hợp lệ!"
     })
-    return;
-  }
-  const newRecord = new CategoryBlog(req.body);
-  await newRecord.save();
 
-  res.json({
-    code: "success",
-    message: "Tạo danh mục thành công!"
-  })
+  }
 }
