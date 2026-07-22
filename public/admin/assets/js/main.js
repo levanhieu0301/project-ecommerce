@@ -37,15 +37,23 @@ if(articleCreateCategoryForm) {
         errorMessage: 'Vui lòng nhập tên danh mục!',
       },
     ])
+    .addField('#slug', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập đường dẫn!',
+      },
+    ])
     .onSuccess((event) => {
       const name = event.target.name.value;
       const parent = event.target.parent.value;
       const description = event.target.description.value;
+      const slug = event.target.slug.value;
 
       // Tạo formData
       const formData = new FormData();
       formData.append("name", name);
       formData.append("parent", parent);
+      formData.append("slug", slug);
       formData.append("description", description);
 
       fetch(`/${pathAdmin}/article/category/create`, {
@@ -65,4 +73,38 @@ if(articleCreateCategoryForm) {
 
         })
     });
+}
+
+// button generate slug 
+const buttonGenerateSlug = document.querySelector("[btn-generate-slug]")
+if(buttonGenerateSlug){
+  buttonGenerateSlug.addEventListener("click", () => {
+      const modelCategory = buttonGenerateSlug.getAttribute("model")
+      const fromCategory = buttonGenerateSlug.getAttribute("from")
+      const toCategory = buttonGenerateSlug.getAttribute("to")
+      const valueCategory = document.querySelector(`[name='${fromCategory}']`).value
+
+      const dataFinal = {
+        string: valueCategory,
+        model: modelCategory,
+      }
+      fetch(`/${pathAdmin}/helper/generate-slug`, {
+        method: "POST",
+        headers:{
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dataFinal)
+
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.code == "success"){
+          document.querySelector(`[name="${toCategory}"]`).value = data.slug
+        }
+        if(data.code == "error"){
+          notyf.error(data.message);
+        }
+      })
+
+  })
 }

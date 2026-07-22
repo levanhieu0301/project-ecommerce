@@ -16,7 +16,8 @@ dotenv.config();
 connectDB();
 
 app.locals.pathAdmin = pathAdmin
-
+// Cho phép gửi JSON
+app.use(express.json())
 
 // Router client
 import clientRoute from "./routes/client/index.route"

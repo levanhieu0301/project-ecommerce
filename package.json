@@ -13,7 +13,8 @@
     "joi": "^18.2.3",
     "mongoose": "^9.7.4",
     "multer": "^2.2.0",
-    "pug": "^3.0.4"
+    "pug": "^3.0.4",
+    "slugify": "^1.6.9"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
