@@ -121,3 +121,55 @@ if(buttonGenerateSlug){
 
   })
 }
+
+// articleEditCategoryForm
+const articleEditCategoryForm = document.querySelector("#articleEditCategoryForm");
+if(articleEditCategoryForm) {
+  const validator = new JustValidate('#articleEditCategoryForm');
+
+  validator
+    .addField('#name', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập tên danh mục!',
+      },
+    ])
+    .addField('#slug', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập đường dẫn!',
+      },
+    ])
+    .onSuccess((event) => {
+      const id = event.target.id.value
+      const name = event.target.name.value;
+      const parent = event.target.parent.value;
+      const description = tinymce.get("description").getContent();
+      const status = event.target.status.value;
+      const slug = event.target.slug.value;
+
+      // Tạo formData
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("parent", parent);
+      formData.append("slug", slug);
+      formData.append("status", status);
+      formData.append("description", description);
+
+      fetch(`/${pathAdmin}/article/category/edit/${id}`, {
+        method: "PATCH",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            drawNotify(data.code, data.message);
+          }
+
+        })
+    });
+}

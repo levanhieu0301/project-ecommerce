@@ -13,5 +13,15 @@ router.post(
   articleValidate.categoryCreatePost, 
   articleController.categoryCreatePost
 );
+router.get(
+  '/category/edit/:id', 
+  articleController.categoryEdit
+);
+router.patch(
+  '/category/edit/:id', 
+  upload.none(), 
+  articleValidate.categoryCreatePost, 
+  articleController.categoryEditPatch
+);
 
 export default router;
