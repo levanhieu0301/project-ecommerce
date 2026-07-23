@@ -19,4 +19,32 @@ block main
         // end card-header
         .card-body.pt-0
           //- Table
+          .table-responsive
+            table.table.table-striped.mb-0
+              thead.table-light
+                tr
+                  th STT
+                  th Tên danh mục
+                  th Danh mục cha
+                  th Trạng thái
+                  th Lượt xem
+                  th.text-end Hành động
+              tbody
+                each item, index in recordList
+                  tr
+                    td #{index + 1}
+                    td #{item.name}
+                    td #{item.parentName}
+                    td
+                      if (item.status == "active")
+                        span.badge.bg-success Hoạt động
+                      else if (item.status == "inactive")
+                        span.badge.bg-danger Tạm dừng
+                    td #{item.view}
+                    td.text-end
+                      a(href="#")
+                        i.las.la-pen.text-secondary.font-18
+                      a(href="#")
+                        i.las.la-trash-alt.text-secondary.font-18
+
     // end col
