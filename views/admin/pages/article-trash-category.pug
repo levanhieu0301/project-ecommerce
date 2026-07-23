@@ -10,20 +10,14 @@ block main
               h4.card-title #{pageTitle}
             // end col
             .col-auto
-              a.btn.btn-danger.me-1(
-                href=`/${pathAdmin}/article/category/trash`
+              a.btn.btn-info(
+                href=`/${pathAdmin}/article/category`
                 )
-                i.las.la-trash-alt.me-1
-                | Thùng rác
-              a.btn.btn-primary(
-                href=`/${pathAdmin}/article/category/create`
-                )
-                i.fa-solid.fa-plus.me-1
-                | Tạo danh mục
+                <i class="fa-solid fa-arrow-left me-1"></i>
+                | Quay lại danh sách
           // end row
         // end card-header
         .card-body.pt-0
-          //- Table
           .table-responsive
             table.table.table-striped.mb-0
               thead.table-light
@@ -47,14 +41,19 @@ block main
                         span.badge.bg-danger Tạm dừng
                     td #{item.view}
                     td.text-end
-                      a(href=`/${pathAdmin}/article/category/edit/${item.id}`)
-                        i.las.la-pen.text-secondary.font-18
                       a(
                         href="javascript:;"
-                        btn-deleted 
-                        api = `/${pathAdmin}/article/category/deleted/${item.id}`
-                        method = "PATCH"
-                      )
-                        i.las.la-trash-alt.text-secondary.font-18
-
+                        btn-deleted
+                        method="PATCH"
+                        api=`/${pathAdmin}/article/category/undo/${item.id}`
+                        class="me-1"
+                        )
+                        <i class="fa-solid fa-rotate-left"></i>
+                      a(
+                        href="javascript:;"
+                        btn-deleted
+                        method="DELETE"
+                        api=`/${pathAdmin}/article/category/destroy/${item.id}`
+                        )
+                        <i class="fa-solid fa-trash text-danger"></i>
     // end col

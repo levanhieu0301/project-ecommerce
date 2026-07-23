@@ -173,3 +173,29 @@ if(articleEditCategoryForm) {
         })
     });
 }
+
+// btnDeleted
+const listButtonApi = document.querySelectorAll("[btn-deleted]");
+if(listButtonApi.length > 0) {
+  listButtonApi.forEach(button => {
+    button.addEventListener("click", () => {
+      const method = button.getAttribute("method");
+      const api = button.getAttribute("api");
+
+      fetch(api, {
+        method: method || "GET"
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            drawNotify(data.code, data.message);
+            location.reload();
+          }
+        })
+    })
+  })
+}

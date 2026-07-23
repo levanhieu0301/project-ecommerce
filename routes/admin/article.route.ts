@@ -23,5 +23,13 @@ router.patch(
   articleValidate.categoryCreatePost, 
   articleController.categoryEditPatch
 );
+router.patch(
+  '/category/deleted/:id', 
+  articleController.categoryDeleted
+);
+
+router.get('/category/trash', articleController.trashCategory);
+router.patch('/category/undo/:id', articleController.undoCategoryPatch);
+router.delete('/category/destroy/:id', articleController.destroyCategoryDelete);
 
 export default router;
