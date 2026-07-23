@@ -11,6 +11,22 @@ export const category = async (req: Request, res: Response) => {
   } = {
     deleted: false,
   }
+   // Phân trang
+  const limitItems = 5;
+  let page = 1;
+  if(req.query.page && parseInt(`${req.query.page}`) > 0) {
+    page = parseInt(`${req.query.page}`);
+  }
+  const totalRecord = await CategoryBlog.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord/limitItems);
+  const skip = (page - 1) * limitItems;
+  const pagination = {
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+    skip: skip
+  };
+  // Hết Phân trang
+  // Tìm kiếm
   if(req.query.keyword) {
     const keyword = slugify(`${req.query.keyword}`, {
       replacement: " ",
@@ -19,7 +35,13 @@ export const category = async (req: Request, res: Response) => {
     const keywordRegex = new RegExp(keyword, "i");
     find.search = keywordRegex;
   }
-  const recordList: any = await CategoryBlog.find(find)
+  const recordList: any = await CategoryBlog
+    .find(find)
+    .sort({
+      createdAt: "desc"
+    })
+    .limit(limitItems)
+    .skip(skip)
   for(const item of recordList){
     if(item.parent){
       const parent = await CategoryBlog.findOne({
@@ -31,7 +53,8 @@ export const category = async (req: Request, res: Response) => {
 
   res.render("admin/pages/article-category", {
     pageTitle: "Danh mục bài viết",
-    recordList: recordList
+    recordList: recordList,
+    pagination: pagination
   })
 }
 export const categoryCreate = async  (req: Request, res: Response) => {

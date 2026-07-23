@@ -44,26 +44,36 @@ block main
                   th Lượt xem
                   th.text-end Hành động
               tbody
-                each item, index in recordList
+                if(recordList.length > 0)
+                  each item, index in recordList
+                    tr
+                      td #{pagination.skip  + index + 1}
+                      td #{item.name}
+                      td #{item.parentName}
+                      td
+                        if (item.status == "active")
+                          span.badge.bg-success Hoạt động
+                        else if (item.status == "inactive")
+                          span.badge.bg-danger Tạm dừng
+                      td #{item.view}
+                      td.text-end
+                        a(href=`/${pathAdmin}/article/category/edit/${item.id}`)
+                          i.las.la-pen.text-secondary.font-18
+                        a(
+                          href="javascript:;"
+                          btn-deleted 
+                          api = `/${pathAdmin}/article/category/deleted/${item.id}`
+                          method = "PATCH"
+                        )
+                          i.las.la-trash-alt.text-secondary.font-18
+                else 
                   tr
-                    td #{index + 1}
-                    td #{item.name}
-                    td #{item.parentName}
-                    td
-                      if (item.status == "active")
-                        span.badge.bg-success Hoạt động
-                      else if (item.status == "inactive")
-                        span.badge.bg-danger Tạm dừng
-                    td #{item.view}
-                    td.text-end
-                      a(href=`/${pathAdmin}/article/category/edit/${item.id}`)
-                        i.las.la-pen.text-secondary.font-18
-                      a(
-                        href="javascript:;"
-                        btn-deleted 
-                        api = `/${pathAdmin}/article/category/deleted/${item.id}`
-                        method = "PATCH"
-                      )
-                        i.las.la-trash-alt.text-secondary.font-18
+                    td(colspan="6" class="text-center") Không tìm thấy dữ liệu
+          .row.mt-3
+            .col-lg-2.col-md-3.col-6
+              select.form-select(pagination)
+                - for (let i = 1; i <= pagination.totalPage; i++)
+                  option(value=i) Trang #{i}
+
 
     // end col

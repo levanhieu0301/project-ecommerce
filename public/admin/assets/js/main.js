@@ -218,3 +218,26 @@ if(formSearch){
     formSearch.keyword.value = valueCurrent
   }
 }
+
+// pagination
+const pagination = document.querySelector("[pagination]");
+if(pagination) {
+  const url = new URL(window.location.href);
+
+  pagination.addEventListener("change", () => {
+    const value = pagination.value;
+    if(value) {
+      url.searchParams.set("page", value);
+    } else {
+      url.searchParams.delete("page");
+    }
+    window.location.href = url.href;
+  })
+
+  // Hiển thị giá trị mặc định
+  const valueCurrent = url.searchParams.get("page");
+  if(valueCurrent) {
+    pagination.value = valueCurrent;
+  }
+}
+// End pagination
