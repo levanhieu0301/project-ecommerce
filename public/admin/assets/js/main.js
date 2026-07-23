@@ -199,3 +199,22 @@ if(listButtonApi.length > 0) {
     })
   })
 }
+
+// FormSearch 
+const formSearch = document.querySelector("[form-search]")
+if(formSearch){
+  const url = new URL(window.location.href)
+  formSearch.addEventListener("submit", (event) => {
+    const value = event.target.keyword.value;
+    if(value){
+      url.searchParams.set("keyword", value)
+    }else {
+      url.searchParams.delete("keyword")
+    }
+    window.location.href = url.href;
+  })
+  const valueCurrent = url.searchParams.get("keyword")
+  if(valueCurrent){
+    formSearch.keyword.value = valueCurrent
+  }
+}
