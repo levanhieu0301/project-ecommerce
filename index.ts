@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express"
 import path from "path"
-import { pathAdmin } from "./configs/variable.config"
+import { domainCDN, pathAdmin } from "./configs/variable.config"
 import { connectDB } from "./configs/database.config"
 import dotenv from "dotenv"
 const app = express()
@@ -36,6 +36,8 @@ app.use((req, res, next) => {
 
 
 app.locals.pathAdmin = pathAdmin
+
+app.locals.domainCDN = domainCDN;
 // Cho phép gửi JSON
 app.use(express.json())
 
