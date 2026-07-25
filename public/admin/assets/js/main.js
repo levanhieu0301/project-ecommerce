@@ -241,3 +241,17 @@ if(pagination) {
   }
 }
 // End pagination
+
+// button-copy
+const listButtonCopy = document.querySelectorAll("[btn-copy]");
+if(listButtonCopy.length > 0) {
+  listButtonCopy.forEach(button => {
+    button.addEventListener("click", () => {
+      const content = button.getAttribute("data-content");
+      window.navigator.clipboard.writeText(content);
+      notyf.success("Đã copy!");
+    })
+  })
+}
+// End button-copy
+

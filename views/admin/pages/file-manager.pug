@@ -31,7 +31,11 @@ block main
                 td #{item.createdAtFormat}
                 td #{item.sizeFormat}
                 td.text-end
-                  a(href="#")
+                  a(
+                    href="javascript:;"
+                    btn-copy 
+                    data-content=`${item.folder}/${item.filename}`
+                  )
                     i.las.la-copy.text-secondary.fs-18.ms-1
                   a(href="#")
                     i.las.la-eye.text-secondary.fs-18.ms-1
