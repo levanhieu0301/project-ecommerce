@@ -1,5 +1,7 @@
 import { Uppy, Dashboard, XHRUpload  } from "https://releases.transloadit.com/uppy/v5.2.1/uppy.min.mjs"
-  const uppy = new Uppy()
+const uppuUpload = document.querySelector("#uppy");
+if(uppuUpload) {
+    const uppy = new Uppy()
   uppy.use(Dashboard, 
   { 
     target: '#uppy',
@@ -21,3 +23,4 @@ import { Uppy, Dashboard, XHRUpload  } from "https://releases.transloadit.com/up
     }
     window.location.reload();
   });
+}
