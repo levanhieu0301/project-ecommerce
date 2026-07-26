@@ -306,3 +306,64 @@ if(modalPreviewFile){
 }
 // End Modal Review file
 
+// Modal Rename file
+const modalRenameFile = document.querySelector("#renameFile")
+if(modalRenameFile){
+  const form = modalRenameFile.querySelector("form")
+
+  let buttonClick = null;
+  const listButtonRename = document.querySelectorAll("[btn-rename]")
+  listButtonRename.forEach(button => {
+    button.addEventListener("click", () => {
+      buttonClick = button
+    })
+  })
+
+  modalRenameFile.addEventListener("shown.bs.modal", (event) => {
+    // Hiển thị tên mặc định vào ô input
+    const idFile = buttonClick.getAttribute("id-file")
+    const filename = buttonClick.getAttribute("filename")
+    form.fileId.value = idFile;
+    form.fileName.value = filename;
+
+  })
+
+  modalRenameFile.addEventListener("hidden.bs.modal", (event) => {
+    buttonClick = null;
+    form.fileId.value = "";
+    form.fileName.value = "";
+
+  })
+  // Submit form
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const valueId = event.target.fileId.value;
+    const valueFileName = event.target.fileName.value;
+
+    if(valueId && valueFileName) {
+      // Tạo formData
+      const formData = new FormData();
+      formData.append("fileName", valueFileName);
+
+      fetch(`/${pathAdmin}/file-manager/change-file-name/${valueId}`, {
+        method: "PATCH",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            drawNotify(data.code, data.message);
+            location.reload();
+          }
+        })
+      }
+
+  })
+
+}
+// End Modal Rename file
+

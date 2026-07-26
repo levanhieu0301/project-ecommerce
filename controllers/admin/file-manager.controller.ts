@@ -75,3 +75,56 @@ export const upload = async  (req: Request, res: Response) => {
       })
   }
 }
+
+export const changeFileName = async  (req: Request, res: Response) => {
+  try {
+      const id = req.params.id;
+  const {fileName} = req.body;
+  const record = await Media.findOne({
+      _id: id
+  })
+
+  if(!record) {
+    res.json({
+      code: "error",
+      message: "Không tìm thấy file!"
+    })
+    return;
+  }
+  const formData = new FormData()
+  formData.append("folder", record.folder)
+  formData.append("oldName", record.filename)
+  formData.append("newName", fileName)
+  const response = await axios.patch(`${domainCDN}/file-manager/change-file-name`, formData, {
+    headers: formData.getHeaders()
+  })
+
+  if(response.data.code == "error") {
+    res.json({
+      code: "error",
+      message: response.data.message
+    })
+    return;
+  }
+  // Cập nhật lại trường filename trong CSDL
+    await Media.updateOne({
+      _id: id
+    }, {
+      filename: fileName
+    })
+
+    res.json({
+      code: "success",
+      message: "Đã đổi tên file!"
+    })
+
+  } catch (error) {
+     res.json({
+      code: "error",
+      message: "Không tìm thấy file!"
+    })
+
+  }
+
+
+}
