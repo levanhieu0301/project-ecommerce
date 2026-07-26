@@ -56,7 +56,9 @@ block main
                     mimetype= `${item.mimetype}`
                     )
                     i.las.la-eye.text-secondary.fs-18.ms-1
-                  a(href="#")
+                  a(
+                    href=`${domainCDN}${item.folder}/${item.filename}?type=download`
+                  )
                     i.las.la-download.text-secondary.fs-18.ms-1
                   a(href="#")
                     i.las.la-pen.text-secondary.fs-18.ms-1
