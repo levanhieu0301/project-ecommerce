@@ -255,3 +255,54 @@ if(listButtonCopy.length > 0) {
 }
 // End button-copy
 
+// Modal Review file
+const modalPreviewFile = document.querySelector("#reviewFile")
+if(modalPreviewFile){
+  const btnPreviewFile = document.querySelectorAll("[btn-review]")
+  const Preview = document.querySelector("[preview]")
+
+  // muốn biết đang click vào ảnh nào
+  let buttonClick = null;
+  btnPreviewFile.forEach(button => {
+    button.addEventListener("click", () =>{
+      buttonClick = button
+    })
+  })
+
+  modalPreviewFile.addEventListener("shown.bs.modal", (event) => {
+    const data = buttonClick.getAttribute("data-content")
+    const mimetype =buttonClick.getAttribute("mimetype");
+    if(mimetype.includes("image")){
+      Preview.innerHTML = `
+          <img src="${data}" width="100%" />`
+    }
+
+    else if(mimetype.includes("audio")) {
+      Preview.innerHTML = `
+        <audio controls>
+          <source src="${file}" />
+        </audio>
+      `;
+    }
+    else if(mimetype.includes("video")) {
+      Preview.innerHTML = `
+        <video controls width="100%">
+          <source src="${file}" />
+        </video>
+      `;
+    }
+    else if(mimetype.includes("application/pdf")) {
+      Preview.innerHTML = `
+        <iframe src="${file}" width="100%" height="600px"></iframe>
+      `;
+    }
+
+  })
+
+  modalPreviewFile.addEventListener("hidden.bs.modal", (event) => {
+    buttonClick = null;
+    Preview.innerHTML = "";
+  })
+}
+// End Modal Review file
+
