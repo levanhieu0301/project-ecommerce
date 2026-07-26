@@ -69,7 +69,12 @@ block main
                     filename= `${item.filename}`
                   )
                     i.las.la-pen.text-secondary.fs-18.ms-1
-                  a( href="#")
+                  a(
+                    href="javascript:;"
+                    btn-delete 
+                    id-file = `${item.id}`
+                    filename= `${item.filename}`
+                  )
                     i.las.la-trash-alt.text-secondary.fs-18.ms-1
       +pagination()
   .card

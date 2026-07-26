@@ -128,3 +128,55 @@ export const changeFileName = async  (req: Request, res: Response) => {
 
 
 }
+
+
+export const deleteFileName = async  (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const record = await Media.findOne({
+      _id: id
+    })
+
+    if(!record) {
+      res.json({
+        code: "error",
+        message: "Không tìm thấy file!"
+      })
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("folder", record.folder);
+    formData.append("fileName", record.filename);
+
+    const response = await axios.patch(`${domainCDN}/file-manager/delete-file`, formData, {
+      headers: formData.getHeaders()
+    });
+
+    if(response.data.code == "error") {
+      res.json({
+        code: "error",
+        message: response.data.message
+      })
+      return;
+    }
+
+    // Xóa bản ghi trong CSDL
+    await Media.deleteOne({
+      _id: id
+    })
+
+    res.json({
+      code: "success",
+      message: "Đã xóa file!"
+    })
+  } catch (error) {
+    res.json({
+      code: "error",
+      message: "Id không hợp lệ!"
+    })
+  }
+
+
+}

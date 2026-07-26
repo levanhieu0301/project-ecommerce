@@ -367,3 +367,33 @@ if(modalRenameFile){
 }
 // End Modal Rename file
 
+// Deleted File
+const buttonDeleteFile = document.querySelectorAll("[btn-delete]")
+if(buttonDeleteFile){
+  buttonDeleteFile.forEach(button => {
+    button.addEventListener("click", (event) => {
+      const valueId = button.getAttribute("id-file")
+      const valuefile = button.getAttribute("filename")
+
+      const isConfirm = confirm(`Bạn có chắc muốn xóa file: ${valuefile}`);
+      if(isConfirm){
+        fetch(`/${pathAdmin}/file-manager/delete-file/${valueId}`, {
+          method: "DELETE"
+        })
+          .then(res => res.json())
+          .then(data => {
+            if(data.code == "error") {
+              notyf.error(data.message);
+            }
+
+            if(data.code == "success") {
+              drawNotify(data.code, data.message);
+              location.reload();
+            }
+          })
+      }
+    })
+  })
+}
+// End Deleted File
+
