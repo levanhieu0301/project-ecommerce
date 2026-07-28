@@ -397,3 +397,35 @@ if(buttonDeleteFile){
 }
 // End Deleted File
 
+// Tạo folder
+const formCreateFolder = document.querySelector("[form-create-folder]")
+if(formCreateFolder){
+  formCreateFolder.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const valueFolder = event.target.folderName.value
+
+    if(!valueFolder) {
+      notyf.error("Vui lòng nhập tên folder");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("valueFolder", valueFolder)
+    fetch(`/${pathAdmin}/file-manager/folder/create`, {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.code == "error") {
+        notyf.error(data.message);
+      }
+
+      if(data.code == "success") {
+        drawNotify(data.code, data.message);
+        location.reload();
+      }
+    })
+  })
+}
+// End Tạo folder
