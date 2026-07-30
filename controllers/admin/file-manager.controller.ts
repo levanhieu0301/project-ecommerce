@@ -286,3 +286,8 @@ export const deleteFolder = async (req: Request, res: Response) => {
     })
   }
 }
+export const fileManagerIframe = async (req: Request, res: Response) => {
+  res.render("admin/pages/file-manager-iframe", {
+    pageTitle: "Quản lý file"
+  });
+}
