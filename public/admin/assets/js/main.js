@@ -411,6 +411,12 @@ if(formCreateFolder){
 
     const formData = new FormData();
     formData.append("valueFolder", valueFolder)
+    const urlCurrent = new URLSearchParams(window.location.search)
+    const folderCurrent = urlCurrent.get("folderPath")
+    if(folderCurrent){
+      formData.append("folderCurrent", folderCurrent)
+    }
+
     fetch(`/${pathAdmin}/file-manager/folder/create`, {
       method: "POST",
       body: formData
@@ -436,8 +442,13 @@ if(btnToFolder){
   const url = new URL(window.location.href)
   btnToFolder.forEach(button => {
     button.addEventListener("click", (event) => {
-      const value = button.getAttribute("name-folder")
+      let value = button.getAttribute("name-folder")
       if(value){
+        const urlCurrent = new URLSearchParams(window.location.search)
+        const folderCurrent = urlCurrent.get("folderPath")
+        if(folderCurrent){
+          value = `${folderCurrent}/${value}`
+        }
         url.searchParams.set("folderPath", value)
       }else {
         url.searchParams.delete("folderPath")
@@ -447,4 +458,33 @@ if(btnToFolder){
   })
 
 }
-// btn-to-folder
+//end btn-to-folder
+
+// Breadcumb folder 
+const breadcumbFolder = document.querySelector("[breadcumb-folder]")
+if(breadcumbFolder){
+  const url = new URLSearchParams(window.location.search)
+  const folderPath =url.get("folderPath") || ""
+  const listFolder = folderPath.split("/") || []
+
+  let html = `
+  <li class="list-group-item bg-white">
+    <a href="/${pathAdmin}/file-manager">
+      <i class="la la-angle-double-right text-info me-2">
+      </i>Media
+    </a>
+  </li>`
+  let path = ""
+  listFolder.forEach((item, index) => {
+    path += (index > 0? "/" : "") + `${item}` 
+    html += `
+      <li class="list-group-item bg-white">
+        <a href="/${pathAdmin}/file-manager?folderPath=${path}">
+          <i class="la la-angle-double-right text-info me-2">
+          </i> ${item}
+        </a>
+      </li>`
+  })
+  breadcumbFolder.innerHTML = html;
+}
+// End Breadcumb folder 

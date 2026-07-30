@@ -203,7 +203,7 @@ export const deleteFileName = async  (req: Request, res: Response) => {
 
 export const folderCreate = async  (req: Request, res: Response) => {
 try {
-  const { valueFolder } = req.body;
+  const { valueFolder, folderCurrent } = req.body;
   if(!valueFolder){
     res.json({
       code: "error",
@@ -213,6 +213,9 @@ try {
   }
     const formData = new FormData();
     formData.append("valueFolder", valueFolder);
+    if(folderCurrent){
+      formData.append("folderCurrent", folderCurrent);
+    }
 
     const response = await axios.post(`${domainCDN}/file-manager/folder/create`, formData, {
       headers: formData.getHeaders()
