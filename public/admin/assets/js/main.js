@@ -488,3 +488,41 @@ if(breadcumbFolder){
   breadcumbFolder.innerHTML = html;
 }
 // End Breadcumb folder 
+
+// Delete Folder 
+const btnDeleteFolder = document.querySelectorAll("[btn-delete-folder]")
+if(btnDeleteFolder){
+  btnDeleteFolder.forEach(button => {
+    button.addEventListener("click", () => {
+      const nameFolder = button.getAttribute("name-folder")
+      // Gửi kèm thư mục đang đứng để xóa
+      const url = new URLSearchParams(window.location.search)
+      const folderPath = url.get("folderPath");
+      let folderFinal = "/media"
+      if(folderPath){
+        folderFinal += `/${folderPath}`
+      }
+      if(nameFolder){
+        folderFinal += `/${nameFolder}`
+      }
+      const isConfirm = confirm(`Bạn có chắc muốn xóa folder: ${nameFolder}? Hành động này sẽ không thể khôi phục.`);
+      if(isConfirm) {
+        fetch(`/${pathAdmin}/file-manager/folder/delete?folderPath=${folderFinal}`, {
+          method: "DELETE"
+        })
+          .then(res => res.json())
+          .then(data => {
+            if(data.code == "error") {
+              notyf.error(data.message);
+            }
+
+            if(data.code == "success") {
+              drawNotify("success", data.message);
+              location.reload();
+            }
+          })
+        }
+    })
+  })
+}
+// End Delete Folder 
