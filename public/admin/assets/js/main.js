@@ -429,3 +429,22 @@ if(formCreateFolder){
   })
 }
 // End Tạo folder
+
+// btn-to-folder
+const btnToFolder = document.querySelectorAll("[btn-to-folder]")
+if(btnToFolder){
+  const url = new URL(window.location.href)
+  btnToFolder.forEach(button => {
+    button.addEventListener("click", (event) => {
+      const value = button.getAttribute("name-folder")
+      if(value){
+        url.searchParams.set("folderPath", value)
+      }else {
+        url.searchParams.delete("folderPath")
+      }
+        window.location.href  = url.href
+    })
+  })
+
+}
+// btn-to-folder

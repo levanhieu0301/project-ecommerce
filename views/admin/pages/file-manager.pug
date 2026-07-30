@@ -32,7 +32,10 @@ block main
             each item in folderList
               tr
                 td
-                  a(href="#") 
+                  a(href="javascript:;"
+                    btn-to-folder
+                    name-folder= `${item.nameFolder}`
+                  ) 
                     .d-inline-flex.justify-content-center.align-items-center.thumb-md.bg-secondary-subtle.rounded.mx-auto.me-1
                       i.fa-solid.fa-folder.fs-18.align-self-center.mb-0.text-secondary
                     span #{item.nameFolder}

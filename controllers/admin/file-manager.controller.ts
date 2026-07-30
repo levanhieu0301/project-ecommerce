@@ -8,7 +8,14 @@ import { domainCDN } from "../../configs/variable.config";
 
 
 export const fileManager = async (req: Request, res: Response) => {
-    // Phân trang
+  const find : any ={
+  }
+  // Mặc định hiển thị file thư mục gốc media
+  find.folder = "/media"
+  if(req.query.folderPath !== undefined){
+    find.folder = find.folder + `/${req.query.folderPath}`
+  }
+   // Phân trang
   const limitItems = 20;
   let page = 1;
   if(req.query.page && parseInt(`${req.query.page}`) > 0) {
@@ -25,7 +32,7 @@ export const fileManager = async (req: Request, res: Response) => {
   // Hết Phân trang
 
   const fileList: any = await Media
-    .find({})
+    .find(find)
     .sort({
       createdAt: "desc"
     })
@@ -38,7 +45,7 @@ export const fileManager = async (req: Request, res: Response) => {
   }
   // Call API lên hệ thống FM để lấy Danh sách folder 
   let folderList: any[] = []
-  const response = await axios.get(`${domainCDN}/file-manager/folder/list`)
+  const response = await axios.get(`${domainCDN}/file-manager/folder/list?folderPath=${req.query.folderPath}`)
   if(response.data.code == "success"){
     folderList = response.data.folderList
     for (const item of folderList) {
@@ -47,6 +54,7 @@ export const fileManager = async (req: Request, res: Response) => {
 
   }
   // End Call API lên hệ thống FM để lấy Danh sách folder 
+
 
   res.render("admin/pages/file-manager", {
     title: "Upload file",
