@@ -8,9 +8,12 @@ if(uppuUpload) {
     inline: true , 
     width: "100%"
   })
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const folderPath = urlParams.get("folderPath") || "";
   uppy.use(XHRUpload, 
   { 
-    endpoint: `/${pathAdmin}/file-manager/upload`, // Đường dẫn backend định nghĩa để nhận ảnh
+    endpoint: `/${pathAdmin}/file-manager/upload?folderPath=${folderPath}`, // Đường dẫn backend định nghĩa để nhận ảnh
     fieldName: "files",
     bundle: true
   })

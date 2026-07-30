@@ -67,6 +67,7 @@ export const fileManager = async (req: Request, res: Response) => {
 export const upload = async  (req: Request, res: Response) => {
   try {
       const files = req.files as Express.Multer.File[];
+      const folderPath = req.query.folderPath
       const formData = new FormData();
       files?.forEach(file => {
         formData.append("files", file.buffer, {
@@ -74,6 +75,9 @@ export const upload = async  (req: Request, res: Response) => {
           contentType: file.mimetype,
         })
       })
+      if(folderPath){
+        formData.append("folderPath", folderPath)
+      }
 
       const response = await axios.post(`${domainCDN}/file-manager/upload`,formData, {
         headers: formData.getHeaders() // để bên kia nhận được file
