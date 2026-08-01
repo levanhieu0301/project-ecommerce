@@ -8,6 +8,7 @@ html(
   head
     script. 
       const pathAdmin = "#{pathAdmin}";
+      const domainCDN = "#{domainCDN}";
     meta(charset="utf-8")
     title #{pageTitle}
     meta(
@@ -74,6 +75,7 @@ html(
         // end footer
       // end page content
     // end page-wrapper
+    include ../partials/modal-file-manager.pug
     // Javascript
     // vendor js
     script(src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js")

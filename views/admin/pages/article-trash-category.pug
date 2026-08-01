@@ -23,6 +23,7 @@ block main
               thead.table-light
                 tr
                   th STT
+                  th Avatar
                   th Tên danh mục
                   th Danh mục cha
                   th Trạng thái
@@ -32,6 +33,12 @@ block main
                 each item, index in recordList
                   tr
                     td #{index + 1}
+                    td
+                      if(item.avatar)
+                        img(
+                          src=`${domainCDN}${item.avatar}`
+                          class="rounded thumb-md me-1 d-inline"
+                        )
                     td #{item.name}
                     td #{item.parentName}
                     td

@@ -60,6 +60,7 @@ if(articleCreateCategoryForm) {
       const description = tinymce.get("description").getContent();
       const status = event.target.status.value;
       const slug = event.target.slug.value;
+      const avatar = event.target.avatar.value;
 
       // Tạo formData
       const formData = new FormData();
@@ -67,6 +68,7 @@ if(articleCreateCategoryForm) {
       formData.append("parent", parent);
       formData.append("slug", slug);
       formData.append("status", status);
+      formData.append("avatar", avatar);
       formData.append("description", description);
 
       fetch(`/${pathAdmin}/article/category/create`, {
@@ -146,6 +148,7 @@ if(articleEditCategoryForm) {
       const parent = event.target.parent.value;
       const description = tinymce.get("description").getContent();
       const status = event.target.status.value;
+      const avatar = event.target.avatar.value;
       const slug = event.target.slug.value;
 
       // Tạo formData
@@ -155,6 +158,7 @@ if(articleEditCategoryForm) {
       formData.append("slug", slug);
       formData.append("status", status);
       formData.append("description", description);
+      formData.append("avatar", avatar);
 
       fetch(`/${pathAdmin}/article/category/edit/${id}`, {
         method: "PATCH",
@@ -168,6 +172,7 @@ if(articleEditCategoryForm) {
 
           if(data.code == "success") {
             drawNotify(data.code, data.message);
+            location.reload();
           }
 
         })
@@ -525,4 +530,26 @@ if(btnDeleteFolder){
     })
   })
 }
-// End Delete Folder 
+// End Delete Folder
+
+// Preview Image when select file
+const formGroupFile = document.querySelector("[form-group-file]")
+if(formGroupFile){
+  const inputFile = formGroupFile.querySelector("[input-file]")
+  const previewFile = formGroupFile.querySelector("[preview-file]")
+  inputFile.addEventListener("input", (event) => {
+    const value = event.target.value;
+    console.log(value)
+    if(value){
+      previewFile.querySelector("img").src = `${domainCDN}${value}`;
+    }
+    else{
+      previewFile.querySelector("img").src = "";
+    }
+    // Hiển thị mặc định
+  if(inputFile.value){
+    previewFile.querySelector("img").src = `${domainCDN}${value}`;
+  } 
+})
+}
+// End Preview Image when select file

@@ -37,6 +37,19 @@ block main
               select.form-select(id="status" name="status")
                 option(value="active") Hoạt động
                 option(value="inactive") Tạm dừng
+          .col-md-6.col-lg-6
+            .mb-3
+              div(form-group-file)
+                label.form-label(for="avatar") Ảnh đại diện
+                .input-group
+                  span.btn.btn-outline-info(
+                    btn-file-manager
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalFileManager"
+                    ) Chọn file
+                  input.form-control(id="avatar" type="text" name="avatar" input-file placeholder="Đường dẫn file...")
+                .preview-file(preview-file)
+                  img
           .col-md-12.col-lg-12
             .mb-3
               label.form-label(for="description") Mô tả
