@@ -4,7 +4,7 @@ import * as articleController from "../../controllers/admin/article.controller"
 import * as articleValidate from "../../validates/admin/article.validate"
 import multer from "multer";
 const upload = multer();
-
+// Danh mục bài viết
 router.get('/category', articleController.category)
 router.get('/category/create', articleController.categoryCreate)
 router.post(
@@ -31,5 +31,9 @@ router.patch(
 router.get('/category/trash', articleController.trashCategory);
 router.patch('/category/undo/:id', articleController.undoCategoryPatch);
 router.delete('/category/destroy/:id', articleController.destroyCategoryDelete);
+// Bài viết
+router.get('/create', articleController.articleCreate)
+router.post('/create', upload.none(), articleValidate.articleCreatePost, articleController.articleCreatePost)
+
 
 export default router;

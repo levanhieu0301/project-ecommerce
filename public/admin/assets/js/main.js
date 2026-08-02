@@ -36,6 +36,21 @@ const drawNotify = (type, message) => {
     message: message
   }));
 }
+
+// Get checkbox list
+const getCheckboxList = (name) => {
+  const checkboxList = document.querySelector(`[checkbox-list="${name}"]`);
+  const inputCheckboxList = checkboxList.querySelectorAll("input[type='checkbox']:checked");
+  const listId = []
+  if(inputCheckboxList.length > 0) {
+    inputCheckboxList.forEach(item => {
+      listId.push(item.value);
+    })
+  }
+  return listId;
+}
+// End Get checkbox list
+
 // articleCreateCategoryForm
 const articleCreateCategoryForm = document.querySelector("#articleCreateCategoryForm");
 if(articleCreateCategoryForm) {
@@ -549,3 +564,59 @@ if(formGroupFile) {
   }
 }
 // End Form Group File
+// Article Create Form
+const articleCreateForm = document.querySelector("#articleCreateForm");
+if(articleCreateForm) {
+  const validation = new JustValidate('#articleCreateForm');
+
+  validation
+    .addField('#name', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập tên bài viết!'
+      }
+    ])
+    .addField('#slug', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập đường dẫn!'
+      }
+    ])
+    .onSuccess((event) => {
+      const name = event.target.name.value;
+      const slug = event.target.slug.value;
+      const category = getCheckboxList("category");
+      const status = event.target.status.value;
+      const avatar = event.target.avatar.value;
+      const description = tinymce.get("description").getContent();
+      const content = tinymce.get("content").getContent();
+
+      // Tạo FormData
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("slug", slug);
+      formData.append("category", JSON.stringify(category));
+      formData.append("status", status);
+      formData.append("avatar", avatar);
+      formData.append("description", description);
+      formData.append("content", content);
+      
+      fetch(`/${pathAdmin}/article/create`, {
+        method: "POST",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            drawNotify(data.code, data.message);
+            location.reload();
+          }
+        })
+    })
+  ;
+}
+// End Article Create Form

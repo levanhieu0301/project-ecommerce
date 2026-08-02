@@ -1,9 +1,14 @@
 import  { Request, Response } from "express"
 import slugify from "slugify"
 import CategoryBlog from "../../models/category-blog.model";
+import Blog from "../../models/blog.model";
 import { generateRandomString } from "../../helpers/generate.helper";
 import mongoose from "mongoose";
 
+const modal: any = {
+  CategoryBlog: CategoryBlog,
+  Blog: Blog
+}
 export const generateSlug = async (req: Request, res: Response) => {
   try {
     const {string, model} = req.body;
@@ -11,7 +16,8 @@ export const generateSlug = async (req: Request, res: Response) => {
     lower: true,     
     strict: true,      
     })
-    const Model = mongoose.model(model);
+    // const Model = mongoose.model(model);
+    const Model = modal[model];
     const existSlug = await Model.findOne({
       slug: slug
     })
