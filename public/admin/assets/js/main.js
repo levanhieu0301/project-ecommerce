@@ -531,25 +531,21 @@ if(btnDeleteFolder){
   })
 }
 // End Delete Folder
+// Form Group File
+const formGroupFile = document.querySelector("[form-group-file]");
+if(formGroupFile) {
+  const inputFile = formGroupFile.querySelector("[input-file]");
+  const previewFile = formGroupFile.querySelector("[preview-file]");
 
-// Preview Image when select file
-const formGroupFile = document.querySelector("[form-group-file]")
-if(formGroupFile){
-  const inputFile = formGroupFile.querySelector("[input-file]")
-  const previewFile = formGroupFile.querySelector("[preview-file]")
-  inputFile.addEventListener("input", (event) => {
-    const value = event.target.value;
-    console.log(value)
-    if(value){
-      previewFile.querySelector("img").src = `${domainCDN}${value}`;
-    }
-    else{
-      previewFile.querySelector("img").src = "";
-    }
-    // Hiển thị mặc định
-  if(inputFile.value){
+  inputFile.addEventListener("input", () => {
+    const value = inputFile.value;
     previewFile.querySelector("img").src = `${domainCDN}${value}`;
-  } 
-})
+  })
+
+  // Hiển thị mặc định
+  if(inputFile.value) {
+    const value = inputFile.value;
+    previewFile.querySelector("img").src = `${domainCDN}${value}`;
+  }
 }
-// End Preview Image when select file
+// End Form Group File
