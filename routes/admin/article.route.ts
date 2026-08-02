@@ -32,6 +32,7 @@ router.get('/category/trash', articleController.trashCategory);
 router.patch('/category/undo/:id', articleController.undoCategoryPatch);
 router.delete('/category/destroy/:id', articleController.destroyCategoryDelete);
 // Bài viết
+router.get('/list', articleController.articleList)
 router.get('/create', articleController.articleCreate)
 router.post('/create', upload.none(), articleValidate.articleCreatePost, articleController.articleCreatePost)
 

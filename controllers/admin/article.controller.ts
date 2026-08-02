@@ -255,6 +255,53 @@ export const destroyCategoryDelete = async (req: Request, res: Response) => {
 }
 
 // Bài viết
+export const articleList = async (req: Request, res: Response) => {
+  const find: {
+    deleted: boolean,
+    search?: RegExp
+  } = {
+    deleted: false
+  };
+
+  if(req.query.keyword) {
+    const keyword = slugify(`${req.query.keyword}`, {
+      replacement: " ",
+      lower: true
+    });
+    const keywordRegex = new RegExp(keyword, "i");
+    find.search = keywordRegex;
+  }
+
+  // Phân trang
+  const limitItems = 20;
+  let page = 1;
+  if(req.query.page && parseInt(`${req.query.page}`) > 0) {
+    page = parseInt(`${req.query.page}`);
+  }
+  const totalRecord = await Blog.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord/limitItems);
+  const skip = (page - 1) * limitItems;
+  const pagination = {
+    totalRecord: totalRecord,
+    totalPage: totalPage,
+    skip: skip
+  };
+  // Hết Phân trang
+
+  const recordList: any = await Blog
+    .find(find)
+    .sort({
+      createdAt: "desc"
+    })
+    .limit(limitItems)
+    .skip(skip)
+
+  res.render("admin/pages/article-list", {
+    pageTitle: "Danh sách bài viết",
+    recordList: recordList,
+    pagination: pagination
+  });
+}
 export const articleCreate = async (req: Request, res: Response) => {
     const categoryList = await CategoryBlog.find({});
     const categoryTree: any = treeCategory(categoryList)
