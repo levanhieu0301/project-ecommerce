@@ -37,6 +37,10 @@ router.get('/create', articleController.articleCreate)
 router.post('/create', upload.none(), articleValidate.articleCreatePost, articleController.articleCreatePost)
 router.get('/edit/:id', articleController.articleEdit)
 router.patch('/edit/:id', upload.none(), articleValidate.articleCreatePost, articleController.articleEditPatch)
+router.patch('/delete/:id', articleController.articleDelete)
+router.get('/trash', articleController.trashArticle)
+router.patch('/undo/:id', articleController.undoArticlePatch)
+router.delete('/destroy/:id', articleController.destroyArticleDelete)
 
 
 
