@@ -620,3 +620,61 @@ if(articleCreateForm) {
   ;
 }
 // End Article Create Form
+
+// Article Edit Form
+const articleEditForm = document.querySelector("#articleEditForm");
+if(articleEditForm) {
+  const validation = new JustValidate('#articleEditForm');
+
+  validation
+    .addField('#name', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập tên bài viết!'
+      }
+    ])
+    .addField('#slug', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập đường dẫn!'
+      }
+    ])
+    .onSuccess((event) => {
+      const id = event.target.id.value;
+      const name = event.target.name.value;
+      const slug = event.target.slug.value;
+      const category = getCheckboxList("category");
+      const status = event.target.status.value;
+      const avatar = event.target.avatar.value;
+      const description = tinymce.get("description").getContent();
+      const content = tinymce.get("content").getContent();
+
+      // Tạo FormData
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("slug", slug);
+      formData.append("category", JSON.stringify(category));
+      formData.append("status", status);
+      formData.append("avatar", avatar);
+      formData.append("description", description);
+      formData.append("content", content);
+      
+      fetch(`/${pathAdmin}/article/edit/${id}`, {
+        method: "PATCH",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            drawNotify(data.code, data.message);
+            location.reload();
+          }
+        })
+    })
+  ;
+}
+// End Article edit Form

@@ -1,8 +1,8 @@
-mixin checkbox(categoryList, level=0)
+mixin checkbox(categoryList, level=0, listchecked=[])
   - const marginLeft = level * 20;
   each category in categoryList
     div(class="checkbox-item" style=`margin-left: ${marginLeft}px;`)
-      input(type="checkbox" id=`checkbox-${category.id}` value=category.id)
+      input(type="checkbox" id=`checkbox-${category.id}` value=category.id checked=(listchecked.includes(category.id)))
       label(for=`checkbox-${category.id}`) #{category.name}
     if(category.children && category.children.length > 0)
-      +checkbox(category.children, level + 1)
+      +checkbox(category.children, level + 1, listchecked)

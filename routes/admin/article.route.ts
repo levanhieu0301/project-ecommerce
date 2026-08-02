@@ -35,6 +35,9 @@ router.delete('/category/destroy/:id', articleController.destroyCategoryDelete);
 router.get('/list', articleController.articleList)
 router.get('/create', articleController.articleCreate)
 router.post('/create', upload.none(), articleValidate.articleCreatePost, articleController.articleCreatePost)
+router.get('/edit/:id', articleController.articleEdit)
+router.patch('/edit/:id', upload.none(), articleValidate.articleCreatePost, articleController.articleEditPatch)
+
 
 
 export default router;
