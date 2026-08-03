@@ -4,6 +4,15 @@ const initialTinyMCE = () => {
     selector: '[textarea-mce]',
     plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
     toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+    init_instance_callback : (editor) => {
+      editor.on('OpenWindow', () => {
+       const title = document.querySelector(".tox .tox-dialog__title")?.innerHTML;
+         if(title == "Insert/Edit Media" || title == "Insert/Edit Image") {
+          const inputSource = document.querySelector(`.tox input.tox-textfield[type="url"]`);
+          inputSource.value = domainCDN;
+        }
+    });
+  }
   });
 }
 initialTinyMCE();
