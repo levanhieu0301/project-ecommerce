@@ -10,5 +10,6 @@ router.post('/create', upload.none(), accountAdminValidate.createPost, accountAd
 router.get('/list', accountAdminController.accountAdminList)
 router.get('/edit/:id', accountAdminController.accountAdminEdit)
 router.patch('/edit/:id', upload.none(), accountAdminValidate.editPatch, accountAdminController.accountAdminEditPatch)
+router.patch('/delete/:id', accountAdminController.accountAdminDelete)
 
 export default router;
