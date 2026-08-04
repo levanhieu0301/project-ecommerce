@@ -60,9 +60,9 @@ block main
                         i.las.la-pen.text-secondary.font-16
                       a(
                         href="javascript:;"
-                        button-api
-                        data-method="PATCH"
-                        data-api=`/${pathAdmin}/role/delete/${item.id}`
+                        btn-deleted 
+                        method="PATCH"
+                        api=`/${pathAdmin}/role/delete/${item.id}` 
                       )
                         i.las.la-trash-alt.text-secondary.font-16
           +pagination()

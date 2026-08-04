@@ -148,3 +148,27 @@ export const roleEditPatch = async (req: Request, res: Response) => {
   }
 
 }
+export const roleDeletePatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    await Role.updateOne({
+      _id: id
+    }, {
+      deleted: true,
+      deletedAt: Date.now(),
+    });
+
+    res.json({
+      code: "success",
+      message: "Xóa nhóm quyền thành công!"
+    })
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Id không hợp lệ!"
+    })
+  }
+}
+
