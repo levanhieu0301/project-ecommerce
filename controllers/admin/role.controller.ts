@@ -1,5 +1,5 @@
 import  { Request, Response } from "express"
-import { permissionList } from "../../configs/variable.config"
+import { pathAdmin, permissionList } from "../../configs/variable.config"
 import Role from "../../models/role.model";
 import slugify from "slugify";
 
@@ -87,3 +87,64 @@ export const roleList = async (req: Request, res: Response) => {
 
 }
 
+export const roleEdit = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const  permissions = permissionList;
+    const roleDetail = await Role.findOne({
+      _id: id,
+      deleted: false
+    })
+
+    if(!roleDetail) {
+      res.redirect(`/${pathAdmin}/role/list`);
+      return;
+    }
+
+  res.render("admin/pages/role-edit", {
+    title: "Chỉnh sửa nhóm quyền",
+    permissions: permissions,
+    record: roleDetail
+  })
+}
+export const roleEditPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const roleDetail = await Role.findOne({
+      _id: id,
+      deleted: false
+    })
+
+    if(!roleDetail) {
+      res.json({
+        code: "error",
+        message: "Nhóm quyền không tồn tại!"
+      })
+      return;
+    }
+
+    req.body.permissions = JSON.parse(req.body.permissions);
+
+    req.body.search = slugify(req.body.name, {
+      replacement: ' ',
+      lower: true, // Chữ thường
+    })
+
+    await Role.updateOne({
+      _id: id,
+      deleted: false
+    }, req.body);
+
+    res.json({
+      code: "success",
+      message: "Cập nhật thành công!"
+    })
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Id không hợp lệ!"
+    })
+  }
+
+}

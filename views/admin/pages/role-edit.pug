@@ -1,0 +1,37 @@
+extends ../layouts/default.pug
+include ../mixins/checkbox.pug
+
+block main
+  .card
+    .card-header
+      .row.align-items-center
+        .col
+          h4.card-title #{pageTitle}
+    .card-body.pt-0
+      form(id="roleEditForm")
+        .row
+          .col-md-6.col-lg-6.d-none
+            .mb-3
+              label.form-label(for="id") id*
+              input.form-control(id="id" type="text" name="id" value=record.id)
+          .col-md-6.col-lg-6
+            .mb-3
+              label.form-label(for="name") Tên nhóm quyền *
+              input.form-control(id="name" type="text" name="name" value=record.name)
+          .col-md-6.col-lg-6
+            .mb-3
+              label.form-label(for="description") Mô tả ngắn
+              input.form-control(id="description" type="text" name="description" value=record.description)
+          .col-md-6.col-lg-6
+            .mb-3
+              label.form-label Phân quyền
+              div(class="checkbox-list" checkbox-list="permissions")
+                +checkbox(permissions, 0, record.permissions)
+          .col-md-6.col-lg-6
+            .mb-3
+              label.form-label(for="status") Trạng thái
+              select.form-select(id="status" name="status")
+                option(value="active" selected=(record.status == "active")) Hoạt động
+                option(value="inactive" selected=(record.status == "inactive")) Tạm dừng
+        button.btn.btn-primary(type="submit") Cập nhật
+        a.btn.btn-danger.ms-1(href=`/${pathAdmin}/role/list`) Hủy
