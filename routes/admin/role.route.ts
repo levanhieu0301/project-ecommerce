@@ -6,5 +6,6 @@ import multer from "multer";
 const upload = multer();
 router.get('/create', roleController.role)
 router.post('/create', upload.none(),roleValidate.createPost, roleController.roleCreatePost)
+router.get('/list', roleController.roleList)
 
 export default router;
