@@ -7,5 +7,6 @@ const upload = multer();
 
 router.get('/create', accountAdminController.createAccountAdmin)
 router.post('/create', upload.none(), accountAdminValidate.createPost, accountAdminController.createAccountAdminPost)
+router.get('/list', accountAdminController.accountAdminList)
 
 export default router;
