@@ -10,5 +10,8 @@ router.get('/list', roleController.roleList)
 router.get('/edit/:id', roleController.roleEdit)
 router.patch('/edit/:id', upload.none(), roleValidate.createPost, roleController.roleEditPatch)
 router.patch('/delete/:id', roleController.roleDeletePatch)
+router.get('/trash', roleController.roleTrash)
+router.patch('/undo/:id', roleController.roleUndo)
+router.delete('/destroy/:id', roleController.roleDestroy)
 
 export default router;

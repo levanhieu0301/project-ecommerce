@@ -171,4 +171,55 @@ export const roleDeletePatch = async (req: Request, res: Response) => {
     })
   }
 }
+export const roleTrash = async (req: Request, res: Response) => {
+  const recordList: any = await Role.find({
+    deleted: true
+  })
+  res.render("admin/pages/role-trash", {
+    pageTitle: "Thùng rác nhóm quyền",
+    recordList: recordList
+  })
+}
+export const roleUndo = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
 
+    await Role.updateOne({
+      _id: id
+    }, {
+      deleted: false,
+    });
+
+    res.json({
+      code: "success",
+      message: "Khôi phục nhóm quyền thành công!"
+    })
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Id không hợp lệ!"
+    })
+  }
+}
+
+export const roleDestroy = async (req: Request, res: Response) => {
+  try {
+      const id = req.params.id;
+
+      await Role.deleteOne({
+        _id: id
+      });
+
+      res.json({
+        code: "success",
+        message: "Xóa nhóm quyền thành công!"
+      })
+    } catch (error) {
+      console.log(error);
+      res.json({
+        code: "error",
+        message: "Id không hợp lệ!"
+      })
+    }
+}
