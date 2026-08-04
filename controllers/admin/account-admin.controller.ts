@@ -3,6 +3,7 @@ import Role from "../../models/role.model"
 import AccountAdmin from "../../models/account-admin.model"
 import bcrypt from "bcryptjs"
 import slugify from "slugify"
+import { pathAdmin } from "../../configs/variable.config"
 
 
 export const createAccountAdmin = async (req: Request, res: Response) => {
@@ -122,11 +123,80 @@ export const accountAdminList = async (req: Request, res: Response) => {
   //   listAccountAdminNew.push(newRecord)
   // }
   // console.log(listAccountAdminNew)
-  
+
   res.render("admin/pages/account-admin-list", {
     pageTitle: "Danh sách tài khoản quản trị",
     recordList: recordList,
     pagination: pagination
 
   })
+}
+
+export const accountAdminEdit = async (req: Request, res: Response) => {
+  const roleList = await Role.find({
+    deleted: false,
+    status: "active"
+  })
+  const id = req.params.id;
+  const existRecord = await AccountAdmin.findOne({
+    _id: id, 
+    deleted: false
+  })
+  if(!existRecord) {
+    res.redirect(`/${pathAdmin}/account-admin/list`)
+    return;
+  }
+  res.render("admin/pages/account-admin-edit", {
+    pageTitle: "Chỉnh sửa tài khoản quản trị",
+    recordDetail: existRecord, 
+    roleList: roleList
+  })
+
+}
+export const accountAdminEditPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const accountDetail = await AccountAdmin.findOne({
+      _id: id,
+      deleted: false
+    })
+    if(!accountDetail) {
+      res.json({
+        code: "error",
+        message: "Tài khoản không tồn tại!"
+      })
+      return;
+    }
+    const existEmail = await AccountAdmin.findOne({
+      email: req.body.email,
+      _id: { $ne: id } // not equal - không bằng
+    })
+    if(existEmail) {
+      res.json({
+        code: "error",
+        message: "Email đã được sử dụng bởi tác khoản khác!"
+      })
+      return;
+    }
+    req.body.roles = JSON.parse(req.body.roles);
+    req.body.search = slugify(`${req.body.fullName} ${req.body.email}`, {
+      replacement: " ",
+      lower: true
+    });
+    await AccountAdmin.updateOne({
+      _id: id,
+      deleted: false
+    }, req.body);
+
+    res.json({
+      code: "success",
+      message: "Cập nhật thành công!"
+    })
+  } catch (error) {
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!"
+    })
+  }
+
 }
