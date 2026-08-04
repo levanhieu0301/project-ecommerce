@@ -11,5 +11,8 @@ router.get('/list', accountAdminController.accountAdminList)
 router.get('/edit/:id', accountAdminController.accountAdminEdit)
 router.patch('/edit/:id', upload.none(), accountAdminValidate.editPatch, accountAdminController.accountAdminEditPatch)
 router.patch('/delete/:id', accountAdminController.accountAdminDelete)
+router.get('/trash', accountAdminController.accountAdminTrash)
+router.patch('/undo/:id', accountAdminController.accountAdminUndo)
+router.delete('/destroy/:id', accountAdminController.accountAdminDestroy)
 
 export default router;
