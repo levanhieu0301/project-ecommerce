@@ -6,6 +6,7 @@ import helperRoute from "./helper.route"
 import fileManagerRoute from "./file-manager.route"
 import roleRoute from "./role.route"
 import accountAdminRoute from "./account-admin.route"
+import accountRoute from "./account.route"
 
 router.use('/dashboard', dashboardRoute)
 router.use('/article', articleRoute)
@@ -13,4 +14,5 @@ router.use('/helper', helperRoute)
 router.use('/file-manager', fileManagerRoute)
 router.use('/role', roleRoute)
 router.use('/account-admin', accountAdminRoute)
+router.use('/account', accountRoute)
 export default router;

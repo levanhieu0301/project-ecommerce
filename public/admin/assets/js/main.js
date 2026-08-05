@@ -1000,3 +1000,57 @@ if(accountAdminChangePasswordForm) {
   ;
 }
 // End Account Admin Change Password Form
+
+// Account Login Form
+const accountLoginForm = document.querySelector("#accountLoginForm");
+if(accountLoginForm) {
+  const validation = new JustValidate('#accountLoginForm');
+
+  validation
+    .addField('#email', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập email của bạn!',
+      },
+      {
+        rule: 'email',
+        errorMessage: 'Email không đúng định dạng!',
+      },
+    ])
+    .addField('#password', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập mật khẩu!',
+      }
+    ])
+    .onSuccess((event) => {
+      const email = event.target.email.value;
+      const password = event.target.password.value;
+      const rememberPassword = event.target.rememberPassword.checked
+      
+
+      // Tạo FormData
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("rememberPassword", rememberPassword)
+      
+      fetch(`/${pathAdmin}/account/login`, {
+        method: "POST",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            drawNotify(data.code, data.message);
+            location.href = `/${pathAdmin}/dashboard`;
+          }
+        })
+    })
+  ;
+}
+// End Account Login Form
