@@ -2,6 +2,7 @@ import  { Request, Response } from "express"
 import AccountAdmin from "../../models/account-admin.model";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import { pathAdmin } from "../../configs/variable.config";
 
 export const login = (req: Request, res: Response) => {
   res.render("admin/pages/account-login", {
@@ -56,4 +57,9 @@ export const loginPost = async (req: Request, res: Response) => {
     code: "success",
     message: "Đăng nhập thành công!"
   })
+}
+
+export const logout = (req: Request, res: Response) => {
+  res.clearCookie("tokenAdmin");
+  res.redirect(`/${pathAdmin}/account/login`); 
 }

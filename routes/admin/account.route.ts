@@ -7,6 +7,7 @@ import * as accountController from "../../controllers/admin/account.controller"
 import * as accountValidate from "../../validates/admin/account.validate"
 
 router.get('/login', accountController.login)
+router.get('/logout', accountController.logout)
 router.post('/login',upload.none(), accountValidate.loginPost,accountController.loginPost)
 
 export default router;
