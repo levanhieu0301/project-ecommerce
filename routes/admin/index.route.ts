@@ -7,12 +7,13 @@ import fileManagerRoute from "./file-manager.route"
 import roleRoute from "./role.route"
 import accountAdminRoute from "./account-admin.route"
 import accountRoute from "./account.route"
+import * as AuthMiddleware from "../../middlewares/admin/account.middleware"
 
-router.use('/dashboard', dashboardRoute)
-router.use('/article', articleRoute)
-router.use('/helper', helperRoute)
-router.use('/file-manager', fileManagerRoute)
-router.use('/role', roleRoute)
-router.use('/account-admin', accountAdminRoute)
+router.use('/dashboard', AuthMiddleware.verifyToken,dashboardRoute)
+router.use('/article', AuthMiddleware.verifyToken, articleRoute)
+router.use('/helper',  AuthMiddleware.verifyToken,helperRoute)
+router.use('/file-manager', AuthMiddleware.verifyToken, fileManagerRoute)
+router.use('/role',  AuthMiddleware.verifyToken,roleRoute)
+router.use('/account-admin',  AuthMiddleware.verifyToken,accountAdminRoute)
 router.use('/account', accountRoute)
 export default router;

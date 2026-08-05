@@ -3,6 +3,7 @@ import path from "path"
 import { domainCDN, pathAdmin } from "./configs/variable.config"
 import { connectDB } from "./configs/database.config"
 import dotenv from "dotenv"
+import cookieParser from "cookie-parser"
 const app = express()
 const port = 5000
 // Tích hợp giao diện pug
@@ -33,7 +34,7 @@ app.use((req, res, next) => {
   }
   next();
 });
-
+app.use(cookieParser())
 
 app.locals.pathAdmin = pathAdmin
 

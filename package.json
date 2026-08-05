@@ -7,10 +7,12 @@
     "start": "nodemon --exec \"node --inspect -r ts-node/register\" index.ts"
   },
   "dependencies": {
+    "@types/cookie-parser": "^1.4.10",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.2.0",
     "axios": "^1.18.1",
     "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "form-data": "^4.0.6",

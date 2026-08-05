@@ -41,7 +41,7 @@ export const loginPost = async (req: Request, res: Response) => {
   }
   // tạo token 
   const token = jwt.sign({
-    Id: existAccount.id,
+    id: existAccount.id,
     email: existAccount.email
   }
   , `${process.env.JWT_SECRET}`,
