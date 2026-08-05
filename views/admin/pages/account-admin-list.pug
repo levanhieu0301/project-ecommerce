@@ -70,13 +70,15 @@ block main
                         span(class="badge bg-danger") Tạm dừng
                     td.text-end
                       a(href=`/${pathAdmin}/account-admin/edit/${item.id}`)
-                        i.las.la-pen.text-secondary.font-16
+                        i.las.la-pen.text-secondary.font-16.fs-4
+                      a(href=`/${pathAdmin}/account-admin/change-password/${item.id}`)
+                        i.las.la-key.text-secondary.fs-4
                       a(
                         href="javascript:;"
                         btn-deleted 
                         api = `/${pathAdmin}/account-admin/delete/${item.id}`
                         method = "PATCH"
                       )
-                        i.las.la-trash-alt.text-secondary.font-16
+                        i.las.la-trash-alt.text-secondary.font-16.fs-4
           +pagination()
     // end col

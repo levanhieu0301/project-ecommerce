@@ -14,5 +14,14 @@ router.patch('/delete/:id', accountAdminController.accountAdminDelete)
 router.get('/trash', accountAdminController.accountAdminTrash)
 router.patch('/undo/:id', accountAdminController.accountAdminUndo)
 router.delete('/destroy/:id', accountAdminController.accountAdminDestroy)
+router.get('/change-password/:id', accountAdminController.changePassword);
+
+router.patch(
+  '/change-password/:id', 
+  upload.none(), 
+  accountAdminValidate.changePasswordPatch,
+  accountAdminController.changePasswordPatch
+);
+
 
 export default router;
