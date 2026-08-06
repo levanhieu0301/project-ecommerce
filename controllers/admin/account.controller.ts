@@ -12,8 +12,8 @@ export const login = (req: Request, res: Response) => {
 export const loginPost = async (req: Request, res: Response) => {
   const {email, password, rememberPassword} = req.body;
   let token = "";
-  if(email === process.env.SUPER_ADMIN_EMAI){
-    const isMatch = password === process.env.SUPER_ADMIN_PASSWORD;
+  if(email == process.env.SUPER_ADMIN_EMAIL){
+    const isMatch = password == process.env.SUPER_ADMIN_PASSWORD;
 
     if(!isMatch) {
       res.json({

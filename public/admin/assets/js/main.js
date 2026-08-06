@@ -1027,6 +1027,7 @@ if(accountLoginForm) {
       const email = event.target.email.value;
       const password = event.target.password.value;
       const rememberPassword = event.target.rememberPassword.checked
+      console.log(email, password, rememberPassword)
       
 
       // Tạo FormData

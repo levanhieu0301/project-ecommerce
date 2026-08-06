@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { pathAdmin } from "../../configs/variable.config";
+import { pathAdmin, permissionList } from "../../configs/variable.config";
 import jwt from "jsonwebtoken";
 import AccountAdmin from "../../models/account-admin.model";
+import Role from "../../models/role.model";
+
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
 try {
@@ -20,6 +22,7 @@ try {
         avatar: "/admin/assets/images/users/avatar-1.jpg",
         isSuperAdmin: true
       };
+      res.locals.permissionList = permissionList.map(item => item.id)
 
     }else {
       const existAccount = await AccountAdmin.findOne({
@@ -34,7 +37,19 @@ try {
         res.redirect(`/${pathAdmin}/account/login`);
         return;
       }
-
+      //Lấy ra role
+      let permissionList: string[] = []
+      for(const roleId of existAccount.roles){
+        const role = await Role.findOne({
+          _id: roleId,
+          deleted: false,
+          status: "active"
+        })
+        if(role){
+          permissionList = [...permissionList, ...role.permissions]
+        }
+      }
+      res.locals.permissionList = permissionList
       //trả về file pug
       res.locals.accountAdmin = {
         fullName: existAccount.fullName,
@@ -43,6 +58,7 @@ try {
         isSuperAdmin: false
       };
 
+
     }
     next();
   } catch (error) {
@@ -50,4 +66,16 @@ try {
     res.redirect(`/${pathAdmin}/account/login`);
   }
 
+}
+export const checkPermissions = (permissionName : string) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    if(res.locals.permissionList.includes(permissionName)){
+      next();
+    }else {
+      res.json({
+        code: "error",
+        message: "Không đủ quyền!"
+      });
+    }
+  }
 }

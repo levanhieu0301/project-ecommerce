@@ -3,74 +3,75 @@ include ../mixins/option.pug
 include ../mixins/checkbox.pug
 
 block main
-  .card
-    .card-header
-      .row.align-items-center
-        .col
-          h4.card-title #{pageTitle}
-    .card-body.pt-0
-      form(id="articleCreateForm")
-        .row
-          .col-md-6.col-lg-6
-            .mb-3
-              label.form-label(for="name") Tên bài viết *
-              input.form-control(id="name" type="text" name="name")
-          .col-md-6.col-lg-6
-            .mb-3
-              label.form-label(for="slug") Đường dẫn *
-              .input-group
-                span.btn.btn-outline-info(
-                  btn-generate-slug
-                  model="Blog"
-                  from="name"
-                  to="slug"
-                  ) Tự động
-                input.form-control(id="slug" type="text" name="slug")
-          .col-md-6.col-lg-6
-            .mb-3
-              label.form-label(for="parent") Danh mục
-              div(class="checkbox-list" checkbox-list="category")
-                +checkbox(categoryList)
-                //- each category in categoryList
-                //-   div(class="checkbox-item" style=`margin-left: 0px;`)
-                //-     input(type="checkbox" id=`checkbox-${category._id}` value=category._id)
-                //-     label(for=`checkbox-${category._id}`) #{category.name}
-                //-   if(category.children && category.children.length > 0)
-                //-     each child in category.children
-                //-       div(class="checkbox-item" style=`margin-left: 20px;`)
-                //-         input(type="checkbox" id=`checkbox-${child._id}` value=child._id)
-                //-         label(for=`checkbox-${child._id}`) #{child.name}
-              // Không dùng 
-              //- select.form-select(id="parent" name="parent")
-              //-   option(value="") --Chọn danh mục--
-              //-   +option(categoryList)
-          .col-md-6.col-lg-6
-            .mb-3
-              label.form-label(for="status") Trạng thái
-              select.form-select(id="status" name="status")
-                option(value="draft") Bản nháp
-                option(value="published") Xuất bản
-                option(value="archived") Lưu trữ
-          .col-md-6.col-lg-6
-            .mb-3
-              div(form-group-file)
-                label.form-label(for="avatar") Ảnh đại diện
+  if (permissionList.includes("article-create"))
+    .card
+      .card-header
+        .row.align-items-center
+          .col
+            h4.card-title #{pageTitle}
+      .card-body.pt-0
+        form(id="articleCreateForm")
+          .row
+            .col-md-6.col-lg-6
+              .mb-3
+                label.form-label(for="name") Tên bài viết *
+                input.form-control(id="name" type="text" name="name")
+            .col-md-6.col-lg-6
+              .mb-3
+                label.form-label(for="slug") Đường dẫn *
                 .input-group
                   span.btn.btn-outline-info(
-                    btn-file-manager
-                    data-bs-toggle="modal" 
-                    data-bs-target="#modalFileManager"
-                    ) Chọn file
-                  input.form-control(id="avatar" type="text" name="avatar" input-file placeholder="Đường dẫn file...")
-                .preview-file(preview-file)
-                  img
-          .col-md-12.col-lg-12
-            .mb-3
-              label.form-label(for="description")  Mô tả ngắn
-              textarea.form-control(id="description" name="description" textarea-mce)
-          .col-md-12.col-lg-12
-            .mb-3
-              label.form-label(for="content") Nội dung chi tiết
-              textarea.form-control(id="content" name="content" textarea-mce)
-        button.btn.btn-primary(type="submit") Tạo mới
-        a.btn.btn-danger.ms-1(href=`/${pathAdmin}/article/list`) Hủy
+                    btn-generate-slug
+                    model="Blog"
+                    from="name"
+                    to="slug"
+                    ) Tự động
+                  input.form-control(id="slug" type="text" name="slug")
+            .col-md-6.col-lg-6
+              .mb-3
+                label.form-label(for="parent") Danh mục
+                div(class="checkbox-list" checkbox-list="category")
+                  +checkbox(categoryList)
+                  //- each category in categoryList
+                  //-   div(class="checkbox-item" style=`margin-left: 0px;`)
+                  //-     input(type="checkbox" id=`checkbox-${category._id}` value=category._id)
+                  //-     label(for=`checkbox-${category._id}`) #{category.name}
+                  //-   if(category.children && category.children.length > 0)
+                  //-     each child in category.children
+                  //-       div(class="checkbox-item" style=`margin-left: 20px;`)
+                  //-         input(type="checkbox" id=`checkbox-${child._id}` value=child._id)
+                  //-         label(for=`checkbox-${child._id}`) #{child.name}
+                // Không dùng 
+                //- select.form-select(id="parent" name="parent")
+                //-   option(value="") --Chọn danh mục--
+                //-   +option(categoryList)
+            .col-md-6.col-lg-6
+              .mb-3
+                label.form-label(for="status") Trạng thái
+                select.form-select(id="status" name="status")
+                  option(value="draft") Bản nháp
+                  option(value="published") Xuất bản
+                  option(value="archived") Lưu trữ
+            .col-md-6.col-lg-6
+              .mb-3
+                div(form-group-file)
+                  label.form-label(for="avatar") Ảnh đại diện
+                  .input-group
+                    span.btn.btn-outline-info(
+                      btn-file-manager
+                      data-bs-toggle="modal" 
+                      data-bs-target="#modalFileManager"
+                      ) Chọn file
+                    input.form-control(id="avatar" type="text" name="avatar" input-file placeholder="Đường dẫn file...")
+                  .preview-file(preview-file)
+                    img
+            .col-md-12.col-lg-12
+              .mb-3
+                label.form-label(for="description")  Mô tả ngắn
+                textarea.form-control(id="description" name="description" textarea-mce)
+            .col-md-12.col-lg-12
+              .mb-3
+                label.form-label(for="content") Nội dung chi tiết
+                textarea.form-control(id="content" name="content" textarea-mce)
+          button.btn.btn-primary(type="submit") Tạo mới
+          a.btn.btn-danger.ms-1(href=`/${pathAdmin}/article/list`) Hủy

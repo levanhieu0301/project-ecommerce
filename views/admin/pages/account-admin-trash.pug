@@ -3,81 +3,82 @@ include ../mixins/pagination.pug
 
 
 block main
-  .row
-    .col-12
-      .card
-        .card-header
-          .row.align-items-center
-            .col
-              h4.card-title #{pageTitle}
-            // end col
-            .col-auto
-              a.btn.btn-info(
-                href=`/${pathAdmin}/account-admin/list`
-                )
-                <i class="fa-solid fa-arrow-left me-1"></i>
-                | Quay lại danh sách
-                // end col
-            // end col
-          // end row
-        // end card-header
-        .card-body.pt-0
-          .row
-            .col-lg-6
-              form.input-group.mb-3(form-search)
-                input.form-control(
-                  placeholder="Từ khóa..."
-                  type="text"
-                  name="keyword"
+  if (permissionList.includes("account-admin-trash"))
+    .row
+      .col-12
+        .card
+          .card-header
+            .row.align-items-center
+              .col
+                h4.card-title #{pageTitle}
+              // end col
+              .col-auto
+                a.btn.btn-info(
+                  href=`/${pathAdmin}/account-admin/list`
                   )
-                button.btn.btn-secondary Tìm kiếm
-          .table-responsive
-            table.table.table-striped.mb-0
-              thead.table-light
-                tr
-                  th STT
-                  th Ảnh đại diện
-                  th Họ tên
-                  th Email
-                  th Nhóm quyền
-                  th Trạng thái
-                  th.text-end Hành động
-              tbody
-                each item,index in recordList
+                  <i class="fa-solid fa-arrow-left me-1"></i>
+                  | Quay lại danh sách
+                  // end col
+              // end col
+            // end row
+          // end card-header
+          .card-body.pt-0
+            .row
+              .col-lg-6
+                form.input-group.mb-3(form-search)
+                  input.form-control(
+                    placeholder="Từ khóa..."
+                    type="text"
+                    name="keyword"
+                    )
+                  button.btn.btn-secondary Tìm kiếm
+            .table-responsive
+              table.table.table-striped.mb-0
+                thead.table-light
                   tr
-                    td #{pagination.skip + index + 1}
-                    td
-                      img(
-                        src=`${domainCDN}${item.avatar}`
-                        class="rounded thumb-lg me-1 d-inline"
-                      )
-                    td #{item.fullName}
-                    td #{item.email}
-                    td(style="max-width: 200px;")
-                      each role in item.rolesName
-                        span(class="badge bg-dark me-1") #{role}
-                    td
-                      if (item.status == "initial")
-                        span(class="badge bg-warning") Khởi tạo
-                      else if (item.status == "active")
-                        span(class="badge bg-success") Hoạt động
-                      else if (item.status == "inactive")
-                        span(class="badge bg-danger") Tạm dừng
-                    td.text-end
-                      a(
-                        href="javascript:;"
-                        btn-deleted
-                        method="PATCH"
-                        api=`/${pathAdmin}/account-admin/undo/${item.id}`
-                        class="me-1"
+                    th STT
+                    th Ảnh đại diện
+                    th Họ tên
+                    th Email
+                    th Nhóm quyền
+                    th Trạng thái
+                    th.text-end Hành động
+                tbody
+                  each item,index in recordList
+                    tr
+                      td #{pagination.skip + index + 1}
+                      td
+                        img(
+                          src=`${domainCDN}${item.avatar}`
+                          class="rounded thumb-lg me-1 d-inline"
                         )
-                        <i class="fa-solid fa-rotate-left"></i>
-                      a(
-                        href="javascript:;"
-                        btn-deleted
-                        method="DELETE"
-                        api=`/${pathAdmin}/account-admin/destroy/${item.id}`
-                        )
-                        <i class="fa-solid fa-trash text-danger"></i>
-          +pagination()
-    // end col
+                      td #{item.fullName}
+                      td #{item.email}
+                      td(style="max-width: 200px;")
+                        each role in item.rolesName
+                          span(class="badge bg-dark me-1") #{role}
+                      td
+                        if (item.status == "initial")
+                          span(class="badge bg-warning") Khởi tạo
+                        else if (item.status == "active")
+                          span(class="badge bg-success") Hoạt động
+                        else if (item.status == "inactive")
+                          span(class="badge bg-danger") Tạm dừng
+                      td.text-end
+                        a(
+                          href="javascript:;"
+                          btn-deleted
+                          method="PATCH"
+                          api=`/${pathAdmin}/account-admin/undo/${item.id}`
+                          class="me-1"
+                          )
+                          <i class="fa-solid fa-rotate-left"></i>
+                        a(
+                          href="javascript:;"
+                          btn-deleted
+                          method="DELETE"
+                          api=`/${pathAdmin}/account-admin/destroy/${item.id}`
+                          )
+                          <i class="fa-solid fa-trash text-danger"></i>
+            +pagination()
+      // end col
