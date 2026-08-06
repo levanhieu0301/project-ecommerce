@@ -4,6 +4,7 @@ import AccountAdmin from "../../models/account-admin.model"
 import bcrypt from "bcryptjs"
 import slugify from "slugify"
 import { pathAdmin } from "../../configs/variable.config"
+import { logAdminAction } from "../../helpers/log-admin.helper"
 
 
 export const createAccountAdmin = async (req: Request, res: Response) => {
@@ -39,7 +40,7 @@ export const createAccountAdminPost = async (req: Request, res: Response) => {
 
     const newRecord = new AccountAdmin(req.body);
     await newRecord.save();
-
+    logAdminAction(req, `Đã tạo tài khoản với tên: ${req.body.fullName} (ID: ${newRecord.id})`)
     res.json({
       code: "success",
       message: "Tạo tài khoản thành công!"
@@ -187,7 +188,7 @@ export const accountAdminEditPatch = async (req: Request, res: Response) => {
       _id: id,
       deleted: false
     }, req.body);
-
+    logAdminAction(req, `Đã chỉnh sửa tài khoản với tên: ${req.body.fullName} (ID: ${id})`)
     res.json({
       code: "success",
       message: "Cập nhật thành công!"
@@ -203,6 +204,9 @@ export const accountAdminEditPatch = async (req: Request, res: Response) => {
 export const accountAdminDelete = async (req: Request, res: Response) => {
     try {
     const id = req.params.id;
+    const existAccount = await AccountAdmin.findOne({
+      _id: id
+    })
 
     await AccountAdmin.updateOne({
       _id: id
@@ -210,7 +214,7 @@ export const accountAdminDelete = async (req: Request, res: Response) => {
       deleted: true,
       deletedAt: Date.now(),
     });
-
+    logAdminAction(req, `Đã xóa mềm tài khoản với tên: ${existAccount?.fullName} (ID: ${id})`)
     res.json({
       code: "success",
       message: "Xóa tài khoản thành công!"
@@ -283,13 +287,16 @@ export const accountAdminTrash = async (req: Request, res: Response) => {
 export const accountAdminUndo = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+    const existAccount = await AccountAdmin.findOne({
+      _id: id
+    })
 
     await AccountAdmin.updateOne({
       _id: id
     }, {
       deleted: false,
     });
-
+    logAdminAction(req, `Đã khôi phục tài khoản với tên: ${existAccount?.fullName} (ID: ${id})`)
     res.json({
       code: "success",
       message: "Khôi phục tài khoản thành công!"
@@ -303,12 +310,15 @@ export const accountAdminUndo = async (req: Request, res: Response) => {
 }
 export const accountAdminDestroy = async (req: Request, res: Response) => {
   try {
-      const id = req.params.id;
+    const id = req.params.id;
+    const existAccount = await AccountAdmin.findOne({
+      _id: id
+    })
 
       await AccountAdmin.deleteOne({
         _id: id
       });
-
+      logAdminAction(req, `Đã xóa vĩnh viễn tài khoản với tên: ${existAccount?.fullName} (ID: ${id})`)
       res.json({
         code: "success",
         message: "Xóa tài khoản thành công!"
@@ -347,7 +357,6 @@ export const changePassword = async (req: Request, res: Response) => {
 export const changePasswordPatch = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-
     const accountDetail = await AccountAdmin.findOne({
       _id: id,
       deleted: false
@@ -368,7 +377,7 @@ export const changePasswordPatch = async (req: Request, res: Response) => {
       _id: id,
       deleted: false
     }, req.body);
-
+    logAdminAction(req, `Đã đổi mật khẩu tên: ${accountDetail.fullName} (ID: ${id})`)
     res.json({
       code: "success",
       message: "Đổi mật khẩu thành công!"

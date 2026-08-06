@@ -5,6 +5,7 @@ import Media from "../../models/media.model"
 import moment from "moment";
 import { formatFileSize } from "../../helpers/format.helper";
 import { domainCDN } from "../../configs/variable.config";
+import { logAdminAction } from "../../helpers/log-admin.helper";
 
 
 export const fileManager = async (req: Request, res: Response) => {
@@ -102,53 +103,53 @@ export const upload = async  (req: Request, res: Response) => {
 
 export const changeFileName = async  (req: Request, res: Response) => {
   try {
-      const id = req.params.id;
-  const {fileName} = req.body;
-  const record = await Media.findOne({
-      _id: id
-  })
-
-  if(!record) {
-    res.json({
-      code: "error",
-      message: "Không tìm thấy file!"
-    })
-    return;
-  }
-  const formData = new FormData()
-  formData.append("folder", record.folder)
-  formData.append("oldName", record.filename)
-  formData.append("newName", fileName)
-  const response = await axios.patch(`${domainCDN}/file-manager/change-file-name`, formData, {
-    headers: formData.getHeaders()
-  })
-
-  if(response.data.code == "error") {
-    res.json({
-      code: "error",
-      message: response.data.message
-    })
-    return;
-  }
-  // Cập nhật lại trường filename trong CSDL
-    await Media.updateOne({
-      _id: id
-    }, {
-      filename: fileName
+    const id = req.params.id;
+    const {fileName} = req.body;
+    const record = await Media.findOne({
+        _id: id
     })
 
-    res.json({
-      code: "success",
-      message: "Đã đổi tên file!"
+    if(!record) {
+      res.json({
+        code: "error",
+        message: "Không tìm thấy file!"
+      })
+      return;
+    }
+    const formData = new FormData()
+    formData.append("folder", record.folder)
+    formData.append("oldName", record.filename)
+    formData.append("newName", fileName)
+    const response = await axios.patch(`${domainCDN}/file-manager/change-file-name`, formData, {
+      headers: formData.getHeaders()
     })
+
+    if(response.data.code == "error") {
+      res.json({
+        code: "error",
+        message: response.data.message
+      })
+      return;
+    }
+    // Cập nhật lại trường filename trong CSDL
+      await Media.updateOne({
+        _id: id
+      }, {
+        filename: fileName
+      })
+      logAdminAction(req, `Đã đổi tên file từ: ${record?.filename} -> thành : ${fileName} `)
+      res.json({
+        code: "success",
+        message: "Đã đổi tên file!"
+      })
 
   } catch (error) {
-     res.json({
-      code: "error",
-      message: "Không tìm thấy file!"
-    })
+      res.json({
+        code: "error",
+        message: "Không tìm thấy file!"
+      })
 
-  }
+    }
 
 
 }
@@ -190,7 +191,7 @@ export const deleteFileName = async  (req: Request, res: Response) => {
     await Media.deleteOne({
       _id: id
     })
-
+    logAdminAction(req, `Đã xóa file tên: ${record?.filename}`)
     res.json({
       code: "success",
       message: "Đã xóa file!"
@@ -231,6 +232,7 @@ try {
     })
     return;
   }
+  logAdminAction(req, `Đã tạo folder tên: ${valueFolder}`)
   res.json({
     code: "success",
     message: "Đã tạo folder!"
@@ -274,7 +276,7 @@ export const deleteFolder = async (req: Request, res: Response) => {
     await Media.deleteMany({
       folder: regexFolderPath
     });
-
+    logAdminAction(req, `Đã xóa folder : ${folderPath}`)
     res.json({
       code: "success",
       message: "Đã xóa folder!"

@@ -2,6 +2,7 @@ import  { Request, Response } from "express"
 import { pathAdmin, permissionList } from "../../configs/variable.config"
 import Role from "../../models/role.model";
 import slugify from "slugify";
+import { logAdminAction } from "../../helpers/log-admin.helper";
 
 export const role = (req: Request, res: Response) => {
   const permissions = permissionList;
@@ -22,7 +23,7 @@ export const roleCreatePost = async (req: Request, res: Response) => {
 
     const newRecord = new Role(req.body);
     await newRecord.save();
-
+    logAdminAction(req, `Đã tạo nhóm quyền tên: ${req.body.name} (ID: ${newRecord.id})`)
     res.json({
       code: "success",
       message: "Tạo nhóm quyền thành công!"
@@ -134,7 +135,7 @@ export const roleEditPatch = async (req: Request, res: Response) => {
       _id: id,
       deleted: false
     }, req.body);
-
+  logAdminAction(req, `Đã chỉnh sửa nhóm quyền tên: ${req.body.name} (ID: ${id})`)
     res.json({
       code: "success",
       message: "Cập nhật thành công!"
@@ -151,6 +152,9 @@ export const roleEditPatch = async (req: Request, res: Response) => {
 export const roleDeletePatch = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+    const roleDetail = await Role.findOne({
+      _id: id
+    })
 
     await Role.updateOne({
       _id: id
@@ -158,7 +162,7 @@ export const roleDeletePatch = async (req: Request, res: Response) => {
       deleted: true,
       deletedAt: Date.now(),
     });
-
+    logAdminAction(req, `Đã xóa mềm nhóm quyền tên: ${roleDetail?.name} (ID: ${id})`)
     res.json({
       code: "success",
       message: "Xóa nhóm quyền thành công!"
@@ -183,13 +187,15 @@ export const roleTrash = async (req: Request, res: Response) => {
 export const roleUndo = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-
+    const roleDetail = await Role.findOne({
+      _id: id
+    })
     await Role.updateOne({
       _id: id
     }, {
       deleted: false,
     });
-
+  logAdminAction(req, `Đã khôi phục nhóm quyền tên: ${roleDetail?.name} (ID: ${id})`)
     res.json({
       code: "success",
       message: "Khôi phục nhóm quyền thành công!"
@@ -206,11 +212,13 @@ export const roleUndo = async (req: Request, res: Response) => {
 export const roleDestroy = async (req: Request, res: Response) => {
   try {
       const id = req.params.id;
-
+    const roleDetail = await Role.findOne({
+      _id: id
+    })
       await Role.deleteOne({
         _id: id
       });
-
+      logAdminAction(req, `Đã tạo nhóm quyền tên: ${roleDetail?.name} (ID: ${id})`)
       res.json({
         code: "success",
         message: "Xóa nhóm quyền thành công!"
