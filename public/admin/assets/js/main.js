@@ -1109,3 +1109,56 @@ if(productCreateCategoryForm) {
   ;
 }
 // End Product Create Category Form
+// productEditCategoryForm
+const productEditCategoryForm = document.querySelector("#productEditCategoryForm");
+if(productEditCategoryForm) {
+  const validator = new JustValidate('#productEditCategoryForm');
+
+  validator
+    .addField('#name', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập tên danh mục!',
+      },
+    ])
+    .addField('#slug', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập đường dẫn!',
+      },
+    ])
+    .onSuccess((event) => {
+      const id = event.target.id.value;
+      const name = event.target.name.value;
+      const slug = event.target.slug.value;
+      const parent = event.target.parent.value;
+      const status = event.target.status.value;
+      const avatar = event.target.avatar.value;
+      const description = tinymce.get("description").getContent();
+
+      // Tạo formData
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("slug", slug);
+      formData.append("parent", parent);
+      formData.append("status", status);
+      formData.append("avatar", avatar);
+      formData.append("description", description);
+
+      fetch(`/${pathAdmin}/product/category/edit/${id}`, {
+        method: "PATCH",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            notyf.success(data.message);
+          }
+        })
+    });
+}
+// End productEditCategoryForm
