@@ -54,6 +54,27 @@
                   li.nav-item
                     a.nav-link(href=`/${pathAdmin}/article/category`) Danh mục bài viết
                 // end nav-item
+          li.nav-item
+            a.nav-link(
+              aria-controls="sidebarProduct" 
+              aria-expanded="false" 
+              role="button" 
+              data-bs-toggle="collapse" 
+              href="#sidebarProduct"
+              )
+              i.iconoir-shop.menu-icon
+              span Sản phẩm
+            #sidebarProduct.collapse
+              ul.nav.flex-column
+                li.nav-item
+                  a.nav-link(href=`/${pathAdmin}/product/create`) Tạo sản phẩm
+                // end nav-item
+                li.nav-item
+                  a.nav-link(href=`/${pathAdmin}/product/list`) Danh sách sản phẩm
+                // end nav-item
+                li.nav-item
+                  a.nav-link(href=`/${pathAdmin}/product/category`) Danh mục sản phẩm
+                // end nav-item
           if (permissionList.includes("file-manager"))
             li.nav-item
               a.nav-link(

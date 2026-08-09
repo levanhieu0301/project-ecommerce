@@ -4,10 +4,12 @@ import CategoryBlog from "../../models/category-blog.model";
 import Blog from "../../models/blog.model";
 import { generateRandomString } from "../../helpers/generate.helper";
 import mongoose from "mongoose";
+import CategoryProduct from "../../models/category-product.model";
 
 const modal: any = {
   CategoryBlog: CategoryBlog,
-  Blog: Blog
+  Blog: Blog,
+  CategoryProduct: CategoryProduct
 }
 export const generateSlug = async (req: Request, res: Response) => {
   try {
