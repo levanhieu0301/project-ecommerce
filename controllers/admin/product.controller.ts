@@ -3,6 +3,7 @@ import CategoryProduct from "../../models/category-product.model"
 import slugify from "slugify"
 import { treeCategory } from "../../helpers/treeCategory.helper"
 import { pathAdmin } from "../../configs/variable.config"
+import { logAdminAction } from "../../helpers/log-admin.helper"
 
 export const categoryProduct = async (req: Request, res: Response) => {
   const find : {
@@ -89,6 +90,7 @@ export const categoryProductCreatePost =async  (req: Request, res: Response) => 
 
     const newRecord = new CategoryProduct(req.body);
     await newRecord.save();
+    logAdminAction(req, `Đã tạo danh mục sản phẩm tên: ${req.body.name} (ID: ${newRecord.id})`)
 
     res.json({
       code: "success",
@@ -156,7 +158,7 @@ export const editCategoryProductPatch = async (req: Request, res: Response) => {
       _id: id,
       deleted: false
     }, req.body)
-
+     logAdminAction(req, `Đã chỉnh sửa danh mục sản phẩm tên: ${req.body.name} (ID: ${id})`)
     res.json({
       code: "success",
       message: "Cập nhật thành công!"
@@ -171,6 +173,9 @@ export const editCategoryProductPatch = async (req: Request, res: Response) => {
 export const deleteCategoryProductPatch = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+    const recordDetail = await CategoryProduct.findOne({
+      _id: id
+    })
 
     await CategoryProduct.updateOne({
       _id: id
@@ -178,7 +183,7 @@ export const deleteCategoryProductPatch = async (req: Request, res: Response) =>
       deleted: true,
       deletedAt: Date.now()
     })
-
+     logAdminAction(req, `Đã xóa mềm danh mục sản phẩm tên: ${recordDetail?.name} (ID: ${id})`)
     res.json({
       code: "success",
       message: "Xóa danh mục thành công!"
@@ -213,7 +218,7 @@ export const categoryProductUndo = async (req: Request, res: Response) => {
     }, {
       deleted: false
     })
-    //  logAdminAction(req, `Đã khôi phục bài viết: ${articleDetail?.name} (ID: ${id})`)
+    logAdminAction(req, `Đã khôi phục bài viết: ${articleDetail?.name} (ID: ${id})`)
     res.json({
       code: "success",
       message: "Khôi phục bài viết thành công!"
@@ -232,10 +237,11 @@ export const categoryProductDestroy = async (req: Request, res: Response) => {
       _id: id,
       deleted: false
     })
+    logAdminAction(req, `Đã xóa vĩnh viễn bài viết: ${articleDetail?.name} (ID: ${id})`)
     await CategoryProduct.deleteOne({
       _id: id
     })
-    //  logAdminAction(req, `Đã xóa vĩnh viễn bài viết: ${articleDetail?.name} (ID: ${id})`)
+    
     res.json({
       code: "success",
       message: "Đã xóa vĩnh viễn bài viết!"
