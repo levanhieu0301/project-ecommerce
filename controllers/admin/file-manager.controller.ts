@@ -46,7 +46,11 @@ export const fileManager = async (req: Request, res: Response) => {
   }
   // Call API lên hệ thống FM để lấy Danh sách folder 
   let folderList: any[] = []
-  const response = await axios.get(`${domainCDN}/file-manager/folder/list?folderPath=${req.query.folderPath}`)
+  const response = await axios.get(`${domainCDN}/file-manager/folder/list?folderPath=${req.query.folderPath}`, {
+    headers: {
+      Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`
+    }
+  })
   if(response.data.code == "success"){
     folderList = response.data.folderList
     for (const item of folderList) {
@@ -81,20 +85,28 @@ export const upload = async  (req: Request, res: Response) => {
       }
 
       const response = await axios.post(`${domainCDN}/file-manager/upload`,formData, {
-        headers: formData.getHeaders() // để bên kia nhận được file
+        // headers: formData.getHeaders(), // để bên kia nhận được file
+        headers: {
+          ...formData.getHeaders(), // để bên kia nhận được file
+          Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`
+        }
       })
       if(response.data.code == "success"){
         await Media.insertMany(response.data.saveLink)
+
+        res.json({
+          code: response.data.code,
+          message: response.data.message
+        })
+      }else {
+        res.json({
+          code: response.data.code,
+          message: response.data.message
+        })
       }
-
-      res.json({
-        code: "success",
-        message: "Upload thành công!"
-
-      })
   } catch (error) {
       res.json({
-        code: "success",
+        code: "error",
         message: "Lỗi upload!"
 
       })
@@ -121,7 +133,11 @@ export const changeFileName = async  (req: Request, res: Response) => {
     formData.append("oldName", record.filename)
     formData.append("newName", fileName)
     const response = await axios.patch(`${domainCDN}/file-manager/change-file-name`, formData, {
-      headers: formData.getHeaders()
+      // headers: formData.getHeaders()
+      headers: {
+        ...formData.getHeaders(), // để bên kia nhận được file
+        Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`
+      }
     })
 
     if(response.data.code == "error") {
@@ -176,7 +192,11 @@ export const deleteFileName = async  (req: Request, res: Response) => {
     formData.append("fileName", record.filename);
 
     const response = await axios.patch(`${domainCDN}/file-manager/delete-file`, formData, {
-      headers: formData.getHeaders()
+      // headers: formData.getHeaders()
+      headers: {
+        ...formData.getHeaders(), // để bên kia nhận được file
+        Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`
+      }
     });
 
     if(response.data.code == "error") {
@@ -223,7 +243,11 @@ try {
     }
 
     const response = await axios.post(`${domainCDN}/file-manager/folder/create`, formData, {
-      headers: formData.getHeaders()
+      // headers: formData.getHeaders()
+      headers: {
+        ...formData.getHeaders(), // để bên kia nhận được file
+        Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`
+      }
     });
   if(response.data.code == "error"){
     res.json({
@@ -260,7 +284,11 @@ export const deleteFolder = async (req: Request, res: Response) => {
     formData.append("folderPath", folderPath);
 
     const response = await axios.patch(`${domainCDN}/file-manager/folder/delete`, formData, {
-      headers: formData.getHeaders()
+      // headers: formData.getHeaders()
+      headers: {
+        ...formData.getHeaders(), // để bên kia nhận được file
+        Authorization: `Bearer ${process.env.FILE_MANAGER_SECRET}`
+      }
     });
 
     if(response.data.code == "error") {
