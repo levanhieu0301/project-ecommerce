@@ -17,13 +17,18 @@ if(uppuUpload) {
     fieldName: "files",
     bundle: true
   })
-  uppy.on('complete', (result) => {
-    if(result.successful.length > 0){
-      drawNotify("success", `Upload thành công ${result.successful.length} file`)
-    }
-    if(result.failed.length > 0){
-      drawNotify("error", `Upload lỗi ${result.failed.length} file`)
-    }
+  uppy.on('upload-success', (file, response) => {
+    const res = response.body;
+    drawNotify(res.code, res.message);
     window.location.reload();
   });
+  // uppy.on('complete', (result) => {
+  //   if(result.successful.length > 0){
+  //     drawNotify("success", `Upload thành công ${result.successful.length} file`)
+  //   }
+  //   if(result.failed.length > 0){
+  //     drawNotify("error", `Upload lỗi ${result.failed.length} file`)
+  //   }
+  //   window.location.reload();
+  // });
 }
