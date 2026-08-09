@@ -215,10 +215,11 @@ export const roleDestroy = async (req: Request, res: Response) => {
     const roleDetail = await Role.findOne({
       _id: id
     })
+    logAdminAction(req, `Đã tạo nhóm quyền tên: ${roleDetail?.name} (ID: ${id})`)
       await Role.deleteOne({
         _id: id
       });
-      logAdminAction(req, `Đã tạo nhóm quyền tên: ${roleDetail?.name} (ID: ${id})`)
+      
       res.json({
         code: "success",
         message: "Xóa nhóm quyền thành công!"

@@ -247,10 +247,11 @@ export const destroyCategoryDelete = async (req: Request, res: Response) => {
     const existAccount = await CategoryBlog.findOne({
       _id: id
     })
+    logAdminAction(req, `Đã xóa vĩnh viễn danh mục bài viết: ${existAccount?.name} (ID: ${id})`)
     await CategoryBlog.deleteOne({
       _id: id
     })
-    logAdminAction(req, `Đã xóa vĩnh viễn danh mục bài viết: ${existAccount?.name} (ID: ${id})`)
+    
     res.json({
       code: "success",
       message: "Đã xóa vĩnh viễn danh mục!"
@@ -513,10 +514,10 @@ export const destroyArticleDelete = async (req: Request, res: Response) => {
       _id: id,
       deleted: false
     })
+     logAdminAction(req, `Đã xóa vĩnh viễn bài viết: ${articleDetail?.name} (ID: ${id})`)
     await Blog.deleteOne({
       _id: id
     })
- logAdminAction(req, `Đã xóa vĩnh viễn bài viết: ${articleDetail?.name} (ID: ${id})`)
     res.json({
       code: "success",
       message: "Đã xóa vĩnh viễn bài viết!"

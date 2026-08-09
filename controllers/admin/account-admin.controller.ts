@@ -314,11 +314,10 @@ export const accountAdminDestroy = async (req: Request, res: Response) => {
     const existAccount = await AccountAdmin.findOne({
       _id: id
     })
-
+    logAdminAction(req, `Đã xóa vĩnh viễn tài khoản với tên: ${existAccount?.fullName} (ID: ${id})`)
       await AccountAdmin.deleteOne({
         _id: id
       });
-      logAdminAction(req, `Đã xóa vĩnh viễn tài khoản với tên: ${existAccount?.fullName} (ID: ${id})`)
       res.json({
         code: "success",
         message: "Xóa tài khoản thành công!"
