@@ -9,12 +9,13 @@ import { checkPermissions } from "../../middlewares/admin/account.middleware";
 
 router.get('/category', productController.categoryProduct)
 router.get('/category/create', productController.categoryProductCreate)
-router.post('/category/create', upload.none(), productValidate.createCategoryPost ,productController.categoryProductCreatePost)
+router.post('/category/create', upload.none(),checkPermissions("product-category-create"), productValidate.createCategoryPost ,productController.categoryProductCreatePost)
 router.get('/category/edit/:id', productController.editCategoryProduct);
 
 router.patch(
   '/category/edit/:id', 
   upload.none(), 
+  checkPermissions("product-category-edit"),
   productValidate.createCategoryPost, 
   productController.editCategoryProductPatch
 );
