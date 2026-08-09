@@ -3,9 +3,23 @@ import CategoryProduct from "../../models/category-product.model"
 import slugify from "slugify"
 import { treeCategory } from "../../helpers/treeCategory.helper"
 
-export const categoryProduct = (req: Request, res: Response) => {
+export const categoryProduct = async (req: Request, res: Response) => {
+  const recordList: any = await CategoryProduct.find({
+    deleted: false,
+  })
+  for(const record of recordList){
+    if(record.parent){
+      const parent = await CategoryProduct.findOne({
+        _id: record.parent
+      })
+      if(parent){
+        record.parentName = parent.name
+      }
+    }
+  }
   res.render("admin/pages/product-category", {
-    pageTitle: "Danh mục sản phẩm"
+    pageTitle: "Danh mục sản phẩm",
+    recordList: recordList
   })
 }
 export const categoryProductCreate = async (req: Request, res: Response) => {
