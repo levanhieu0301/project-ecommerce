@@ -33,3 +33,37 @@ export const createCategoryPost = (req: Request, res: Response, next: NextFuncti
 
   next();
 }
+export const createProductPost = (req: Request, res: Response, next: NextFunction) => {
+  const schema = Joi.object({
+    name: Joi.string()
+      .required()
+      .messages({
+        "string.empty": "Vui lòng nhập tên sản phẩm!"
+      }),
+    slug: Joi.string()
+      .required()
+      .messages({
+        "string.empty": "Vui lòng nhập đường dẫn!"
+      }),
+    position: Joi.string().allow(''),
+    status: Joi.string().allow(''),
+    category: Joi.string().allow(''),
+    description: Joi.string().allow(''),
+    content: Joi.string().allow(''),
+    images: Joi.string().allow(''),
+  });
+
+  const { error } = schema.validate(req.body);
+
+  if(error) {
+    const errorMessage = error.details[0].message;
+
+    res.json({
+      code: "error",
+      message: errorMessage
+    });
+    return;
+  }
+
+  next();
+}

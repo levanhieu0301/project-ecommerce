@@ -6,7 +6,7 @@ import * as productController from "../../controllers/admin/product.controller"
 import * as productValidate from "../../validates/admin/product.validate"
 import { checkPermissions } from "../../middlewares/admin/account.middleware";
 
-
+// Danh mục sản phẩm
 router.get('/category', productController.categoryProduct)
 router.get('/category/create', productController.categoryProductCreate)
 router.post('/category/create', upload.none(),checkPermissions("product-category-create"), productValidate.createCategoryPost ,productController.categoryProductCreatePost)
@@ -23,6 +23,14 @@ router.patch('/category/delete/:id', productController.deleteCategoryProductPatc
 router.get('/category/trash', productController.categoryProductTrash)
 router.patch('/category/undo/:id', productController.categoryProductUndo)
 router.delete('/category/destroy/:id', productController.categoryProductDestroy)
+// Sản phẩm
+router.get('/create', productController.createProduct)
+router.post(
+  '/create', 
+  upload.none(), 
+  productValidate.createProductPost, 
+  productController.createProductPost
+);
 
 
 export default router;

@@ -60,6 +60,21 @@ const getCheckboxList = (name) => {
 }
 // End Get checkbox list
 
+// Get Multi File
+const getMultiFile = (name) => {
+  const boxMultiFile = document.querySelector(`[multi-file="${name}"]`);
+  const listImage = boxMultiFile.querySelectorAll(`img[src-relative]`);
+  const listLink = [];
+  listImage.forEach(image => {
+    const link = image.getAttribute("src-relative");
+    if(link) {
+      listLink.push(link);
+    }
+  })
+  return listLink;
+}
+// End Get Multi File
+
 // articleCreateCategoryForm
 const articleCreateCategoryForm = document.querySelector("#articleCreateCategoryForm");
 if(articleCreateCategoryForm) {
@@ -1162,3 +1177,140 @@ if(productEditCategoryForm) {
     });
 }
 // End productEditCategoryForm
+
+// Product Create Form
+const productCreateForm = document.querySelector("#productCreateForm");
+if(productCreateForm) {
+  const validation = new JustValidate('#productCreateForm');
+
+  validation
+    .addField('#name', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập tên sản phẩm!'
+      }
+    ])
+    .addField('#slug', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập đường dẫn!'
+      }
+    ])
+    .onSuccess((event) => {
+      const name = event.target.name.value;
+      const slug = event.target.slug.value;
+      const position = event.target.position.value;
+      const status = event.target.status.value;
+      const category = getCheckboxList("category");
+      const description = tinymce.get("description").getContent();
+      const content = tinymce.get("content").getContent();
+      const images = getMultiFile("images")
+
+      // Tạo FormData
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("slug", slug);
+      formData.append("position", position);
+      formData.append("status", status);
+      formData.append("category", JSON.stringify(category));
+      formData.append("description", description);
+      formData.append("content", content);
+      formData.append("images", JSON.stringify(images));
+      
+      fetch(`/${pathAdmin}/product/create`, {
+        method: "POST",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            drawNotify(data.code, data.message);
+            location.reload();
+          }
+        })
+    })
+  ;
+}
+// End Product Create Form
+
+// Check All 
+const checkAll = document.querySelector(".checkbox-all")
+if(checkAll){
+  const listCheckInput = document.querySelectorAll(".checkbox-input")
+  checkAll.addEventListener("change", (event) => {
+    listCheckInput.forEach(button => {
+      button.checked = checkAll.checked
+    })
+  })
+  listCheckInput.forEach(button => {
+    button.addEventListener("change", (event) => {
+      const listInputChecked = document.querySelectorAll(".checkbox-input:checked")
+      if(listInputChecked.length == listCheckInput.length){
+        checkAll.checked = true
+      }else {
+        checkAll.checked = false
+      }
+    })
+  })
+}
+// End Check All 
+// Copy file multi
+const buttonCopyFileMulti =  document.querySelector("[button-copy-multi]")
+if(buttonCopyFileMulti){
+  buttonCopyFileMulti.addEventListener("click", (event) => {
+    const listLinkImages = []
+    const listButtonChecked = document.querySelectorAll(".checkbox-input:checked")
+    listButtonChecked.forEach(button => {
+      listLinkImages.push(button.value)
+    })
+    navigator.clipboard.writeText(JSON.stringify(listLinkImages));
+    notyf.success("Đã copy!");
+
+  })
+}
+// End Copy file multi
+
+// Button paste
+const buttonPaste = document.querySelectorAll("[button-paste]")
+if(buttonPaste){
+  buttonPaste.forEach(button => {
+    const elementListImages = button.closest(".form-multi-file").querySelector(`[multi-file="images"]`)
+    button.addEventListener("click",async () => {
+      const listImagesJson = await navigator.clipboard.readText()
+      const listImages = JSON.parse(listImagesJson)
+      for(const item of listImages){
+        elementListImages.insertAdjacentHTML("beforeend", `
+        <div class="inner-image">
+          <img src="${domainCDN}${item}" alt="" src-relative="${item}">
+          <span class="inner-remove">x</span>
+        </div>
+        `)
+      }
+    })
+     new Sortable(elementListImages, {
+      animation: 150
+    });
+
+  })
+}
+// End Button paste
+
+// Remove Images
+const listImages = document.querySelectorAll(".form-multi-file .inner-list-image");
+if(listImages){
+  listImages.forEach(button=> {
+    button.addEventListener("click", (event) => {
+      if(event.target.closest(".inner-remove")){
+        const parentElement = event.target.closest(".inner-image")
+        if(parentElement){
+          parentElement.remove()
+        }
+      }
+    })
+  })
+}
+// End Remove Images

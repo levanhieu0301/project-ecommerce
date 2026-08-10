@@ -4,7 +4,9 @@ import slugify from "slugify"
 import { treeCategory } from "../../helpers/treeCategory.helper"
 import { pathAdmin } from "../../configs/variable.config"
 import { logAdminAction } from "../../helpers/log-admin.helper"
+import Product from "../../models/product.model"
 
+// Danh mục sản phẩm
 export const categoryProduct = async (req: Request, res: Response) => {
   const find : {
     deleted: boolean,
@@ -252,4 +254,60 @@ export const categoryProductDestroy = async (req: Request, res: Response) => {
       message: "Id không hợp lệ!"
     })
   }
+}
+// Sản phẩm
+export const createProduct = async (req: Request, res: Response) => {
+  const listCategoryProduct = await CategoryProduct.find({
+    deleted: false,
+  })
+  const categoryTree: any = treeCategory(listCategoryProduct)
+  res.render("admin/pages/product-create", {
+      pageTitle: "Tạo sản phẩm",
+      categoryList : categoryTree
+    }); 
+}
+export const createProductPost = async (req: Request, res: Response) => {
+    const existSlug = await Product.findOne({
+      slug: req.body.slug
+    })
+
+    if(existSlug) {
+      res.json({
+        code: "error",
+        message: "Đường dẫn đã tồn tại!"
+      })
+      return;
+    }
+    
+    if(req.body.position){
+      req.body.position = parseInt(req.body.position)
+    }else {
+      const recordMaxPosition = await Product
+        .findOne({})
+        .sort({
+          position: "desc"
+        })
+      if(recordMaxPosition && recordMaxPosition.position){
+        req.body.position = recordMaxPosition.position + 1
+      }else {
+        req.body.position = 1
+      }
+    }
+
+    req.body.category = JSON.parse(req.body.category);
+    req.body.images = JSON.parse(req.body.images);
+    req.body.search = slugify(`${req.body.name}`, {
+      replacement: " ",
+      lower: true
+    });
+    const newRecord = new Product(req.body);
+    await newRecord.save();
+
+    logAdminAction(req, `Đã tạo sản phẩm: ${req.body.name} (Id: ${newRecord.id})`);
+
+    res.json({
+      code: "success",
+      message: "Tạo sản phẩm thành công!"
+    })
+
 }

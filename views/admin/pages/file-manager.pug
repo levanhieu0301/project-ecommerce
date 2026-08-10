@@ -71,17 +71,25 @@ block main
         // end row
       // end card-header
       .card-body.pt-0
+        div.mb-2
+          span.btn.btn-outline-info(
+            button-copy-multi
+          ) Copy file đã chọn
         .table-responsive
           table.table.table-striped.mb-0
             thead.table-light
               tr
+                th
+                  input(type ="checkbox"  class="checkbox-all")
                 th Tên
                 th Ngày tạo
                 th Kích thước
                 th.text-end Hành động
             tbody
               each item in fileList
-                tr
+                tr  
+                  td 
+                    input(type ="checkbox"  class="checkbox-input" value = `${item.folder}/${item.filename}`)
                   td
                     if (item.mimetype.includes("image"))
                       img(
