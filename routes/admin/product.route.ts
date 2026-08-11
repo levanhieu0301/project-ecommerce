@@ -53,7 +53,8 @@ router.patch(
 );
 
 router.patch('/attribute/delete/:id', productController.deleteAttributePatch);
-
-
+router.get('/attribute/trash', productController.attributeTrashProduct);
+router.patch('/attribute/undo/:id', productController.undoAttributePatch);
+router.delete('/attribute/destroy/:id', productController.destroyAttribute);
 
 export default router;

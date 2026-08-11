@@ -474,3 +474,99 @@ export const deleteAttributePatch = async (req: Request, res: Response) => {
     })
   }
 }
+
+export const attributeTrashProduct = async (req: Request, res: Response) => {
+  const find: {
+      deleted: boolean,
+      search?: RegExp
+    } = {
+      deleted: true
+    };
+
+  if(req.query.keyword) {
+    const keyword = slugify(`${req.query.keyword}`, {
+      replacement: ' ',
+      lower: true, // Chữ thường
+    })
+    const keywordRegex = new RegExp(keyword, "i");
+    find.search = keywordRegex;
+  }
+
+  // Phân trang
+  const limitItems = 20;
+  let page = 1;
+  if(req.query.page) {
+    const currentPage = parseInt(`${req.query.page}`);
+    if(currentPage > 0) {
+      page = currentPage;
+    }
+  }
+  const totalRecord = await AttributeProduct.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord/limitItems);
+  const skip = (page - 1) * limitItems;
+  const pagination = {
+    skip: skip,
+    totalRecord: totalRecord,
+    totalPage: totalPage
+  };
+  // Hết Phân trang
+
+  const recordList: any = await AttributeProduct
+    .find(find)
+    .limit(limitItems)
+    .skip(skip)
+    .sort({
+      createdAt: "desc"
+    });
+
+  res.render("admin/pages/product-attribute-trash", {
+    pageTitle: "Thùng rác thuộc tính sản phẩm",
+    listAttribute: recordList,
+    pagination: pagination
+  }); 
+}
+export const undoAttributePatch = async (req: Request, res: Response) => {
+   try {
+    const id = req.params.id;
+    const articleDetail = await AttributeProduct.findOne({
+      _id: id,
+    })
+    await AttributeProduct.updateOne({
+      _id: id
+    }, {
+      deleted: false
+    })
+    logAdminAction(req, `Đã khôi phục thuộc tính: ${articleDetail?.name} (ID: ${id})`)
+    res.json({
+      code: "success",
+      message: "Khôi phục thuộc tính thành công!"
+    })
+  } catch (error) {
+    res.json({
+      code: "error",
+      message: "Id không hợp lệ!"
+    })
+  }
+}
+export const destroyAttribute = async (req: Request, res: Response) => {
+   try {
+    const id = req.params.id;
+    const articleDetail = await AttributeProduct.findOne({
+      _id: id,
+    })
+    logAdminAction(req, `Đã xóa vĩnh viễn thuộc tính: ${articleDetail?.name} (ID: ${id})`)
+    await AttributeProduct.deleteOne({
+      _id: id
+    })
+    res.json({
+      code: "success",
+      message: "Xóa vĩnh viễn thuộc tính thành công!"
+    })
+  } catch (error) {
+    res.json({
+      code: "error",
+      message: "Id không hợp lệ!"
+    })
+  }
+}
+
