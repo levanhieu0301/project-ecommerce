@@ -380,7 +380,7 @@ export const createAttributePost = async (req: Request, res: Response) => {
 
     const newRecord = new AttributeProduct(req.body);
     await newRecord.save();
-
+    logAdminAction(req, `Đã tạo thuốc tính tên: ${req.body.name} (Id: ${newRecord.id})`);
     res.json({
       code: "success",
       message: "Tạo thuộc tính thành công!"
