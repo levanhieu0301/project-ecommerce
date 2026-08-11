@@ -100,6 +100,22 @@ export const permissionList = [
     name: "Thuộc tính sản phẩm"
   },
   {
+    id: "product-attribute-create",
+    name: "Tạo thuộc tính sản phẩm"
+  },
+  {
+    id: "product-attribute-edit",
+    name: "Chỉnh sửa thuộc tính sản phẩm"
+  },
+  {
+    id: "product-attribute-delete",
+    name: "Xóa thuộc tính sản phẩm"
+  },
+  {
+    id: "product-attribute-trash",
+    name: "Thùng rác thuộc tính sản phẩm"
+  },
+  {
     id: "role",
     name: "NHÓM QUYỀN"
   },

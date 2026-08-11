@@ -3,66 +3,71 @@ include ../mixins/pagination.pug
 
 
 block main
-  .row
-    .col-12
-      .card
-        .card-header
-          .row.align-items-center
-            .col
-              h4.card-title #{pageTitle}
-            // end col
-            .col-auto
-              a.btn.btn-danger.me-1(
-                    href=`/${pathAdmin}/product/attribute/trash`
+  if (permissionList.includes("product-attribute"))
+    .row
+      .col-12
+        .card
+          .card-header
+            .row.align-items-center
+              .col
+                h4.card-title #{pageTitle}
+              // end col
+              .col-auto
+                if (permissionList.includes("product-attribute-trash"))
+                  a.btn.btn-danger.me-1(
+                        href=`/${pathAdmin}/product/attribute/trash`
+                        )
+                        i.las.la-trash-alt.me-1
+                        | Thùng rác
+                if (permissionList.includes("product-attribute-create"))
+                  a.btn.btn-primary(
+                    href=`/${pathAdmin}/product/attribute/create`
                     )
-                    i.las.la-trash-alt.me-1
-                    | Thùng rác
-              a.btn.btn-primary(
-                href=`/${pathAdmin}/product/attribute/create`
-                )
-                i.fa-solid.fa-plus.me-1
-                | Tạo thuộc tính
-                // end col
-            // end col
-          // end row
-        // end card-header
-        .card-body.pt-0
-          .row
-            .col-lg-6
-              form.input-group.mb-3(form-search)
-                input.form-control(
-                  placeholder="Từ khóa..."
-                  type="text"
-                  name="keyword"
-                  )
-                button.btn.btn-secondary Tìm kiếm
-          .table-responsive
-            table.table.table-striped.mb-0
-              thead.table-light
-                tr
-                  th STT
-                  th Tên thuộc tính
-                  th Kiểu hiển thị
-                  th Danh sách lựa chọn
-                  th.text-end Hành động
-              tbody
-                each item, index in listAttribute
+                    i.fa-solid.fa-plus.me-1
+                  | Tạo thuộc tính
+                  // end col
+              // end col
+            // end row
+          // end card-header
+          .card-body.pt-0
+            .row
+              .col-lg-6
+                form.input-group.mb-3(form-search)
+                  input.form-control(
+                    placeholder="Từ khóa..."
+                    type="text"
+                    name="keyword"
+                    )
+                  button.btn.btn-secondary Tìm kiếm
+            .table-responsive
+              table.table.table-striped.mb-0
+                thead.table-light
                   tr
-                    td #{pagination.skip + index + 1}
-                    td #{item.name}
-                    td #{item.type}
-                    td
-                      each option in item.options
-                        span(class="badge bg-info me-1 mb-1") #{option.label}
-                    td.text-end
-                      a(href=`/${pathAdmin}/product/attribute/edit/:id`)
-                        i.las.la-pen.text-secondary.fs-20
-                      a(
-                        href="javascript:;"
-                        btn-deleted
-                        method="PATCH"
-                        api=`/${pathAdmin}/product/attribute/delete/:id`
-                      )
-                        i.las.la-trash-alt.text-secondary.fs-20
-          +pagination()
-    // end col
+                    th STT
+                    th Tên thuộc tính
+                    th Kiểu hiển thị
+                    th Danh sách lựa chọn
+                    th.text-end Hành động
+                tbody
+                  each item, index in listAttribute
+                    tr
+                      td #{pagination.skip + index + 1}
+                      td #{item.name}
+                      td #{item.type}
+                      td
+                        each option in item.options
+                          span(class="badge bg-info me-1 mb-1") #{option.label}
+                      td.text-end
+                        if (permissionList.includes("product-attribute-edit"))
+                          a(href=`/${pathAdmin}/product/attribute/edit/:id`)
+                            i.las.la-pen.text-secondary.fs-20
+                        if (permissionList.includes("product-attribute-delete"))
+                          a(
+                            href="javascript:;"
+                            btn-deleted
+                            method="PATCH"
+                            api=`/${pathAdmin}/product/attribute/delete/:id`
+                          )
+                            i.las.la-trash-alt.text-secondary.fs-20
+            +pagination()
+      // end col

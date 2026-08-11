@@ -39,6 +39,7 @@ router.get('/attribute/create', productController.attributeCreateProduct);
 router.post(
   '/attribute/create', 
   upload.none(), 
+  checkPermissions("product-attribute-create"),
   productValidate.createAttributePost, 
   productController.createAttributePost
 );
