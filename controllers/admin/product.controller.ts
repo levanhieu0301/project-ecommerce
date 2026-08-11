@@ -393,3 +393,56 @@ export const createAttributePost = async (req: Request, res: Response) => {
     })
   }
 }
+export const attributeEditProduct = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const attributeDetail = await AttributeProduct.findOne({
+      _id: id,
+      deleted: false
+    })
+
+    if(!attributeDetail) {
+      res.redirect(`/${pathAdmin}/product/attribute`);
+      return;
+    }
+
+    res.render("admin/pages/product-attribute-edit", {
+      pageTitle: "Chỉnh sửa thuộc tính sản phẩm",
+      attributeDetail: attributeDetail
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect(`/${pathAdmin}/product/attribute`);
+  }
+
+}
+
+export const editAttributePatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    req.body.options = JSON.parse(req.body.options);
+    
+    req.body.search = slugify(req.body.name, {
+      replacement: ' ',
+      lower: true, // Chữ thường
+    })
+
+    await AttributeProduct.updateOne({
+      _id: id,
+      deleted: false
+    }, req.body);
+    logAdminAction(req, `Đã sửa thuốc tính tên: ${req.body.name} (Id: ${id})`);
+    res.json({
+      code: "success",
+      message: "Cập nhật thuộc tính thành công!"
+    })
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!"
+    })
+  }
+}

@@ -43,6 +43,14 @@ router.post(
   productValidate.createAttributePost, 
   productController.createAttributePost
 );
+router.get('/attribute/edit/:id', productController.attributeEditProduct);
+router.patch(
+  '/attribute/edit/:id', 
+  upload.none(), 
+  checkPermissions("product-attribute-edit"),
+  productValidate.createAttributePost, 
+  productController.editAttributePatch
+);
 
 
 export default router;
