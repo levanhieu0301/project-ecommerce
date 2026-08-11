@@ -27,7 +27,8 @@ router.delete('/category/destroy/:id', productController.categoryProductDestroy)
 router.get('/create', productController.createProduct)
 router.post(
   '/create', 
-  upload.none(), 
+  upload.none(),
+  checkPermissions("product-create") ,
   productValidate.createProductPost, 
   productController.createProductPost
 );
