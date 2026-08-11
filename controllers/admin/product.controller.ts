@@ -315,12 +315,53 @@ export const createProductPost = async (req: Request, res: Response) => {
 
 // Thuộc tính
 export const attributeProduct = async (req: Request, res: Response) => {
-  // const listAttribute = await AttributeProduct.find({
-  //   deleted: false
-  // })
+  const find: {
+      deleted: boolean,
+      search?: RegExp
+    } = {
+      deleted: false
+    };
+
+  if(req.query.keyword) {
+    const keyword = slugify(`${req.query.keyword}`, {
+      replacement: ' ',
+      lower: true, // Chữ thường
+    })
+    const keywordRegex = new RegExp(keyword, "i");
+    find.search = keywordRegex;
+  }
+
+  // Phân trang
+  const limitItems = 20;
+  let page = 1;
+  if(req.query.page) {
+    const currentPage = parseInt(`${req.query.page}`);
+    if(currentPage > 0) {
+      page = currentPage;
+    }
+  }
+  const totalRecord = await AttributeProduct.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord/limitItems);
+  const skip = (page - 1) * limitItems;
+  const pagination = {
+    skip: skip,
+    totalRecord: totalRecord,
+    totalPage: totalPage
+  };
+  // Hết Phân trang
+
+  const recordList: any = await AttributeProduct
+    .find(find)
+    .limit(limitItems)
+    .skip(skip)
+    .sort({
+      createdAt: "desc"
+    });
+
   res.render("admin/pages/product-attribute", {
     pageTitle: "Thuộc tính sản phẩm",
-    // listAttribute: listAttribute
+    listAttribute: recordList,
+    pagination: pagination
   }); 
 }
 export const attributeCreateProduct = async (req: Request, res: Response) => {
