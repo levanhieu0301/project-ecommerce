@@ -79,6 +79,9 @@
                   if (permissionList.includes("product-category"))
                     li.nav-item
                       a.nav-link(href=`/${pathAdmin}/product/category`) Danh mục sản phẩm
+                  if (permissionList.includes("product-attribute"))
+                    li.nav-item
+                      a.nav-link(href=`/${pathAdmin}/product/attribute`) Thuộc tính sản phẩm
                   // end nav-item
           if (permissionList.includes("file-manager"))
             li.nav-item

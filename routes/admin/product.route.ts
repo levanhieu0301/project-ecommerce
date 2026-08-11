@@ -33,5 +33,15 @@ router.post(
   productController.createProductPost
 );
 
+// Thuộc tính
+router.get('/attribute', productController.attributeProduct);
+router.get('/attribute/create', productController.attributeCreateProduct);
+router.post(
+  '/attribute/create', 
+  upload.none(), 
+  productValidate.createAttributePost, 
+  productController.createAttributePost
+);
+
 
 export default router;

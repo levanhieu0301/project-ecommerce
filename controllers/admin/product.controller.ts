@@ -5,6 +5,7 @@ import { treeCategory } from "../../helpers/treeCategory.helper"
 import { pathAdmin } from "../../configs/variable.config"
 import { logAdminAction } from "../../helpers/log-admin.helper"
 import Product from "../../models/product.model"
+import AttributeProduct from "../../models/attribute-product.model"
 
 // Danh mục sản phẩm
 export const categoryProduct = async (req: Request, res: Response) => {
@@ -310,4 +311,44 @@ export const createProductPost = async (req: Request, res: Response) => {
       message: "Tạo sản phẩm thành công!"
     })
 
+}
+
+// Thuộc tính
+export const attributeProduct = async (req: Request, res: Response) => {
+  // const listAttribute = await AttributeProduct.find({
+  //   deleted: false
+  // })
+  res.render("admin/pages/product-attribute", {
+    pageTitle: "Thuộc tính sản phẩm",
+    // listAttribute: listAttribute
+  }); 
+}
+export const attributeCreateProduct = async (req: Request, res: Response) => {
+  res.render("admin/pages/product-attribute-create", {
+    pageTitle: "Tạo thuộc tính sản phẩm",
+  }); 
+}
+export const createAttributePost = async (req: Request, res: Response) => {
+  try {
+    req.body.options = JSON.parse(req.body.options);
+
+    req.body.search = slugify(`${req.body.name}`, {
+      replacement: " ",
+      lower: true
+    });
+
+    const newRecord = new AttributeProduct(req.body);
+    await newRecord.save();
+
+    res.json({
+      code: "success",
+      message: "Tạo thuộc tính thành công!"
+    })
+  } catch (error) {
+    console.error(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!"
+    })
+  }
 }

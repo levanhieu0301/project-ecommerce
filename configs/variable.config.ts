@@ -96,6 +96,10 @@ export const permissionList = [
     name: "Thùng rác danh mục sản phẩm"
   },
   {
+    id: "product-attribute",
+    name: "Thuộc tính sản phẩm"
+  },
+  {
     id: "role",
     name: "NHÓM QUYỀN"
   },
