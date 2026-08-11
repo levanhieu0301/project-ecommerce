@@ -380,7 +380,7 @@ export const createAttributePost = async (req: Request, res: Response) => {
 
     const newRecord = new AttributeProduct(req.body);
     await newRecord.save();
-    logAdminAction(req, `Đã tạo thuốc tính tên: ${req.body.name} (Id: ${newRecord.id})`);
+    logAdminAction(req, `Đã tạo thuộc tính tên: ${req.body.name} (Id: ${newRecord.id})`);
     res.json({
       code: "success",
       message: "Tạo thuộc tính thành công!"
@@ -433,7 +433,7 @@ export const editAttributePatch = async (req: Request, res: Response) => {
       _id: id,
       deleted: false
     }, req.body);
-    logAdminAction(req, `Đã sửa thuốc tính tên: ${req.body.name} (Id: ${id})`);
+    logAdminAction(req, `Đã sửa thuộc tính tên: ${req.body.name} (Id: ${id})`);
     res.json({
       code: "success",
       message: "Cập nhật thuộc tính thành công!"
@@ -443,6 +443,34 @@ export const editAttributePatch = async (req: Request, res: Response) => {
     res.json({
       code: "error",
       message: "Dữ liệu không hợp lệ!"
+    })
+  }
+}
+
+export const deleteAttributePatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const record = await AttributeProduct.findOne({
+      _id: id
+    })
+    logAdminAction(req, `Đã xóa mềm thuộc tính tên: ${record?.name} (Id: ${id})`);
+
+    await AttributeProduct.updateOne({
+      _id: id
+    }, {
+      deleted: true,
+      deletedAt: Date.now(),
+    });
+
+    res.json({
+      code: "success",
+      message: "Xóa thuộc tính thành công!"
+    })
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Id không hợp lệ!"
     })
   }
 }
