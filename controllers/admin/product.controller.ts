@@ -548,6 +548,103 @@ export const deletePatch = async (req: Request, res: Response) => {
 }
 
 
+export const trashProduct = async (req: Request, res: Response) => {
+  const find: {
+    deleted: boolean,
+    search?: RegExp
+  } = {
+    deleted: true
+  };
+
+  if(req.query.keyword) {
+    const keyword = slugify(`${req.query.keyword}`, {
+      replacement: ' ',
+      lower: true, // Chữ thường
+    })
+    const keywordRegex = new RegExp(keyword, "i");
+    find.search = keywordRegex;
+  }
+
+  // Phân trang
+  const limitItems = 20;
+  let page = 1;
+  if(req.query.page) {
+    const currentPage = parseInt(`${req.query.page}`);
+    if(currentPage > 0) {
+      page = currentPage;
+    }
+  }
+  const totalRecord = await Product.countDocuments(find);
+  const totalPage = Math.ceil(totalRecord/limitItems);
+  const skip = (page - 1) * limitItems;
+  const pagination = {
+    skip: skip,
+    totalRecord: totalRecord,
+    totalPage: totalPage
+  };
+  // Hết Phân trang
+  const recordList: any = await Product
+    .find(find)
+    .limit(limitItems)
+    .skip(skip)
+    .sort({
+      position: "desc"
+    });
+
+ res.render("admin/pages/product-trash", {
+    pageTitle: "Thùng rác sản phẩm",
+    recordList: recordList,
+    pagination: pagination
+  });
+}
+export const undoProduct = async (req: Request, res: Response) => {
+ try {
+    const id = req.params.id;
+    const productDetail = await Product.findOne({
+      _id: id,
+    })
+    await Product.updateOne({
+      _id: id
+    }, {
+      deleted: false
+    })
+    logAdminAction(req, `Đã khôi phục sản phẩm: ${productDetail?.name} (ID: ${id})`)
+    res.json({
+      code: "success",
+      message: "Khôi phục sản phẩm thành công!"
+    })
+  } catch (error) {
+    res.json({
+      code: "error",
+      message: "Id không hợp lệ!"
+    })
+  }
+}
+export const destroyProduct = async (req: Request, res: Response) => {
+ try {
+    const id = req.params.id;
+    const productDetail = await Product.findOne({
+      _id: id,
+    })
+    logAdminAction(req, `Đã xóa vĩnh viễn sản phẩm: ${productDetail?.name} (ID: ${id})`)
+    await Product.deleteOne({
+      _id: id
+    })
+    
+    res.json({
+      code: "success",
+      message: "Đã xóa vĩnh viễn sản phẩm!"
+    })
+  } catch (error) {
+    res.json({
+      code: "error",
+      message: "Id không hợp lệ!"
+    })
+  }
+}
+
+
+
 
 // Thuộc tính
 export const attributeProduct = async (req: Request, res: Response) => {

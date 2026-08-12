@@ -43,6 +43,9 @@ router.patch(
 );
 
 router.patch('/delete/:id', productController.deletePatch);
+router.get('/trash', productController.trashProduct);
+router.patch('/undo/:id', productController.undoProduct);
+router.delete('/destroy/:id', productController.destroyProduct);
 
 // Thuộc tính
 router.get('/attribute', productController.attributeProduct);
