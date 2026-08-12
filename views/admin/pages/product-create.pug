@@ -52,6 +52,39 @@ block main
                 input.form-control(id="priceNew" type="number" name="priceNew")
             .col-md-12.col-lg-12
               .mb-3
+                label.form-label Danh sách thuộc tính
+                div(class="checkbox-list" checkbox-list="attributes" )
+                  +checkbox(attributeList)
+                span.btn.btn-outline-info.mt-1(
+                  button-render-variant="attributes"
+                ) Tạo biến thể
+                script. 
+                  const attributeList = !{JSON.stringify(attributeList)}
+            .col-md-12.col-lg-12
+              .mb-3
+                label.form-label Danh sách biến thể
+                .table-responsive-sm
+                  table.table.mb-0(table-variant)
+                    thead.table-light
+                      tr
+                      //-   th(scope="col") Trạng thái
+                      //-   th(scope="col") Kích cỡ
+                      //-   th(scope="col") Màu sắc
+                      //-   th(scope="col") Giá cũ
+                      //-   th(scope="col") Giá mới
+                    tbody
+                      //- tr
+                      //-   td
+                      //-     .form-check.form-switch.form-switch-success
+                      //-       input.form-check-input(type="checkbox" checked)
+                      //-   td Size S
+                      //-   td Đỏ
+                      //-   td
+                      //-     input.form-control(type="number")
+                      //-   td
+                      //-     input.form-control(type="number")
+            .col-md-12.col-lg-12
+              .mb-3
                 label.form-label Danh sách ảnh
                 div(class="form-multi-file")
                   .input-group

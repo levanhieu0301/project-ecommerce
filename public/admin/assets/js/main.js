@@ -1227,6 +1227,37 @@ if(productCreateForm) {
       const images = getMultiFile("images")
       const priceOld = event.target.priceOld.value
       const priceNew = event.target.priceNew.value
+      const attributes = getCheckboxList("attributes");
+      //  mình muốn lưu variant : {
+      //   status: true hay false
+      //   listVariantTR: màu đỏ , size s
+      //   giá mới: 
+      //   giá cũ:
+      // }
+      const variants = []
+      const listTr = document.querySelectorAll("[table-variant] tbody tr")
+      listTr.forEach(tr => {
+        const status = tr.querySelector("input.form-check-input").checked
+        const attributeValue = JSON.parse(tr.querySelector("[attribute-value]").value);
+        let priceOld = tr.querySelector("[price-old]").value;
+        if(priceOld) {
+          priceOld = parseInt(priceOld);
+        }
+        let priceNew = tr.querySelector("[price-new]").value;
+        if(priceNew) {
+          priceNew = parseInt(priceNew);
+        } else {
+          priceNew = priceOld;
+        }
+        variants.push({
+          status: status,
+          attributeValue: attributeValue,
+          priceOld: priceOld,
+          priceNew: priceNew
+        });
+
+      })
+
 
       // Tạo FormData
       const formData = new FormData();
@@ -1240,6 +1271,8 @@ if(productCreateForm) {
       formData.append("priceOld", priceOld);
       formData.append("priceNew", priceNew);
       formData.append("images", JSON.stringify(images));
+      formData.append("attributes", JSON.stringify(attributes));
+      formData.append("variants", JSON.stringify(variants));
       
       fetch(`/${pathAdmin}/product/create`, {
         method: "POST",
@@ -1461,3 +1494,78 @@ if(productEditAttributeForm) {
   ;
 }
 // End Product Edit Attribute Form
+
+// Format data 
+const formatAttribute = (listAttribute) => {
+  const listOptions = listAttribute.map(attribute => 
+    attribute.options.map(option =>  ({
+        attriId: attribute._id,
+        attriTpye: attribute.type,
+        label: option.label,
+        value: option.value
+      })
+    )
+  )
+   // Bước 2: Tạo ra tổ hợp các biến thể
+  const variantList = listOptions.reduce((a, b) => a.flatMap(x => b.map(y => [...x, y])), [[]]);
+
+  return variantList
+}
+// End Format data 
+
+//Tạo biến thể
+const btnCreateVariant = document.querySelector("[button-render-variant]")
+if(btnCreateVariant){
+  btnCreateVariant.addEventListener("click", () => {
+    const attribute = btnCreateVariant.getAttribute("button-render-variant")
+    const listIdChecked = getCheckboxList(attribute)
+    const listAttribute = attributeList.filter(item => listIdChecked.includes(item._id))
+    const listVariant = formatAttribute(listAttribute)
+    const tableVariant = document.querySelector("[table-variant]")
+    const thead = tableVariant.querySelector("thead tr")
+    let variantHeadHTML = ""
+    variantHeadHTML += `<th scope="col">Trạng thái</th>`
+    listAttribute.forEach(item => {
+      variantHeadHTML += `<th scope="col">${item.name}</th>`
+    })
+    variantHeadHTML += `
+    <th scope="col">Giá cũ</th>
+    <th scope="col">Giá mới</th>
+    `
+    thead.innerHTML = variantHeadHTML
+
+
+    // tbody
+    const tbody = tableVariant.querySelector("tbody")
+    const priceOld = document.querySelector(`[name="priceOld"]`).value;
+    const priceNew = document.querySelector(`[name="priceNew"]`).value;
+    let tbodyFinal = ""
+    listVariant.forEach(item => {
+      const variantJSON = JSON.stringify(item).replaceAll(`"`, `&quot;`)
+      let tr = `<tr>`
+      tr += `
+        <td>
+          <div class="form-check form-switch form-switch-success">
+            <input class="form-check-input" type="checkbox" checked="">
+          </div>
+          <input class="d-none" attribute-value value="${variantJSON}" />
+        </td>`
+      item.forEach(option => {
+        tr +=`<td>${option.label}</td>`
+      })
+      tr += `
+        <td>
+          <input class="form-control" type="number" value="${priceOld}" price-old>
+        </td>
+        <td>
+          <input class="form-control" type="number" value="${priceNew}" price-new>
+        </td>
+        `
+      tr += `</tr>`
+      tbodyFinal += tr
+    })
+    tbody.innerHTML = tbodyFinal
+    
+  })
+}
+//end Tạo biến thể

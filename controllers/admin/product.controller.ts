@@ -262,9 +262,13 @@ export const createProduct = async (req: Request, res: Response) => {
     deleted: false,
   })
   const categoryTree: any = treeCategory(listCategoryProduct)
+  const attributeList = await AttributeProduct.find({
+    deleted: false
+  })
   res.render("admin/pages/product-create", {
       pageTitle: "Tạo sản phẩm",
-      categoryList : categoryTree
+      categoryList : categoryTree,
+      attributeList: attributeList
     }); 
 }
 export const createProductPost = async (req: Request, res: Response) => {
@@ -297,6 +301,11 @@ export const createProductPost = async (req: Request, res: Response) => {
 
     req.body.category = JSON.parse(req.body.category);
     req.body.images = JSON.parse(req.body.images);
+    
+    req.body.attributes = JSON.parse(req.body.attributes);
+
+    req.body.variants = JSON.parse(req.body.variants);
+
     
     if(req.body.priceOld) {
       req.body.priceOld = parseInt(req.body.priceOld);
