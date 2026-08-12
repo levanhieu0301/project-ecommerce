@@ -12,16 +12,18 @@ block main
                 h4.card-title #{pageTitle}
               // end col
               .col-auto
-                a.btn.btn-danger.me-1(
-                  href=`/${pathAdmin}/product/trash`
-                  )
-                  i.las.la-trash-alt.me-1
-                  | Thùng rác
-                a.btn.btn-primary(
-                  href=`/${pathAdmin}/product/create`
-                  )
-                  i.fa-solid.fa-plus.me-1
-                  | Tạo sản phẩm
+                if (permissionList.includes("product-trash"))
+                  a.btn.btn-danger.me-1(
+                    href=`/${pathAdmin}/product/trash`
+                    )
+                    i.las.la-trash-alt.me-1
+                    | Thùng rác
+                if (permissionList.includes("product-create"))
+                  a.btn.btn-primary(
+                    href=`/${pathAdmin}/product/create`
+                    )
+                    i.fa-solid.fa-plus.me-1
+                    | Tạo sản phẩm
                   // end col
               // end col
             // end row
@@ -80,14 +82,16 @@ block main
                           span(class="badge bg-danger") Tạm dừng
                       td #{item.view}
                       td.text-end
-                        a(href=`/${pathAdmin}/product/edit/${item.id}`)
-                          i.las.la-pen.text-secondary.fs-20
-                        a(
-                          href="javascript:;"
-                          btn-deleted 
-                          method="PATCH"
-                          api=`/${pathAdmin}/product/delete/${item.id}` 
-                        )
-                          i.las.la-trash-alt.text-secondary.fs-20
+                        if (permissionList.includes("product-edit"))
+                          a(href=`/${pathAdmin}/product/edit/${item.id}`)
+                            i.las.la-pen.text-secondary.fs-20
+                        if (permissionList.includes("product-delete"))
+                          a(
+                            href="javascript:;"
+                            btn-deleted 
+                            method="PATCH"
+                            api=`/${pathAdmin}/product/delete/${item.id}` 
+                          )
+                            i.las.la-trash-alt.text-secondary.fs-20
             +pagination()
       // end col

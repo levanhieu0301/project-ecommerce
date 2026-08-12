@@ -33,6 +33,15 @@ router.post(
   productController.createProductPost
 );
 router.get('/list', productController.listProduct)
+router.get('/edit/:id', productController.editProduct)
+router.patch(
+  '/edit/:id', 
+  upload.none(), 
+  checkPermissions("product-edit") ,
+  productValidate.createProductPost, 
+  productController.editPatch
+);
+
 // Thuộc tính
 router.get('/attribute', productController.attributeProduct);
 router.get('/attribute/create', productController.attributeCreateProduct);

@@ -1606,3 +1606,117 @@ if(selectTag){
   })
 }
 //End Tags
+
+
+// Product Create Form
+const productEditForm = document.querySelector("#productEditForm");
+if(productEditForm) {
+  const validation = new JustValidate('#productEditForm');
+
+  validation
+    .addField('#name', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập tên sản phẩm!'
+      }
+    ])
+    .addField('#slug', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập đường dẫn!'
+      }
+    ])
+    .onSuccess((event) => {
+      const id = event.target.id.value;
+      const name = event.target.name.value;
+      const slug = event.target.slug.value;
+      const position = event.target.position.value;
+      const status = event.target.status.value;
+      const category = getCheckboxList("category");
+      const description = tinymce.get("description").getContent();
+      const content = tinymce.get("content").getContent();
+      const images = getMultiFile("images")
+      const priceOld = event.target.priceOld.value
+      const priceNew = event.target.priceNew.value
+      const stock = event.target.stock.value
+      const attributes = getCheckboxList("attributes");
+
+      // Tags
+      const selectElement = document.querySelector(`select[name="tags"]`)
+      const tags = Array.from(selectElement.selectedOptions).map(option => option.value);
+      // end Tags
+
+      //  mình muốn lưu variant : {
+      //   status: true hay false
+      //   listVariantTR: màu đỏ , size s
+      //   giá mới: 
+      //   giá cũ:
+      // }
+      const variants = []
+      const listTr = document.querySelectorAll("[table-variant] tbody tr")
+      listTr.forEach(tr => {
+        const status = tr.querySelector("input.form-check-input").checked
+        const attributeValue = JSON.parse(tr.querySelector("[attribute-value]").value);
+        let priceOld = tr.querySelector("[price-old]").value;
+        if(priceOld) {
+          priceOld = parseInt(priceOld);
+        }
+        let priceNew = tr.querySelector("[price-new]").value;
+        if(priceNew) {
+          priceNew = parseInt(priceNew);
+        } else {
+          priceNew = priceOld;
+        }
+        let stock = tr.querySelector("[stock]").value;
+        if(stock){
+          stock = parseInt(stock)
+        }else  {
+          stock = 0
+        }
+        variants.push({
+          status: status,
+          attributeValue: attributeValue,
+          stock: stock,
+          priceOld: priceOld,
+          priceNew: priceNew
+        });
+
+      })
+
+
+      // Tạo FormData
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("slug", slug);
+      formData.append("position", position);
+      formData.append("status", status);
+      formData.append("category", JSON.stringify(category));
+      formData.append("description", description);
+      formData.append("content", content);
+      formData.append("priceOld", priceOld);
+      formData.append("priceNew", priceNew);
+      formData.append("stock", stock);
+      formData.append("images", JSON.stringify(images));
+      formData.append("attributes", JSON.stringify(attributes));
+      formData.append("variants", JSON.stringify(variants));
+      formData.append("tags", JSON.stringify(tags));
+      
+      fetch(`/${pathAdmin}/product/edit/${id}`, {
+        method: "PATCH",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            notyf.success(data.message);
+
+          }
+        })
+    })
+  ;
+}
+// End Product Create Form

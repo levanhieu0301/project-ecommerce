@@ -6,6 +6,8 @@ import { pathAdmin } from "../../configs/variable.config"
 import { logAdminAction } from "../../helpers/log-admin.helper"
 import Product from "../../models/product.model"
 import AttributeProduct from "../../models/attribute-product.model"
+import { listenerCount } from "events"
+import { array } from "joi"
 
 // Danh mục sản phẩm
 export const categoryProduct = async (req: Request, res: Response) => {
@@ -384,6 +386,144 @@ export const listProduct = async (req: Request, res: Response) => {
     pagination: pagination
   });
 }
+export const editProduct = async (req: Request, res: Response) => {
+  try {
+    const listCategoryProduct = await CategoryProduct.find({
+      deleted: false,
+    })
+    const categoryTree: any = treeCategory(listCategoryProduct)
+    const attributeList = await AttributeProduct.find({
+      deleted: false
+    })
+    const id = req.params.id
+    const recordProduct = await Product.findOne({
+      _id: id
+    })
+    if(!recordProduct){
+      res.redirect("/${pathAdmin}/product/list")
+    }
+    const arrayNameAttri: string[]  = []
+    if(recordProduct) {
+      for(const item of recordProduct.attributes){
+        const recordAttribute = await AttributeProduct.findOne({
+          _id: item
+        })
+        if(recordAttribute){
+          arrayNameAttri.push(`${recordAttribute.name}`)
+        }
+      }
+    }
+
+
+    res.render("admin/pages/product-edit", {
+      pageTitle: "Chỉnh sửa sản phẩm",
+      recordProduct: recordProduct,
+      categoryList: categoryTree,
+      attributeList: attributeList,
+      arrayNameAttri: arrayNameAttri
+    }); 
+  } catch (error) {
+    res.json({
+      code: "error",
+      message: "Id không hợp lệ!"
+    })
+  }
+}
+export const editPatch = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const productDetail = await Product.findOne({
+      _id: id,
+      deleted: false
+    })
+
+    if(!productDetail) {
+      res.json({
+        code: "error",
+        message: "Sản phẩm không tồn tại!"
+      });
+      return;
+    }
+
+    const existSlug = await Product.findOne({
+      _id: { $ne: id },
+      slug: req.body.slug
+    })
+
+    if(existSlug) {
+      res.json({
+        code: "error",
+        message: "Đường dẫn đã tồn tại!"
+      })
+      return;
+    }
+
+    if(req.body.position) {
+      req.body.position = parseInt(req.body.position);
+    } else {
+      // Nếu không truyền position -> lấy position lớn nhất + 1
+      const recordMaxPosition = await Product
+        .findOne({})
+        .sort({
+          position: "desc"
+        });
+      if(recordMaxPosition && recordMaxPosition.position) {
+        req.body.position = recordMaxPosition.position + 1;
+      } else {
+        req.body.position = 1;
+      }
+    }
+
+    req.body.category = JSON.parse(req.body.category);
+
+    req.body.images = JSON.parse(req.body.images);
+
+    req.body.search = slugify(`${req.body.name}`, {
+      replacement: " ",
+      lower: true
+    });
+
+    if(req.body.priceOld) {
+      req.body.priceOld = parseInt(req.body.priceOld);
+    }
+
+    if(req.body.priceNew) {
+      req.body.priceNew = parseInt(req.body.priceNew);
+    } else {
+      req.body.priceNew = req.body.priceOld;
+    }
+
+    if(req.body.stock) {
+      req.body.stock = parseInt(req.body.stock);
+    }
+
+    req.body.attributes = JSON.parse(req.body.attributes);
+
+    req.body.variants = JSON.parse(req.body.variants);
+
+    req.body.tags = JSON.parse(req.body.tags);
+
+    await Product.updateOne({
+      _id: id,
+      deleted: false
+    }, req.body);
+
+    logAdminAction(req, `Đã sửa sản phẩm: ${productDetail.name} (Id: ${productDetail.id})`);
+
+    res.json({
+      code: "success",
+      message: "Cập nhật sản phẩm thành công!"
+    })
+  } catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "Dữ liệu không hợp lệ!"
+    });
+  }
+}
+
 
 // Thuộc tính
 export const attributeProduct = async (req: Request, res: Response) => {
