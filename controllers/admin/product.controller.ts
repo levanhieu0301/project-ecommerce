@@ -315,6 +315,10 @@ export const createProductPost = async (req: Request, res: Response) => {
     }else {
       req.body.priceNew = parseInt(req.body.priceOld)
     }
+    
+    if(req.body.stock) {
+      req.body.stock = parseInt(req.body.stock);
+    }
     req.body.search = slugify(`${req.body.name}`, {
       replacement: " ",
       lower: true

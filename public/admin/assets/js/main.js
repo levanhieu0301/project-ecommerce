@@ -1227,6 +1227,7 @@ if(productCreateForm) {
       const images = getMultiFile("images")
       const priceOld = event.target.priceOld.value
       const priceNew = event.target.priceNew.value
+      const stock = event.target.stock.value
       const attributes = getCheckboxList("attributes");
       //  mình muốn lưu variant : {
       //   status: true hay false
@@ -1249,9 +1250,16 @@ if(productCreateForm) {
         } else {
           priceNew = priceOld;
         }
+        let stock = tr.querySelector("[stock]").value;
+        if(stock){
+          stock = parseInt(stock)
+        }else  {
+          stock = 0
+        }
         variants.push({
           status: status,
           attributeValue: attributeValue,
+          stock: stock,
           priceOld: priceOld,
           priceNew: priceNew
         });
@@ -1270,6 +1278,7 @@ if(productCreateForm) {
       formData.append("content", content);
       formData.append("priceOld", priceOld);
       formData.append("priceNew", priceNew);
+      formData.append("stock", stock);
       formData.append("images", JSON.stringify(images));
       formData.append("attributes", JSON.stringify(attributes));
       formData.append("variants", JSON.stringify(variants));
@@ -1531,6 +1540,7 @@ if(btnCreateVariant){
     variantHeadHTML += `
     <th scope="col">Giá cũ</th>
     <th scope="col">Giá mới</th>
+    <th scope="col">Còn lại</th>
     `
     thead.innerHTML = variantHeadHTML
 
@@ -1559,6 +1569,9 @@ if(btnCreateVariant){
         </td>
         <td>
           <input class="form-control" type="number" value="${priceNew}" price-new>
+        </td>
+        <td>
+          <input class="form-control" type="number" stock>
         </td>
         `
       tr += `</tr>`
