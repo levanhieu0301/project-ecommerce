@@ -50,6 +50,8 @@ export const createProductPost = (req: Request, res: Response, next: NextFunctio
     category: Joi.string().allow(''),
     description: Joi.string().allow(''),
     content: Joi.string().allow(''),
+    priceOld: Joi.string().allow(''),
+    priceNew: Joi.string().allow(''),
     images: Joi.string().allow(''),
   });
 
