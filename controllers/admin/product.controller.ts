@@ -223,10 +223,10 @@ export const categoryProductUndo = async (req: Request, res: Response) => {
     }, {
       deleted: false
     })
-    logAdminAction(req, `Đã khôi phục bài viết: ${articleDetail?.name} (ID: ${id})`)
+    logAdminAction(req, `Đã khôi phục bài danh mục sản phẩm: ${articleDetail?.name} (ID: ${id})`)
     res.json({
       code: "success",
-      message: "Khôi phục bài viết thành công!"
+      message: "Khôi phục danh mục thành công!"
     })
   } catch (error) {
     res.json({
@@ -242,14 +242,14 @@ export const categoryProductDestroy = async (req: Request, res: Response) => {
       _id: id,
       deleted: false
     })
-    logAdminAction(req, `Đã xóa vĩnh viễn bài viết: ${articleDetail?.name} (ID: ${id})`)
+    logAdminAction(req, `Đã xóa vĩnh viễn danh mục: ${articleDetail?.name} (ID: ${id})`)
     await CategoryProduct.deleteOne({
       _id: id
     })
     
     res.json({
       code: "success",
-      message: "Đã xóa vĩnh viễn bài viết!"
+      message: "Đã xóa vĩnh viễn danh mục!"
     })
   } catch (error) {
     res.json({
@@ -526,6 +526,9 @@ export const editPatch = async (req: Request, res: Response) => {
 export const deletePatch = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+    const productDetail = await Product.findOne({
+      _id: id,
+    })
 
     await Product.updateOne({
       _id: id
@@ -533,7 +536,7 @@ export const deletePatch = async (req: Request, res: Response) => {
       deleted: true,
       deletedAt: Date.now(),
     });
-
+    logAdminAction(req, `Đã xóa mềm sản phẩm: ${productDetail?.name} (Id: ${id})`);
     res.json({
       code: "success",
       message: "Xóa sản phẩm thành công!"
