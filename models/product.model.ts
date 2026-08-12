@@ -10,6 +10,7 @@ const schema = new mongoose.Schema(
     priceOld: Number,
     priceNew: Number,
     stock: Number,
+    tags: [String],
     attributes: Array,
     variants: Array,
     description: String,

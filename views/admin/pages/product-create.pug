@@ -114,5 +114,9 @@ block main
               .mb-3
                 label.form-label(for="content") Nội dung chi tiết
                 textarea(id="content" name="content" textarea-mce)
+            .col-md-12.col-lg-12
+              .mb-3
+                label.form-label Tags
+                select(select-tags name="tags") 
           button.btn.btn-primary(type="submit") Tạo mới
           a.btn.btn-danger.ms-1(href=`/${pathAdmin}/product/list`) Hủy

@@ -305,6 +305,7 @@ export const createProductPost = async (req: Request, res: Response) => {
     req.body.attributes = JSON.parse(req.body.attributes);
 
     req.body.variants = JSON.parse(req.body.variants);
+    req.body.tags = JSON.parse(req.body.tags);
 
     
     if(req.body.priceOld) {

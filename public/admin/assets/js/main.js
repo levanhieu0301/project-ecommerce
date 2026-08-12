@@ -1229,6 +1229,12 @@ if(productCreateForm) {
       const priceNew = event.target.priceNew.value
       const stock = event.target.stock.value
       const attributes = getCheckboxList("attributes");
+
+      // Tags
+      const selectElement = document.querySelector(`select[name="tags"]`)
+      const tags = Array.from(selectElement.selectedOptions).map(option => option.value);
+      // end Tags
+
       //  mình muốn lưu variant : {
       //   status: true hay false
       //   listVariantTR: màu đỏ , size s
@@ -1282,6 +1288,7 @@ if(productCreateForm) {
       formData.append("images", JSON.stringify(images));
       formData.append("attributes", JSON.stringify(attributes));
       formData.append("variants", JSON.stringify(variants));
+      formData.append("tags", JSON.stringify(tags));
       
       fetch(`/${pathAdmin}/product/create`, {
         method: "POST",
@@ -1582,3 +1589,20 @@ if(btnCreateVariant){
   })
 }
 //end Tạo biến thể
+
+//Tags
+const selectTag = document.querySelector("[select-tags]")
+if(selectTag){
+  new Selectr('[select-tags]', {
+    taggable: true
+  });
+
+  // Ngăn chặn hành vi submit 
+  const inputTags = document.querySelector(".selectr-tag-input")
+  inputTags.addEventListener("keydown", (event) => {
+    if(event.key == "Enter"){
+      event.preventDefault()
+    }
+  })
+}
+//End Tags
