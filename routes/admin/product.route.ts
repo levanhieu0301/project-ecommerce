@@ -42,6 +42,8 @@ router.patch(
   productController.editPatch
 );
 
+router.patch('/delete/:id', productController.deletePatch);
+
 // Thuộc tính
 router.get('/attribute', productController.attributeProduct);
 router.get('/attribute/create', productController.attributeCreateProduct);
