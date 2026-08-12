@@ -32,7 +32,7 @@ router.post(
   productValidate.createProductPost, 
   productController.createProductPost
 );
-
+router.get('/list', productController.listProduct)
 // Thuộc tính
 router.get('/attribute', productController.attributeProduct);
 router.get('/attribute/create', productController.attributeCreateProduct);
