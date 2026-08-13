@@ -87,9 +87,9 @@ block main
                         i.las.la-pen.text-secondary.fs-20
                       a(
                         href="javascript:;"
-                        button-api
-                        data-method="PATCH"
-                        data-api=`/${pathAdmin}/coupon/delete/${item.id}`
+                         btn-deleted
+                        method="PATCH"
+                        api=`/${pathAdmin}/coupon/delete/${item.id}`
                       )
                         i.las.la-trash-alt.text-secondary.fs-20
           +pagination()
