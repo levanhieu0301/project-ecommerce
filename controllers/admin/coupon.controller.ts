@@ -3,6 +3,7 @@ import Coupon from '../../models/coupon.model';
 import moment from 'moment';
 import slugify from 'slugify';
 import { pathAdmin } from '../../configs/variable.config';
+import { logAdminAction } from '../../helpers/log-admin.helper';
 
 export const create = async (req: Request, res: Response) => {
   res.render("admin/pages/coupon-create", {
@@ -39,7 +40,7 @@ export const createPost = async (req: Request, res: Response) => {
 
     const newRecord = new Coupon(req.body);
     await newRecord.save();
-
+    logAdminAction(req, `Đã xóa tạo mã giảm giá:${req.body.code}  (ID: ${newRecord.id})`)
     res.json({
       code: "success",
       message: "Đã tạo mã giảm giá!"
@@ -189,7 +190,7 @@ export const editPatch = async (req: Request, res: Response) => {
       _id: id,
       deleted: false
     }, req.body);
-
+    logAdminAction(req, `Đã sửa mã giảm giá:${req.body.code}  (ID: ${id})`)
     res.json({
       code: "success",
       message: "Cập nhật thành công!"
@@ -205,6 +206,9 @@ export const editPatch = async (req: Request, res: Response) => {
 export const deletePatch = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
+    const couponDetail = await Coupon.findOne({
+      _id: id
+    }) 
 
     await Coupon.updateOne({
       _id: id
@@ -212,7 +216,7 @@ export const deletePatch = async (req: Request, res: Response) => {
       deleted: true,
       deletedAt: Date.now(),
     });
-
+    logAdminAction(req, `Đã xóa mềm mã giảm giá:${couponDetail?.code}  (ID: ${id})`)
     res.json({
       code: "success",
       message: "Xóa mã giảm giá thành công!"
@@ -294,7 +298,7 @@ export const undo = async (req: Request, res: Response) => {
     }, {
       deleted: false,
     });
-
+    logAdminAction(req, `Đã khôi phục mã giảm giá:${couponDetail?.code}  (ID: ${id})`)
     res.json({
       code: "success",
       message: "Khôi phục mã thành công!"
@@ -310,18 +314,19 @@ export const undo = async (req: Request, res: Response) => {
 
 export const destroy = async (req: Request, res: Response) => {
   try {
-      const id = req.params.id;
+    const id = req.params.id;
     const couponDetail = await Coupon.findOne({
       _id: id
     })
-      await Coupon.deleteOne({
-        _id: id
-      });
-      
-      res.json({
-        code: "success",
-        message: "Xóa xĩnh viễn mã giảm giá thành công!"
-      })
+    logAdminAction(req, `Đã xóa vinh viễn mã giảm giá:${couponDetail?.code}  (ID: ${id})`)
+    await Coupon.deleteOne({
+      _id: id
+    });
+    
+    res.json({
+      code: "success",
+      message: "Xóa xĩnh viễn mã giảm giá thành công!"
+    })
     } catch (error) {
       console.log(error);
       res.json({
