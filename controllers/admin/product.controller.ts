@@ -6,8 +6,7 @@ import { pathAdmin } from "../../configs/variable.config"
 import { logAdminAction } from "../../helpers/log-admin.helper"
 import Product from "../../models/product.model"
 import AttributeProduct from "../../models/attribute-product.model"
-import { listenerCount } from "events"
-import { array } from "joi"
+import { Parser } from 'json2csv';
 
 // Danh mục sản phẩm
 export const categoryProduct = async (req: Request, res: Response) => {
@@ -905,4 +904,19 @@ export const destroyAttribute = async (req: Request, res: Response) => {
     })
   }
 }
+// Csv
 
+export const exportCSV = async (req: Request, res: Response) => {
+  const listProduct = await Product.find().lean();
+
+  const parser = new Parser({
+    delimiter: ";"
+  });
+
+  let csv = parser.parse(listProduct);
+  csv = "\ufeff" + csv;
+
+  res.attachment("product.csv");
+  res.header("Content-Type", "text/csv; charset=utf-8");
+  res.send(csv);
+};
