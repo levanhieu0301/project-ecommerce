@@ -116,6 +116,30 @@ export const permissionList = [
     name: "Thùng rác thuộc tính sản phẩm"
   },
   {
+    id: "coupon",
+    name: "MÃ GIẢM GIÁ"
+  },
+  {
+    id: "coupon-list",
+    name: "Danh sách mã giảm giá"
+  },
+  {
+    id: "coupon-create",
+    name: "Tạo mã giảm giá"
+  },
+  {
+    id: "coupon-edit",
+    name: "Sửa mã giảm giá"
+  },
+  {
+    id: "coupon-delete",
+    name: "Xóa mã giảm giá"
+  },
+  {
+    id: "coupon-trash",
+    name: "Thùng rác mã giảm giá"
+  },
+  {
     id: "role",
     name: "NHÓM QUYỀN"
   },

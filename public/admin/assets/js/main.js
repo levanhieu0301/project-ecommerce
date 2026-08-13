@@ -1772,3 +1772,78 @@ if(formImportExcel) {
   ;
 }
 // end import CSV
+
+// date-range
+const dateRange = document.querySelector("[date-range]");
+if(dateRange) {
+  new DateRangePicker(dateRange, {
+    format: 'dd/mm/yyyy'
+  });
+}
+// End date-range
+// Coupon Create Form
+const couponCreateForm = document.querySelector("#couponCreateForm");
+if(couponCreateForm) {
+  const validation = new JustValidate('#couponCreateForm');
+
+  validation
+    .addField('#code', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập mã giảm giá!'
+      }
+    ])
+    .addField('#name', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập tên mã giảm giá!'
+      }
+    ])
+    .onSuccess((event) => {
+      const code = event.target.code.value;
+      const name = event.target.name.value;
+      const typeDiscount = event.target.typeDiscount.value;
+      const value = event.target.value.value;
+      const minOrderValue = event.target.minOrderValue.value;
+      const maxDiscountValue = event.target.maxDiscountValue.value;
+      const usageLimit = event.target.usageLimit.value;
+      const typeDisplay = event.target.typeDisplay.value;
+      const status = event.target.status.value;
+      const startDate = event.target.startDate.value;
+      const endDate = event.target.endDate.value;
+      const description = tinymce.get("description").getContent();
+
+      // Tạo FormData
+      const formData = new FormData();
+      formData.append("code", code);
+      formData.append("name", name);
+      formData.append("typeDiscount", typeDiscount);
+      formData.append("value", value);
+      formData.append("minOrderValue", minOrderValue);
+      formData.append("maxDiscountValue", maxDiscountValue);
+      formData.append("usageLimit", usageLimit);
+      formData.append("typeDisplay", typeDisplay);
+      formData.append("status", status);
+      formData.append("startDate", startDate);
+      formData.append("endDate", endDate);
+      formData.append("description", description);
+      
+      fetch(`/${pathAdmin}/coupon/create`, {
+        method: "POST",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            drawNotify(data.code, data.message);
+            location.reload();
+          }
+        })
+    })
+  ;
+}
+// End Coupon Create Form

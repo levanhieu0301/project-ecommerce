@@ -83,6 +83,27 @@
                     li.nav-item
                       a.nav-link(href=`/${pathAdmin}/product/attribute`) Thuộc tính sản phẩm
                   // end nav-item
+          if (permissionList.includes("coupon"))
+            li.nav-item
+              a.nav-link(
+                aria-controls="sidebarCoupon" 
+                aria-expanded="false" 
+                role="button" 
+                data-bs-toggle="collapse" 
+                href="#sidebarCoupon"
+                )
+                i.iconoir-percentage-circle.menu-icon
+                span Mã giảm giá
+              #sidebarCoupon.collapse
+                ul.nav.flex-column
+                  if (permissionList.includes("coupon-create"))
+                    li.nav-item
+                      a.nav-link(href=`/${pathAdmin}/coupon/create`) Tạo mã giảm giá
+                    // end nav-item
+                  if (permissionList.includes("coupon-list"))
+                    li.nav-item
+                      a.nav-link(href=`/${pathAdmin}/coupon/list`) Danh sách mã giảm giá
+                    // end nav-item
           if (permissionList.includes("file-manager"))
             li.nav-item
               a.nav-link(
