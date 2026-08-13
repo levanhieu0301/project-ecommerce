@@ -29,6 +29,8 @@ router.patch(
   '/delete/:id', 
   couponController.deletePatch
 );
-
+router.get('/trash', couponController.trash)
+router.patch('/undo/:id', couponController.undo)
+router.delete('/destroy/:id', couponController.destroy)
 
 export default router;
