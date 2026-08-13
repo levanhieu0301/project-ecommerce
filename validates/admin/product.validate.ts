@@ -98,3 +98,31 @@ export const createAttributePost = (req: Request, res: Response, next: NextFunct
 
   next();
 }
+export const importCSVPost = (req: Request, res: Response, next: NextFunction) => {
+  const schema = Joi.object({
+    mimetype: Joi.string()
+      .valid("text/csv")
+      .required()
+      .messages({
+        "string.empty": "Vui lòng upload file CSV!",
+        "any.only": "Chỉ chấp nhận file CSV!"
+      }),
+  });
+
+  const { error } = schema.validate({
+    mimetype: req.file?.mimetype
+  });
+
+  if(error) {
+    const errorMessage = error.details[0].message;
+
+    res.json({
+      code: "error",
+      message: errorMessage
+    });
+    return;
+  }
+
+  next();
+}
+

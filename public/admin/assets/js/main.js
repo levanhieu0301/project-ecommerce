@@ -1720,3 +1720,55 @@ if(productEditForm) {
   ;
 }
 // End Product Create Form
+
+// import CSV
+const formImportExcel = document.querySelector("#formImportExcel");
+if(formImportExcel) {
+  const validation = new JustValidate('#formImportExcel');
+
+  validation
+    .addField('#file', [
+      {
+        rule: 'minFilesCount',
+        value: 1,
+        errorMessage: "Vui lòng chọn file CSV",
+      },
+      {
+        rule: "files",
+        value: {
+          files: {
+            extensions: ['csv'],
+            types: ['text/csv'],
+          },
+        },
+        errorMessage: "Vui lòng chọn đúng loại file CSV",
+      },
+    ])
+    .onSuccess((event) => {
+      const inputFile = document.querySelector("#file")
+      const file = inputFile.files[0];
+      const api = formImportExcel.getAttribute("data-api")
+
+
+      // Tạo FormData
+      const formData = new FormData();
+      formData.append("file", file)
+      fetch(api, {
+        method: "POST",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            drawNotify(data.code, data.message);
+            location.reload();
+          }
+        })
+    })
+  ;
+}
+// end import CSV

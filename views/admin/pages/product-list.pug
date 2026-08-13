@@ -42,6 +42,19 @@ block main
                 a.btn.w-100.btn-info(href=`/${pathAdmin}/product/export/csv`)
                   i.fa-solid.fa-download.me-1
                   | Xuất Excel
+              .col-lg-4
+                form.input-group.mb-3(
+                  id="formImportExcel"
+                  data-api=`/${pathAdmin}/product/import/csv`
+                )
+                  input(
+                    class="form-control" 
+                    type="file" 
+                    name="file" 
+                    id="file"
+                    accept=".csv"
+                  )
+                  button.btn.btn-secondary Nhúng Excel
             .table-responsive
               table.table.table-striped.mb-0
                 thead.table-light
