@@ -3,6 +3,7 @@ import { Router } from "express";
 import * as couponController from "../../controllers/admin/coupon.controller";
 import multer from "multer";
 import * as couponValidate from "../../validates/admin/coupon.validate";
+import { checkPermissions } from "../../middlewares/admin/account.middleware";
 
 const router = Router();
 
@@ -13,6 +14,7 @@ router.get('/create', couponController.create);
 router.post(
   '/create', 
   upload.none(), 
+  checkPermissions("coupon-create"),
   couponValidate.createPost,
   couponController.createPost
 );
@@ -22,6 +24,7 @@ router.get('/edit/:id', couponController.edit);
 router.patch(
   '/edit/:id', 
   upload.none(), 
+  checkPermissions("coupon-edit"),
   couponValidate.createPost,
   couponController.editPatch
 );
