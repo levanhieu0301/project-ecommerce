@@ -16,7 +16,8 @@ export const category = async (req: Request, res: Response, next: NextFunction) 
 
   // Danh sách danh mục bài viết
   const categoryArticleList = await CategoryBlog.find({
-    deleted: false
+    deleted: false,
+    status: "active"
   });
   const categoryArticleTree = treeCategory(categoryArticleList);
   res.locals.categoryArticleList = categoryArticleTree;
