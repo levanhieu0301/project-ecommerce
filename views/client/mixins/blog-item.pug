@@ -1,38 +1,39 @@
-mixin blog-item()
+mixin blog-item(blog)
   div(class="blog_item")
     a(
       class="blog_img" 
-      href="blog_details.html"
+      href=`/article/detail/${blog.slug}`
       )
       img.img-fluid.w-100(
         alt="blog" 
-        src="/client/assets/images/blog_img_12.png"
+        src= `${domainCDN}${blog.avatar}`
         )
     div(class="blog_text")
       ul.top
-        li
-          span
-            img.img-fluid.w-100(
-              alt="user" 
-              src="/client/assets/images/user_icon_black.svg"
-              )
-          | Jhon Deo
-        li
-          span
-            img.img-fluid.w-100(
-              alt="Message" 
-              src="/client/assets/images/calender.png"
-              )
-          | 24 Apr 2025
+        if (blog.authorName)
+          li
+            span
+              img.img-fluid.w-100(
+                alt="user" 
+                src="/client/assets/images/user_icon_black.svg"
+                )
+            | #{blog.authorName}
+        if (blog.date)
+          li
+            span
+              img.img-fluid.w-100(
+                alt="Message" 
+                src="/client/assets/images/calender.png"
+                )
+            | #{blog.date}
       a.title(href="blog_details.html")
-        | How To Choose The Right Sofa for your
-        |   home
+        | #{blog.name}
       ul.bottom
         li
           a(href="blog_details.html")
-            | read more
+            | Đọc thêm
             i.fas.fa-long-arrow-right
         li
           span
             i.far.fa-comment-dots
-            | 15 Comments
+            | 0 Bình luận

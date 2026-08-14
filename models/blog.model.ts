@@ -24,7 +24,10 @@ const schema = new mongoose.Schema(
       default: false,
       type: Boolean
     },
-    deletedAt: Date
+    deletedAt: Date,
+    createdBy: String,
+    updatedBy: String,
+
 
   },
   {

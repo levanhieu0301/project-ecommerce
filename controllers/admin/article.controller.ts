@@ -5,6 +5,7 @@ import slugify from "slugify"
 import { pathAdmin } from "../../configs/variable.config"
 import Blog from "../../models/blog.model"
 import { logAdminAction } from "../../helpers/log-admin.helper"
+import { RequestAccount } from "../../interfaces/request-account.interface"
 
 export const category = async (req: Request, res: Response) => {
   const find : {
@@ -321,7 +322,7 @@ export const articleCreate = async (req: Request, res: Response) => {
     categoryList: categoryTree
   })
 }
-export const articleCreatePost = async (req: Request, res: Response) => {
+export const articleCreatePost = async (req: RequestAccount, res: Response) => {
   try {
     const existSlug = await Blog.findOne({
       slug: req.body.slug
@@ -344,7 +345,8 @@ export const articleCreatePost = async (req: Request, res: Response) => {
 
     if(req.body.status == "published") {
       req.body.publishAt = new Date();
-    }
+    }    
+    req.body.createdBy = req.adminId;
 
     const newRecord = new Blog(req.body);
     await newRecord.save();
@@ -388,7 +390,7 @@ export const articleEdit = async (req: Request, res: Response) => {
     res.redirect(`/${pathAdmin}/article/list`);
   }
 }
-export const articleEditPatch = async (req: Request, res: Response) => {
+export const articleEditPatch = async (req: RequestAccount, res: Response) => {
   try {
     const id = req.params.id;
 
@@ -428,6 +430,7 @@ export const articleEditPatch = async (req: Request, res: Response) => {
     if(req.body.status == "published") {
       req.body.publishAt = new Date();
     }
+     req.body.updatedBy = req.adminId;
 
     await Blog.updateOne({
       _id: id,
