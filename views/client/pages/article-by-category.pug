@@ -1,5 +1,38 @@
-extends ../layouts/default.pug 
+extends ../layouts/default.pug
+include ../mixins/blog-item.pug
 
-
-block main 
-  h2 #{pageTitle}
+block main
+  //
+    =========================
+    PAGE BANNER START
+    ==========================
+  include ../partials/page-banner.pug
+  //
+    =========================
+    PAGE BANNER START
+    ==========================
+  //
+    ============================
+    BLOG RIGHT SIDEBAR START
+    =============================
+  section(class="blog_right_sidebar blog_2 mt_75 mb_100")
+    .container
+      .row
+        .col-xl-9.col-lg-8
+          .row
+            .col-xl-4.col-md-6.wow.fadeInUp
+              +blog-item()
+            .col-xl-4.col-md-6.wow.fadeInUp
+              +blog-item()
+            .col-xl-4.col-md-6.wow.fadeInUp
+              +blog-item()
+            .col-xl-4.col-md-6.wow.fadeInUp
+              +blog-item()
+          .row
+            include ../partials/pagination-area.pug
+        .col-xl-3.col-lg-4.col-md-8
+          include ../partials/sticky-sidebar-blog.pug
+  //
+    ============================
+    BLOG RIGHT SIDEBAR START
+    =============================
