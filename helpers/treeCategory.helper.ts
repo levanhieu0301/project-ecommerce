@@ -7,7 +7,9 @@ export const treeCategory = (listCategory :any, parentId: string = "") => {
     return ({
       id: category.id,
       name: category.name,
-      children: childCategory
+      slug: category.slug,
+      avatar: category.avatar,
+      children: childCategory,
     })
   })
   return tree;

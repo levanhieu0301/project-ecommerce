@@ -1,0 +1,54 @@
+mixin menu-cart-item(listCategoryProduct, level = 0) 
+  - 
+    var ulClass = "";
+    if (level == 0) ulClass = "menu_cat_item"
+    else if (level == 1) ulClass ="menu_cat_droapdown"
+    else ulClass = "sub_category"
+  ul(class=ulClass)
+    each item in listCategoryProduct
+      li
+        a(href=`/product/category/${item.slug}`)
+          if (level == 0 && item.avatar)
+            span
+              img(
+                alt="category" 
+                src=`${domainCDN}${item.avatar}`
+                )
+          | #{item.name}
+          if (level > 0 && item.children && item.children.length > 0)
+            i.fal.fa-angle-right
+        if (item.children && item.children.length > 0)
+          +menu-cart-item(item.children, level + 1) 
+    if (level == 0)
+      li(class="all_category")
+        a(href="category.html")
+          | Xem tất cả
+          i.far.fa-arrow-right
+    // Cách bình thường 
+//- mixin menu-cart-item(listCategoryProduct) 
+//-   ul(class="menu_cat_item")
+//-     each item in listCategoryProduct
+//-       li
+//-         a(href=`/product/category/${item.slug}`)
+//-           span
+//-             img(
+//-               alt="category" 
+//-               src=`${domainCDN}${item.avatar}`
+//-               )
+//-           | #{item.name}
+//-         if (item.children && item.children.length > 0)
+//-           ul(class="menu_cat_droapdown")
+//-             each itemChild in item.children
+//-               li
+//-                 a(href=`/product/category/${itemChild.slug}`)
+//-                   | #{itemChild.name}
+//-                   i.fal.fa-angle-right
+//-                 if (itemChild.children && itemChild.children.length > 0)
+//-                   ul(class="sub_category")
+//-                     each children in itemChild.children
+//-                       li
+//-                         a(href=`/product/category/${children.slug}`) #{children.name}
+//-     li(class="all_category")
+//-       a(href="category.html")
+//-         | Xem tất cả
+//-         i.far.fa-arrow-right
