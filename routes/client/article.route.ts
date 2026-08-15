@@ -6,4 +6,12 @@ import { getPopularBlog, getPopularCategoryBlog } from "../../middlewares/client
 
 router.get('/category/:slug',getPopularBlog,getPopularCategoryBlog, articleController.articleByCategory)
 
+router.get(
+  '/detail/:slug', 
+  getPopularBlog,
+  getPopularCategoryBlog,
+  articleController.detail
+);
+
+
 export default router;

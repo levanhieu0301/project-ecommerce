@@ -75,3 +75,20 @@ export const articleByCategory = async (req: Request, res: Response) => {
     pagination: pagination
   })
 }
+export const detail = async (req: Request, res: Response) => {
+  const articleDetail = await Blog.findOne({
+    slug: req.params.slug,
+    deleted: false,
+    status: "published"
+  })
+
+  if(!articleDetail) {
+    res.redirect("/");
+    return;
+  }
+
+  res.render("client/pages/article-detail", {
+    pageTitle: articleDetail.name,
+    articleDetail: articleDetail,
+  });
+}

@@ -1,12 +1,13 @@
 extends ../layouts/default.pug
 include ../mixins/blog-item.pug
+include ../mixins/page-banner.pug
 
 block main
   //
     =========================
     PAGE BANNER START
     ==========================
-  include ../partials/page-banner.pug
+  +page-banner(categoryDetail, `/article/category/${categoryDetail.slug}`)
   //
     =========================
     PAGE BANNER START
