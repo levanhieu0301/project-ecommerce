@@ -15,3 +15,16 @@ if(listButton){
   })
 }
 // End pagination
+
+// chia sẻ
+const share = document.querySelectorAll("[button-share]")
+if(share){
+  share.forEach(item => {
+    item.href = item.href + window.location.href
+    // item.href = item.href + "https://28tech.com.vn/lap-trinh-backend-nodejs-middle";
+    // lấy đường link người ta cấp + link website : `https://www.facebook.com/sharer/sharer.php?u=linkWebsite`
+  })
+}
+// chia sẻ
+
+
