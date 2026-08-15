@@ -27,28 +27,13 @@ div(id="sticky_sidebar")
             a.title.w-100(href=`/article/detail/${item.slug}`)
               |  #{item.name}
     div(class="blog_details_right_header")
-      h3 Property Categories
+      h3 Danh Mục Phổ Biến
       ul(class="sidebar_blog_category")
-        li
-          a(href="#")
-            p Make up
-            span (07)
-        li
-          a(href="#")
-            p Skin care
-            span (14)
-        li
-          a(href="#")
-            p Fashion and beauty
-            span (34)
-        li
-          a(href="#")
-            p Cosnetics
-            span (05)
-        li
-          a(href="#")
-            p Body care
-            span (18)
+        each item in popularCategoryList
+          li
+            a(href=`/article/category/${item.slug}`)
+              p #{item.name}
+              span (#{item.totalRecord})
     div(class="blog_details_right_header")
       h3 Popular Tags
       ul.d-flex.flex-wrap(class="blog_details_tag")

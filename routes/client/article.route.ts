@@ -1,9 +1,9 @@
 import { Router } from "express";
 const router = Router();
 import * as articleController from "../../controllers/client/article.controller"
-import { getPopularBlog } from "../../middlewares/client/article.middleware";
+import { getPopularBlog, getPopularCategoryBlog } from "../../middlewares/client/article.middleware";
 
 
-router.get('/category/:slug',getPopularBlog, articleController.articleByCategory)
+router.get('/category/:slug',getPopularBlog,getPopularCategoryBlog, articleController.articleByCategory)
 
 export default router;
