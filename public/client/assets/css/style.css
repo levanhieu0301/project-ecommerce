@@ -41,6 +41,7 @@ CSS INDEX
 ===========================*/
 @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&amp;family=Oregano:ital@0;1&amp;family=Roboto:ital,wght@0,100..900;1,100..900&amp;display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Libertinus+Sans:ital,wght@0,400;0,700;1,400&display=swap');
 * {
     margin: 0;
     padding: 0;
@@ -142,7 +143,7 @@ button {
     --colorWhite: #ffffff;
     --lightBg: #edf5ff;
     --lightBg2: #F5F5F5;
-    --headingFont: "Jost", serif;
+    --headingFont: "Libertinus Sans", sans-serif;
     --bodyFont: "Roboto", serif;
     --cursiveFont: "Oregano", serif;
     --ratingColor: #F9A61C;

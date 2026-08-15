@@ -8,61 +8,24 @@ div(id="sticky_sidebar")
       button(type="submit")
         i.far.fa-search(aria-hidden="true")
     div(class="blog_details_right_header sidebar_blog")
-      h3 Popular Blog
-      .d-flex.flex-wrap(class="popular_blog")
-        div(class="popular_blog_img")
-          img.img-fluid.w-100(
-            alt="img" 
-            src="/client/assets/images/blog_img_1.png"
-            )
-        div(class="popular_blog_text")
-          p
-            span
-              img.img-fluid.w-100(
-                alt="icon" 
-                src="/client/assets/images/calender.png"
-                )
-            | March 23, 2024
-          a.title(href="blog_details.html")
-            | The Best Delicious Coffee Shop In
-            |   Bangkok
-            |   China.
-      .d-flex.flex-wrap(class="popular_blog")
-        div(class="popular_blog_img")
-          img.img-fluid.w-100(
-            alt="img" 
-            src="/client/assets/images/blog_img_2.png"
-            )
-        div(class="popular_blog_text")
-          p
-            span
-              img.img-fluid.w-100(
-                alt="icon" 
-                src="/client/assets/images/calender.png"
-                )
-            | March 24, 2024
-          a.title(href="blog_details.html")
-            | Luxury top-floor properties
-            |   available for
-            |   purchase.
-      .d-flex.flex-wrap(class="popular_blog")
-        div(class="popular_blog_img")
-          img.img-fluid.w-100(
-            alt="img" 
-            src="/client/assets/images/blog_img_3.png"
-            )
-        div(class="popular_blog_text")
-          p
-            span
-              img.img-fluid.w-100(
-                alt="icon" 
-                src="/client/assets/images/calender.png"
-                )
-            | March 25, 2024
-          a.title(href="blog_details.html")
-            | Skills that you can learn the
-            |   Real Estate
-            |   Market.
+      h3 Bài Viết Phổ Biến
+      each item in popularBlogList
+        .d-flex.flex-wrap(class="popular_blog")
+          div(class="popular_blog_img")
+            img.img-fluid.w-100(
+              alt="img" 
+              src=`${domainCDN}${item.avatar}`
+              )
+          div(class="popular_blog_text")
+            p
+              span
+                img.img-fluid.w-100(
+                  alt="icon" 
+                  src="/client/assets/images/calender.png"
+                  )
+              | #{item.createdAtFormat}
+            a.title.w-100(href=`/article/detail/${item.slug}`)
+              |  #{item.name}
     div(class="blog_details_right_header")
       h3 Property Categories
       ul(class="sidebar_blog_category")
