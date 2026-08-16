@@ -1,15 +1,16 @@
-mixin product-item-2()
+mixin product-item-2(item)
   div(class="product_item_2 product_item")
     div(class="product_img")
       img.img-fluid.w-100(
-        alt="Product" 
-        src="/client/assets/images/product_11.png"
+        alt=item.name
+        src=`${domainCDN}${item.images[0]}`
         )
       ul(class="discount_list")
-        li.new new
-        li.discount
-          b -
-          | 75%
+        //- li.new new
+        if (item.discount > 0)
+          li.discount
+            b -
+            | #{item.discount}%
       ul(class="btn_list")
         li
           a(href="#")
@@ -30,19 +31,21 @@ mixin product-item-2()
               src="/client/assets/images/cart_icon_white.svg"
               )
     div(class="product_text")
-      a.title(href="shop_details.html") Kid's Western Party Dress
+      a.title(href=`/product/detail/${item.slug}`) #{item.name}
       p.price
-        | $75.00
-        del $69.00
+        if (item.priceNew)
+          | #{item.priceNew.toLocaleString("vi-VN")}đ
+        if (item.priceOld)
+        del #{item.priceOld.toLocaleString("vi-VN")}đ
       p.rating
         i.fas.fa-star
         i.fas.fa-star
         i.fas.fa-star
         i.fas.fa-star-half-alt
         i.far.fa-star
-        span (58 reviews)
-      ul.color
-        li.active(style="background:#DB4437")
-        li(style="background:#638C34")
-        li(style="background:#1C58F2")
-        li(style="background:#ffa500")
+        span (0 Đánh giá)
+      if ( item.listColor.length > 0)
+        ul.color
+          each color in item.listColor
+            li(style=`background:${color}`)
+

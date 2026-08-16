@@ -34,8 +34,9 @@ block main
               role="tabpanel"
               )
               .row
-                .col-xxl-3.col-6.col-md-4.col-lg-6.col-xl-4.wow.fadeInUp
-                  +product-item-2()
+                each item in listProductByCategory
+                  .col-xxl-3.col-6.col-md-4.col-lg-6.col-xl-4.wow.fadeInUp
+                    +product-item-2(item)
               .row
                 div(class="pagination_area")
                   nav(aria-label="...")
@@ -58,8 +59,9 @@ block main
               role="tabpanel"
               )
               .row
-                .col-6.col-xxl-10.col-sm-12
-                  +product-list-item()
+                each item in listProductByCategory
+                  .col-6.col-xxl-10.col-sm-12
+                    +product-list-item(item)
               .row
                 div(class="pagination_area")
                   nav(aria-label="...")

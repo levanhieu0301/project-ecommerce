@@ -1516,7 +1516,7 @@ const formatAttribute = (listAttribute) => {
   const listOptions = listAttribute.map(attribute => 
     attribute.options.map(option =>  ({
         attriId: attribute._id,
-        attriTpye: attribute.type,
+        attriType: attribute.type,
         label: option.label,
         value: option.value
       })
@@ -1608,7 +1608,7 @@ if(selectTag){
 //End Tags
 
 
-// Product Create Form
+// Product edit Form
 const productEditForm = document.querySelector("#productEditForm");
 if(productEditForm) {
   const validation = new JustValidate('#productEditForm');
@@ -1653,7 +1653,7 @@ if(productEditForm) {
       //   giá cũ:
       // }
       const variants = []
-      const listTr = document.querySelectorAll("[table-variant] tbody tr")
+      const listTr = document.querySelectorAll("[table-variant] tbody tr") 
       listTr.forEach(tr => {
         const status = tr.querySelector("input.form-check-input").checked
         const attributeValue = JSON.parse(tr.querySelector("[attribute-value]").value);
@@ -1719,7 +1719,7 @@ if(productEditForm) {
     })
   ;
 }
-// End Product Create Form
+// End Product edit Form
 
 // import CSV
 const formImportExcel = document.querySelector("#formImportExcel");

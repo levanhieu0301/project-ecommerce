@@ -91,11 +91,11 @@ block main
                           each option in tr.attributeValue
                             td #{option.label}
                           td
-                            input.form-control(type="number" value = tr.priceOld)
+                            input.form-control(type="number" value = tr.priceOld price-old)
                           td
-                            input.form-control(type="number" value = tr.priceNew)
+                            input.form-control(type="number" value = tr.priceNew price-new)
                           td
-                            input.form-control(type="number" value = tr.stock)
+                            input.form-control(type="number" value = tr.stock stock)
             .col-md-12.col-lg-12
               .mb-3
                 label.form-label Danh sách ảnh
