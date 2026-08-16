@@ -56,6 +56,28 @@ $(function () {
 
     //======NICE SELECT=======
     $('.select_js').niceSelect();
+    const selectJsLimit = document.querySelector("[select-js]") 
+    if(selectJsLimit){
+        const url = new URL(window.location.href)
+        selectJsLimit.addEventListener("click", (event) => {
+            if(event.target.classList.contains("option")){
+                const value = event.target.getAttribute("data-value")
+                if (value){
+                    url.searchParams.set("limitItems", value)
+                }else {
+                    url.searchParams.delete("limitItems")
+                }
+                window.location.href = url.href
+            }
+            
+        })
+        // Hiển thị mặc đinh
+        const currentValue = url.searchParams.get("limitItems")
+        if (currentValue){
+            selectJsLimit.querySelector(".show").value = currentValue;
+            $('.show.select_js').niceSelect('update');
+        }
+    }
 
 
     //=====WOW JS====== 

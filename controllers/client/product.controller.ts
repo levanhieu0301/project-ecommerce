@@ -13,12 +13,39 @@ export const category =async (req: Request, res: Response) => {
   if(!categoryDetail){
     res.redirect("/")
   }
-  const listProductByCategory: any = await Product
-    .find({
+  const find: any = {
       category: categoryDetail.id,
       status: "active",
       deleted: false
-    })
+    }
+    // Phân trang
+    let limitItems = 20;
+    if(req.query.limitItems) {
+      const currentlimitItems = parseInt(`${req.query.limitItems}`);
+      if(currentlimitItems > 0) {
+        limitItems = currentlimitItems;
+      }
+    }
+    let page = 1;
+    if(req.query.page) {
+      const currentPage = parseInt(`${req.query.page}`);
+      if(currentPage > 0) {
+        page = currentPage;
+      }
+    }
+    const totalRecord = await Product.countDocuments(find);
+    const totalPage = Math.ceil(totalRecord/limitItems);
+    const skip = (page - 1) * limitItems;
+    const pagination = {
+      totalPage: totalPage,
+      currentPage: page
+    };
+    // Hết Phân trang
+
+  const listProductByCategory: any = await Product
+    .find(find)
+    .limit(limitItems)
+    .skip(skip)
     .sort({
         position: "desc"
     })
@@ -40,6 +67,7 @@ export const category =async (req: Request, res: Response) => {
   res.render("client/pages/product-by-category", {
     pageTitle: "Danh sách sản phẩm theo danh mục",
     categoryDetail: categoryDetail,
-    listProductByCategory: listProductByCategory
+    listProductByCategory: listProductByCategory,
+    pagination: pagination
   })
 }
