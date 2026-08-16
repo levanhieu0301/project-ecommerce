@@ -103,7 +103,22 @@ export const detail = async (req: Request, res: Response) => {
       articleDetail.date = moment(articleDetail.createdAt).format("DD/MM/YYYY");
     }
     }
-
+    const view = `view_${articleDetail.id}`
+    res.cookie(view, "true", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV == "production",
+      sameSite: "strict",
+      maxAge: 30 * 60 * 1000 // 30 phút
+    })
+    if (!req.cookies[view]){
+      await Blog.updateOne({
+        slug: req.params.slug,
+        deleted: false,
+        status: "published"
+      }, {
+        $inc: { view: 1 } // mỗi lần gọi tăng 1
+      })
+    }
 
   res.render("client/pages/article-detail", {
     pageTitle: articleDetail.name,
