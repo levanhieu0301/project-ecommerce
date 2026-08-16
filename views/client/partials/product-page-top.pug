@@ -1,0 +1,41 @@
+div(class="product_page_top")
+  .row
+    .col-4.col-xl-6.col-md-6
+      div(class="product_page_top_button")
+        nav
+          #nav-tab.nav.nav-tabs(role="tablist")
+            button#nav-home-tab.nav-link.active(
+              aria-selected="true" 
+              aria-controls="nav-home" 
+              role="tab" 
+              type="button" 
+              data-bs-target="#nav-home" 
+              data-bs-toggle="tab"
+              )
+              i.fas.fa-th
+            button#nav-profile-tab.nav-link(
+              aria-selected="false" 
+              aria-controls="nav-profile" 
+              role="tab" 
+              type="button" 
+              data-bs-target="#nav-profile" 
+              data-bs-toggle="tab"
+              )
+              i.fas.fa-list-ul
+        p Showing 1–14 of 26 results
+    .col-8.col-xl-6.col-md-6
+      ul(class="product_page_sorting")
+        li
+          select(class="select_js")
+            option Default Sorting
+            option Low to Hight
+            option High to Low
+            option New Added
+            option On Sale
+        li
+          select.show(class="select_js")
+            option Show: 12
+            option Show: 16
+            option Show: 20
+            option Show: 24
+            option Show: 26

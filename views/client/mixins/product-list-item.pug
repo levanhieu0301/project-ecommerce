@@ -1,0 +1,58 @@
+mixin product-list-item()
+  div(class="product_list_item product_item_2 product_item")
+    .row.align-items-center
+      .col-md-5.col-sm-6.col-xxl-4
+        div(class="product_img")
+          img.img-fluid.w-100(
+            alt="Product" 
+            src="/client/assets/images/product_17.png"
+            )
+          ul(class="discount_list")
+            li.new new
+            li.discount
+              b -
+              | 75%
+          ul(class="btn_list")
+            li
+              a(href="#")
+                img.img-fluid(
+                  alt="Compare" 
+                  src="/client/assets/images/compare_icon_white.svg"
+                  )
+            li
+              a(href="#")
+                img.img-fluid(
+                  alt="Love" 
+                  src="/client/assets/images/love_icon_white.svg"
+                  )
+      .col-md-7.col-sm-6.col-xxl-8
+        div(class="product_text")
+          a.title(href="shop_details.html")
+            | Denim Jeans Pants For
+            |   Men
+          p.rating
+            i.fas.fa-star
+            i.fas.fa-star
+            i.fas.fa-star
+            i.fas.fa-star
+            i.fas.fa-star
+            span (27 reviews)
+          p.price
+            | $50.00
+            del $60.00
+          ul.color
+            li.active(style="background:#DB4437")
+            li(style="background:#638C34")
+            li(style="background:#1C58F2")
+            li(style="background:#ffa500")
+          p(class="short_description")
+            | Lorem ipsum dolor sit amet consectetur,
+            |   adipisicing elit. Exercitationem inventore libero accusantium ex
+            |   ipsam, provident voluptas facere nemo, quas assumenda
+            |   reprehenderit nihil ratione quaerat ad.
+          a(
+            href="shop_details.html" 
+            class="common_btn"
+            )
+            | add to cart
+            i.fas.fa-long-arrow-right
