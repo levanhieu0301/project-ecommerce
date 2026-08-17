@@ -14,10 +14,10 @@ export const category =async (req: Request, res: Response) => {
     res.redirect("/")
   }
   const find: any = {
-      category: categoryDetail.id,
-      status: "active",
-      deleted: false
-    }
+    category: categoryDetail.id,
+    status: "active",
+    deleted: false
+  }
     // Phân trang
     let limitItems = 20;
     if(req.query.limitItems) {
@@ -38,17 +38,42 @@ export const category =async (req: Request, res: Response) => {
     const skip = (page - 1) * limitItems;
     const pagination = {
       totalPage: totalPage,
-      currentPage: page
-    };
+      currentPage: page,
+      totalRecord: totalRecord,
+      skip: skip
+  };
+
     // Hết Phân trang
+  let sort: any ={}
+  if(req.query.sort){
+     const [key, value] = `${req.query.sort}`.split("-")
+    switch (key) {
+      case "position":
+        sort.position = value
+        break;
+      case "price":
+        sort.priceNew = value
+        sort.position = value // thêm nếu cùng giá
+        break;
+      case "createdAt":
+        sort.createdAt = value
+        break;
+      case "discount":
+        sort.discount = value
+        break;
+      default:
+        sort.position = "desc";
+        break;
+    }
+  }else {
+    sort.position = "desc"
+  }
 
   const listProductByCategory: any = await Product
     .find(find)
     .limit(limitItems)
     .skip(skip)
-    .sort({
-        position: "desc"
-    })
+    .sort(sort)
     for(const category of listProductByCategory){
       category.discount = Math.floor(((category.priceOld - category.priceNew) / category.priceOld) * 100)
       // màu sắc

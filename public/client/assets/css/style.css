@@ -8068,10 +8068,10 @@ footer {
 .product_page_sorting h5 {
     font-size: 16px;
 }
-
+/* 
 .product_page_sorting .select_js.show {
     width: 130px;
-}
+} */
 
 .product_page_sorting .nice-select {
     width: 180px;

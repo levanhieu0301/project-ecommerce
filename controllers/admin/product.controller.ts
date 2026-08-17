@@ -315,8 +315,10 @@ export const createProductPost = async (req: Request, res: Response) => {
     }
     if(req.body.priceNew){
       req.body.priceNew = parseInt(req.body.priceNew)
+      req.body.discount = Math.floor(((req.body.priceOld - req.body.priceNew) / req.body.priceOld) * 100);
     }else {
       req.body.priceNew = parseInt(req.body.priceOld)
+      req.body.discount = 0;
     }
     
     if(req.body.stock) {
@@ -490,8 +492,10 @@ export const editPatch = async (req: Request, res: Response) => {
 
     if(req.body.priceNew) {
       req.body.priceNew = parseInt(req.body.priceNew);
+      req.body.discount = Math.floor(((req.body.priceOld - req.body.priceNew) / req.body.priceOld) * 100);
     } else {
       req.body.priceNew = req.body.priceOld;
+      req.body.discount = 0;
     }
 
     if(req.body.stock) {
