@@ -27,4 +27,27 @@ if(share){
 }
 // chia sẻ
 
+// Bộ lọc theo trạng thái sản phẩm
+const btnStatusProduct = document.querySelectorAll("[button-status]")
+if(btnStatusProduct.length > 0){
+  const url = new URL(window.location.href)
+  btnStatusProduct.forEach(btn => {
+    const name = btn.value
+    btn.addEventListener("change", (event) => {
+      const value = btn.checked; 
+      if (value){
+        url.searchParams.set(name, value)
+      }else {
+        url.searchParams.delete(name)
+      }
+      window.location.href = url.href
+    })
+    const valueCurrent = url.searchParams.get(name)
+    if(valueCurrent){
+      btn.checked = valueCurrent
+    }
+  })
+}
+// End Bộ lọc theo trạng thái sản phẩm
+
 

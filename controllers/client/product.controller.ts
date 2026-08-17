@@ -75,6 +75,22 @@ export const category =async (req: Request, res: Response) => {
       $lte: maxPrice
     }
   }
+   // Đang giảm giá
+  if(req.query.discount && req.query.discount == "true") {
+    find.discount = {
+      $gt: 0
+    }
+  }
+  // Hết Đang giảm giá
+
+  // Còn hàng
+  if(req.query.stock && req.query.stock == "true") {
+    find.stock = {
+      $gt: 0
+    }
+  }
+  // Hết Còn hàng
+
 
   const listProductByCategory: any = await Product
     .find(find)

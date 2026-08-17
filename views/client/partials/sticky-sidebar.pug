@@ -5,19 +5,21 @@ div(id="sticky_sidebar")
       h3 Mức giá
       div(class="range_slider")
     div(class="sidebar_status")
-      h3 Product Status
+      h3 Trạng thái sản phẩm
       .form-check
-        input#flexCheckDefault.form-check-input(
-          value="" 
+        input#filterOnSale.form-check-input(
+          button-status
+          value="discount" 
           type="checkbox"
           )
-        label.form-check-label(for="flexCheckDefault") On sale
+        label.form-check-label(for="filterOnSale") Đang giảm giá
       .form-check
-        input#flexCheckChecked.form-check-input(
-          value="" 
+        input#filterInStock.form-check-input(
+          button-status
+          value="stock" 
           type="checkbox"
           )
-        label.form-check-label(for="flexCheckChecked") In Stock
+        label.form-check-label(for="filterInStock") Còn hàng
     div(class="sidebar_category")
       h3 Categories
       ul
