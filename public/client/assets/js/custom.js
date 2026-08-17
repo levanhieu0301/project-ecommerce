@@ -721,19 +721,42 @@ $(function () {
 
 
     //=====RANGE SLIDER===== 
-    $('.basic').alRangeSlider();
-    const options = {
-        range: { min: 0, max: 1000, step: 1 },
-        initialSelectedValues: { from: 100, to: 500 },
-        grid: { minTicksStep: 1, marksStep: 5 },
-        theme: "dark",
-    };
+    $('.basic').alRangeSlider(); 
+    const rangeSlider = document.querySelector(".range_slider")
+    if (rangeSlider){
+        const url = new URL(window.location.href)
+        let initialSelectedValues = { from: 0, to: 2000000 } // Hiển thị mặc định
+        const getValueUrl = url.searchParams.get("price")
+        if (getValueUrl){
+            const [minValue, maxValue] = getValueUrl.split("-")
+            initialSelectedValues.from = minValue
+            initialSelectedValues.to = maxValue
+        }
+        const options = {
+            range: { min: 0, max: 5000000, step: 10000 },
+            initialSelectedValues: initialSelectedValues,// Hiển thị mặc định
+            prettify: (parameter) => {
+                return parseInt(parameter).toLocaleString("vi-VN") +"đ"
+            },
+            onFinish: (value) => {
+                const valueChange = value.selectedValues
+                const valueFormat = `${valueChange.from}-${valueChange.to}`
+                if (valueFormat){
+                    url.searchParams.set("price", valueFormat)
+                }else{
+                    url.searchParams.delete("price")
+                }
+                window.location.href = url.href
+            }
+         };
 
-    $('.range_slider').alRangeSlider(options);
-    const options2 = {
-        orientation: "vertical"
-    };
+        $('.range_slider').alRangeSlider(options);
+        const options2 = {
+            orientation: "vertical"
+        };
 
+
+    }
 
     //======PRODUCT FILTER====== 
     $(".shop_filter_btn").on("click", function () {

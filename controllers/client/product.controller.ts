@@ -68,6 +68,13 @@ export const category =async (req: Request, res: Response) => {
   }else {
     sort.position = "desc"
   }
+  if (req.query.price){
+    const [minPrice, maxPrice] = `${req.query.price}`.split("-").map(item => parseInt(item))
+    find.priceNew = {
+      $gte: minPrice,
+      $lte: maxPrice
+    }
+  }
 
   const listProductByCategory: any = await Product
     .find(find)
