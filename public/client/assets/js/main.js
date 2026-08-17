@@ -102,3 +102,34 @@ if (filterAttribute.length > 0){
   })
 }
 // End Lọc theo thuộc tính
+
+// Tìm kiếm ở trang chủ 
+const formSearch = document.querySelector("[form-search]")
+if(formSearch){
+  const url = new URL(window.location.href)
+  formSearch.addEventListener("submit", (event) => {
+    event.preventDefault()
+    const valueCategory = event.target.category.value
+    const valueKeyword = event.target.keyword.value
+    if(valueCategory){
+      url.pathname = `/product/category/${valueCategory}`;
+    }else {
+      url.pathname = `/product/category`
+    }
+    if(valueKeyword){
+      url.searchParams.set("keyword", valueKeyword)
+    }else {
+      url.searchParams.delete("keyword")
+    }
+    window.location.href =  url.href
+  })
+  const slug = url.pathname.split("/").pop()
+  const keyword = url.searchParams.get("keyword")
+  if (slug && slug != "category"){
+    formSearch.category.value = slug
+  }
+  if (keyword){
+    formSearch.keyword.value = keyword
+  }
+}
+// End Tìm kiếm ở trang chủ 

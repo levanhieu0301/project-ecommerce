@@ -24,17 +24,15 @@ header(class="header_2")
             span(class="mobile_menu_icon")
               i.far.fa-stream(class="menu_icon_bar")
       .col-xXl-6.col-xl-5.col-lg-5.d-none.d-lg-block
-        form(action="#")
-          select(class="select_2")
-            option All Categories
-            option Fashion
-            option Elentronics
-            option Fashion & Beauty
-            option Jewelry
-            option Grocery
+        form(form-search)
+          select(class="select_2" name="category")
+            option(value="") Tất cả danh mục
+            each item in listCategoryProduct
+              option(value=item.slug) #{item.name}
           .input
             input(
-              placeholder="Search your product..." 
+              placeholder="Tìm kiếm sản phẩm..." 
+              name="keyword"
               type="text"
               )
             button(type="submit")

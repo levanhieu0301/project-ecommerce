@@ -2,13 +2,23 @@ import  { Request, Response } from "express"
 import Product from "../../models/product.model"
 import CategoryProduct from "../../models/category-product.model"
 import { listProduct } from "../admin/product.controller"
-
+import slugify from "slugify"
 export const category =async (req: Request, res: Response) => {
-  const categoryDetail: any = await CategoryProduct.findOne({
-    slug: req.params.slug,
-    deleted: false,
-    status: "active"
-  })
+  const slug = req.params.slug
+  let categoryDetail : any = null;
+  if(slug){
+    categoryDetail = await CategoryProduct.findOne({
+      slug: slug,
+      deleted: false,
+      status: "active"
+    })
+  }else {
+    categoryDetail = {
+      id: "",
+      name : "Tất cả sản phẩm",
+      slug: ""
+    }
+  }
 
   if(!categoryDetail){
     res.redirect("/")
@@ -20,7 +30,7 @@ export const category =async (req: Request, res: Response) => {
     // $or: any // những trường khác, tiêu chí khác
   // }
   const find: any = {
-    category: categoryDetail.id,
+    // category: categoryDetail.id,
     status: "active",
     deleted: false, 
     // $or: [
@@ -39,6 +49,11 @@ export const category =async (req: Request, res: Response) => {
     //   }
     // ]
   }
+  // Danh mục 
+  if (categoryDetail.id){
+    find.category = categoryDetail.id
+  }
+  // Danh mục 
     // Phân trang
     let limitItems = 20;
     if(req.query.limitItems) {
@@ -140,6 +155,16 @@ export const category =async (req: Request, res: Response) => {
     }
   })
   // Hết thuộc tính
+  // keyword
+  if (req.query.keyword){
+    const keywordFormat = slugify(`${req.query.keyword}`, {
+      replacement: " ",
+      lower: true
+    });
+    const keywordRegex = new RegExp(keywordFormat, "i")
+    find.search = keywordRegex
+  }
+  // End keyword
 
   const listProductByCategory: any = await Product
     .find(find)
