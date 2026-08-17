@@ -27,91 +27,20 @@ div(id="sticky_sidebar")
           li
             a(href="javascript:;" btn-slug=item.slug)
               | #{item.name}
-    div(class="sidebar_color")
-      h3 Filter by Color
-      ul
-        li
-          .form-check
-            input.form-check-input(
-              style="background-color: #DB4437;" 
-              id="color_1" 
-              value="" 
-              type="checkbox"
-              )
-            label.form-check-label(for="color_1") Red
-          span 03
-        li
-          .form-check
-            input.form-check-input(
-              style="background-color: #41CF0F;" 
-              id="color_2" 
-              checked="" 
-              value="" 
-              type="checkbox"
-              )
-            label.form-check-label(for="color_2") green
-          span 17
-        li
-          .form-check
-            input.form-check-input(
-              style="background-color: #8e8e8e;" 
-              id="color_3" 
-              value="" 
-              type="checkbox"
-              )
-            label.form-check-label(for="color_3") gray
-          span 06
-        li
-          .form-check
-            input.form-check-input(
-              style="background-color: #ffa500;" 
-              id="color_4" 
-              checked="" 
-              value="" 
-              type="checkbox"
-              )
-            label.form-check-label(for="color_4") Orange
-          span 09
-        li
-          .form-check
-            input.form-check-input(
-              style="background-color: #B615FD;" 
-              id="color_5" 
-              value="" 
-              type="checkbox"
-              )
-            label.form-check-label(for="color_5") purple
-          span 42
-        li
-          .form-check
-            input.form-check-input(
-              style="background-color: #FFD747;" 
-              id="color_6" 
-              value="" 
-              type="checkbox"
-              )
-            label.form-check-label(for="color_6") Yellow
-          span 23
-        li
-          .form-check
-            input.form-check-input(
-              style="background-color: #AB9774;" 
-              id="color_7" 
-              value="" 
-              type="checkbox"
-              )
-            label.form-check-label(for="color_7") Olive
-          span 06
-        li
-          .form-check
-            input.form-check-input(
-              style="background-color: #1C58F2;" 
-              id="color_8" 
-              value="" 
-              type="checkbox"
-              )
-            label.form-check-label(for="color_8") Dark Blue
-          span 25
+    each item in listAttribute
+      div(class=`${item.type == "color" ? "sidebar_color": "sidebar_status"}`)
+        h3 #{item.name}
+        ul(filter-attribute=item.id)
+          each option in item.options
+            li
+              .form-check
+                input.form-check-input(
+                  style= `${item.type == "color" ? `background-color: ${option.value}`: ""}`  
+                  id=`${item.type}-${item.id}-${option.value}` 
+                  value= option.value
+                  type="checkbox"
+                  )
+                label.form-check-label(for=`${item.type}-${item.id}-${option.value}` ) #{option.label}
     div(class="sidebar_rating")
       h3 Rating
       .form-check

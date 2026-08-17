@@ -66,3 +66,39 @@ if (filterCategory.length > 0){
 // End Lọc theo danh mục 
 
 
+// Lọc theo thuộc tính
+const filterAttribute = document.querySelectorAll("[filter-attribute]")
+if (filterAttribute.length > 0){
+   const url = new URL(window.location.href)
+  filterAttribute.forEach(item => {
+    const id = item.getAttribute("filter-attribute")
+    const listInput = item.querySelectorAll(`input[type="checkbox"]`)
+    listInput.forEach(input => {
+      input.addEventListener("change",(event) => {
+        // Lấy lại tất cả khi ng ta thay đổi change
+        const listInputChecked = item.querySelectorAll(`input[type="checkbox"]:checked`)
+         const listCheckedFinal = []
+        listInputChecked.forEach(inputChecked => listCheckedFinal.push(inputChecked.value))
+       
+       if(listCheckedFinal.length > 0){
+          url.searchParams.set(`attribute_${id}`, listCheckedFinal.join(","))
+       }else {
+        url.searchParams.delete(`attribute_${id}`)
+       }
+       window.location.href = url.href
+    } )
+    })
+    // Hiển thị giá trị mặc định
+    const listValueCurrent = url.searchParams.get(`attribute_${id}`);
+    if(listValueCurrent) {
+      const listValue = listValueCurrent.split(",");
+      listInput.forEach(input => {
+        if(listValue.includes(input.value)) {
+          input.checked = true;
+        }
+      })
+    }
+
+  })
+}
+// End Lọc theo thuộc tính

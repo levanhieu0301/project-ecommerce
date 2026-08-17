@@ -13,10 +13,31 @@ export const category =async (req: Request, res: Response) => {
   if(!categoryDetail){
     res.redirect("/")
   }
+  // {
+    // category: any
+    // status: boolean,
+    // deleted: boolean,
+    // $or: any // những trường khác, tiêu chí khác
+  // }
   const find: any = {
     category: categoryDetail.id,
     status: "active",
-    deleted: false
+    deleted: false, 
+    // $or: [
+    //   {
+    //     variants: { // tìm vào trường variants
+    //       $elemMatch: { // Lấy ra nhưng phần tử khớp với
+    //         status: true,
+    //         attributeValue: {
+    //           $elemMatch: {
+    //             attrId: "6a7ae45f1569c8b55b734ddb",
+    //             value: { $in: ["s", "l"] }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // ]
   }
     // Phân trang
     let limitItems = 20;
@@ -90,7 +111,35 @@ export const category =async (req: Request, res: Response) => {
     }
   }
   // Hết Còn hàng
+  // Thuộc tính
+  const filterAttribute: any[] = []
+  // console.log(Object.keys(req.query)) // chuyển đối tượng thành mảng: (req.query->đối tượng)
+  Object.keys(req.query).forEach(key => {
+    if(key.startsWith("attribute_")){
+      const id = key.replace("attribute_", "")
+      // const value= req.query.attribute_6a7ae45f1569c8b55b734ddb
+      //  const vale = req.query[`attribute_6a7ae45f1569c8b55b734ddb`]
+      const value = `${req.query[key]}`.split(",");
+      filterAttribute.push({
+        variants: { // tìm vào trường variants
+          $elemMatch: { // Lấy ra nhưng phần tử khớp với
+            status: true,
+            attributeValue: {
+              $elemMatch: {
+                attriId: id,
+                value: { $in: value }
+              }
+            }
+          }
+        }
+      })
+    if(filterAttribute.length > 0) {
+        find.$or = filterAttribute;
+    }
 
+    }
+  })
+  // Hết thuộc tính
 
   const listProductByCategory: any = await Product
     .find(find)
