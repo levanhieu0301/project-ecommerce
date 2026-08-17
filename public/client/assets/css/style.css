@@ -680,7 +680,17 @@ header form .select2-container--default .select2-selection--single .select2-sele
 
 header form .input {
     width: 65%;
+     display: flex;
+    align-items: center;
+    gap: 10px;
+
 }
+header form .input .inner-voice {
+    margin-left: 20px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
 
 header form input {
     border: none;

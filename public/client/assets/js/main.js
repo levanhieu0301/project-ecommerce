@@ -107,6 +107,18 @@ if (filterAttribute.length > 0){
 const formSearch = document.querySelector("[form-search]")
 if(formSearch){
   const url = new URL(window.location.href)
+
+  // Hiển thị giá trị mặc định
+  const categoryCurrent = url.pathname.split("/").pop();
+  const keywordCurrent = url.searchParams.get("keyword");
+  
+  if(categoryCurrent && categoryCurrent != "category") {
+    formSearch.category.value = categoryCurrent;
+  }
+
+  if(keywordCurrent) {
+    formSearch.keyword.value = keywordCurrent;
+  }
   formSearch.addEventListener("submit", (event) => {
     event.preventDefault()
     const valueCategory = event.target.category.value
@@ -123,13 +135,45 @@ if(formSearch){
     }
     window.location.href =  url.href
   })
-  const slug = url.pathname.split("/").pop()
-  const keyword = url.searchParams.get("keyword")
-  if (slug && slug != "category"){
-    formSearch.category.value = slug
-  }
-  if (keyword){
-    formSearch.keyword.value = keyword
-  }
+
 }
 // End Tìm kiếm ở trang chủ 
+
+// // Tìm kiếm theo Giọng nói 
+// const buttonVoice = document.querySelector("[button-voice]")
+// if (buttonVoice){
+//   buttonVoice.addEventListener("click", (event) => {
+//     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//     const recognition = new SpeechRecognition();
+//     recognition.lang = "vi-VN";
+//     recognition.start();
+//     recognition.onresult = (event) => {
+//       const value = event.results[0][0].transcript;
+//       if(value) {
+//           formSearch.keyword.value = value;
+//           formSearch.submit();
+//         }
+//     }
+//   })
+// }
+// // End Tìm kiếm theo Giọng nói 
+
+  // button-voice
+  const buttonVoice = document.querySelector("[button-voice]");
+  if(buttonVoice) {
+    buttonVoice.addEventListener("click", () => {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const voice = new SpeechRecognition();
+      voice.lang = "vi-VN";
+      voice.start();
+      voice.onresult = (event) => {
+        const value = event.results[0][0].transcript;
+        if(value) {
+          formSearch.keyword.value = value;
+          
+          formSearch.submit();
+        }
+      };
+    })
+  }
+  // End button-voice
