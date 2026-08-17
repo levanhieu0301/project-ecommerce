@@ -21,72 +21,12 @@ div(id="sticky_sidebar")
           )
         label.form-check-label(for="filterInStock") Còn hàng
     div(class="sidebar_category")
-      h3 Categories
+      h3 Danh mục
       ul
-        li
-          a(href="#")
-            | Men’s Fashion
-            span 20
-        li
-          a(href="#")
-            | western wear
-            span 09
-        li
-          a(href="#")
-            | skin care
-            span 04
-        li
-          a(href="#")
-            | sport wear
-            span 13
-        li
-          a(href="#")
-            | fashion jewellery
-            span 36
-        li
-          a(href="#")
-            | beauty Care
-            span 22
-        li
-          a(href="#")
-            | Makeoup Tools
-            span 16
-        li
-          a(href="#")
-            | Winter collention
-            span 27
-        li
-          a(href="#")
-            | Men’s Fashion
-            span 20
-        li
-          a(href="#")
-            | western wear
-            span 09
-        li
-          a(href="#")
-            | skin care
-            span 04
-        li
-          a(href="#")
-            | sport wear
-            span 13
-        li
-          a(href="#")
-            | fashion jewellery
-            span 36
-        li
-          a(href="#")
-            | beauty Care
-            span 22
-        li
-          a(href="#")
-            | Makeoup Tools
-            span 16
-        li
-          a(href="#")
-            | Winter collention
-            span 27
+        each item in listCategoryProduct
+          li
+            a(href="javascript:;" btn-slug=item.slug)
+              | #{item.name}
     div(class="sidebar_color")
       h3 Filter by Color
       ul

@@ -50,4 +50,19 @@ if(btnStatusProduct.length > 0){
 }
 // End Bộ lọc theo trạng thái sản phẩm
 
+// Lọc theo danh mục 
+const filterCategory = document.querySelectorAll("[btn-slug]")
+if (filterCategory.length > 0){
+  const url = new URL(window.location.href)
+  filterCategory.forEach(item => {
+    item.addEventListener("click", (event) => {
+      const attribute = item.getAttribute("btn-slug")
+      url.pathname =  `/product/category/${attribute}`;
+      window.location.href = url.href
+
+    })
+  })
+}
+// End Lọc theo danh mục 
+
 
