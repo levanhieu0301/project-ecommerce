@@ -135,29 +135,6 @@ if(formSearch){
     }
     window.location.href =  url.href
   })
-
-}
-// End Tìm kiếm ở trang chủ 
-
-// // Tìm kiếm theo Giọng nói 
-// const buttonVoice = document.querySelector("[button-voice]")
-// if (buttonVoice){
-//   buttonVoice.addEventListener("click", (event) => {
-//     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-//     const recognition = new SpeechRecognition();
-//     recognition.lang = "vi-VN";
-//     recognition.start();
-//     recognition.onresult = (event) => {
-//       const value = event.results[0][0].transcript;
-//       if(value) {
-//           formSearch.keyword.value = value;
-//           formSearch.submit();
-//         }
-//     }
-//   })
-// }
-// // End Tìm kiếm theo Giọng nói 
-
   // button-voice
   const buttonVoice = document.querySelector("[button-voice]");
   if(buttonVoice) {
@@ -177,3 +154,51 @@ if(formSearch){
     })
   }
   // End button-voice
+
+  // suggest
+  const suggestInput = formSearch.querySelector(`input[name="keyword"]`)
+  const boxSuggest = formSearch.querySelector(".inner-suggest")
+  const boxSuggestList = formSearch.querySelector(".inner-list")
+  let timeout
+  suggestInput.addEventListener("input", () => {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      const value = suggestInput.value
+      if (value) {
+        fetch(`/product/suggest?keyword=${value}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.code == "success"){
+              const Arrayhtml = data.list.map(item => {
+                return  `
+                      <a class="inner-item" href="/product/detail/${item.slug}">
+                        <img class="inner-image" src="${domainCDN}${item.images[0]}">
+                        <div class="inner-info">
+                          <div class="inner-name">${item.name}</div>
+                          <div class="inner-prices">
+                            <div class="inner-price-new"> ${item.priceNew.toLocaleString("vi-VN")}đ</div>
+                            <div class="inner-price-old">${item.priceOld.toLocaleString("vi-VN")}đ</div>
+                          </div>
+                        </div>
+                      </a>
+                      `
+              })
+                boxSuggestList.innerHTML = Arrayhtml.join("")
+              if(data.list.length > 0) {
+                boxSuggest.style.display = "block";
+              } else {
+                boxSuggest.style.display = "none";
+              }
+
+            }
+          })
+        }else {
+           boxSuggest.style.display = "none";
+        }
+      }
+    ,500)
+  })
+  // End suggest
+
+}
+// End Tìm kiếm ở trang chủ 

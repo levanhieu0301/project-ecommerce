@@ -3,6 +3,7 @@ import Product from "../../models/product.model"
 import CategoryProduct from "../../models/category-product.model"
 import { listProduct } from "../admin/product.controller"
 import slugify from "slugify"
+
 export const category =async (req: Request, res: Response) => {
   const slug = req.params.slug
   let categoryDetail : any = null;
@@ -191,5 +192,39 @@ export const category =async (req: Request, res: Response) => {
     categoryDetail: categoryDetail,
     listProductByCategory: listProductByCategory,
     pagination: pagination
+  })
+}
+export const suggest = async (req: Request, res: Response) => {
+  const find: any = {
+    deleted: false,
+    status: "active",
+    priceNew: {
+      $gt: 0
+    },
+    stock: {
+      $gt: 0
+    }
+  }
+  if (req.query.keyword){
+    const keywordFormat = slugify(`${req.query.keyword}`, {
+      replacement: " ",
+      lower: true
+    });
+    const keywordRegex = new RegExp(keywordFormat, "i")
+    find.search = keywordRegex
+  }
+  // End keyword
+  const listProductSuggest = await Product
+    .find(find)
+    .limit(5)
+    .sort({
+      position: "desc"
+    })
+    .select("slug name priceNew priceOld images")
+    .lean()
+
+  res.json({
+    code: "success",
+    list: listProductSuggest
   })
 }
