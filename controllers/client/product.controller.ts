@@ -275,11 +275,40 @@ export const detail = async (req: Request, res: Response) => {
   productDetail.categoryList = categoryList;
   // Hết Danh sách danh mục
 
+  // Danh sách sản phẩm liên quan (cùng danh mục)
+  const listProductRelated :any = await Product.find({
+    _id: {$ne: productDetail.id},
+    category: {$in: productDetail.category},
+    deleted: false,
+    status: "active"
+  })
+  .sort({
+    view: "desc"
+  })
+  .limit(10);
+  for(const category of listProductRelated){
+    category.discount = Math.floor(((category.priceOld - category.priceNew) / category.priceOld) * 100)
+    // màu sắc
+    // chỉ lọc ra bản ghi nào status : true
+    const setColor = new Set();
+    category.variants.filter( (variant : any) => variant.status).forEach((variant : any) => {
+      variant.attributeValue.forEach((attri: any) => {
+          if(attri.attriType =="color"){
+            setColor.add(attri.value)
+          }
+      } )
+    })
+    category.listColor = [...setColor]
+  }
+  //Hết Danh sách sản phẩm liên quan (cùng danh mục)
+
+
 
   res.render("client/pages/product-detail", {
     pageTitle: productDetail.name,
     productDetail: productDetail,
-    listAttribute: listAttribute
+    listAttribute: listAttribute,
+    listProductRelated: listProductRelated
   });
 
 }
