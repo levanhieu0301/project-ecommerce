@@ -6,5 +6,6 @@ import * as productController from "../../controllers/client/product.controller"
 router.get('/category/:slug', productController.category)
 router.get('/category', productController.category)
 router.get('/suggest', productController.suggest)
+router.get('/detail/:slug', productController.detail)
 
 export default router;

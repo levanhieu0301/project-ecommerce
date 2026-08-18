@@ -228,3 +228,21 @@ export const suggest = async (req: Request, res: Response) => {
     list: listProductSuggest
   })
 }
+export const detail = async (req: Request, res: Response) => {
+  const productDetail = await Product.findOne({
+    slug: req.params.slug,
+    deleted: false,
+    status: "active"
+  })
+
+  if(!productDetail) {
+    res.redirect("/");
+    return;
+  }
+
+  res.render("client/pages/product-detail", {
+    pageTitle: productDetail.name,
+    productDetail: productDetail,
+  });
+
+}
