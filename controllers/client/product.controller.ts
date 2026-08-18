@@ -262,7 +262,6 @@ export const detail = async (req: Request, res: Response) => {
     attribute.setAttribute = [...attributeSet]
     attribute.attributeSetLabel = [...attributeSetLabel]
   }
-  console.log(listAttribute)
   // Lấy thuộc tính sản phẩm
 
   // Danh sách danh mục
