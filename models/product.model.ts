@@ -17,6 +17,7 @@ const schema = new mongoose.Schema(
     },
     attributes: Array,
     variants: Array,
+    sku: String,
     description: String,
     content: String,
     status: {

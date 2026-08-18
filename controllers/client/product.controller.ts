@@ -3,6 +3,7 @@ import Product from "../../models/product.model"
 import CategoryProduct from "../../models/category-product.model"
 import { listProduct } from "../admin/product.controller"
 import slugify from "slugify"
+import AttributeProduct from "../../models/attribute-product.model"
 
 export const category =async (req: Request, res: Response) => {
   const slug = req.params.slug
@@ -229,7 +230,7 @@ export const suggest = async (req: Request, res: Response) => {
   })
 }
 export const detail = async (req: Request, res: Response) => {
-  const productDetail = await Product.findOne({
+  const productDetail:any = await Product.findOne({
     slug: req.params.slug,
     deleted: false,
     status: "active"
@@ -239,10 +240,47 @@ export const detail = async (req: Request, res: Response) => {
     res.redirect("/");
     return;
   }
+  // Để lấy tên hiển thị : Màu sắc: 
+  //                      Kích cỡ: 
+  const listAttribute:any = await AttributeProduct.find({
+    _id: {$in : productDetail.attributes}
+  }) 
+  //  Hết Để lấy tên hiển thị : Màu sắc: 
+  //                            Kích cỡ: 
+  // Lấy thuộc tính sản phẩm 
+  for (const attribute of listAttribute){
+    const attributeSet = new Set()
+    const attributeSetLabel = new Set()
+    productDetail.variants.filter((object: any) => object.status).forEach((object:any) => {
+      object.attributeValue.forEach((option:any) => {
+        if(option.attriId == attribute._id){
+          attributeSet.add(option.value)
+          attributeSetLabel.add(option.label)
+        }
+      })
+    })
+    attribute.setAttribute = [...attributeSet]
+    attribute.attributeSetLabel = [...attributeSetLabel]
+  }
+  console.log(listAttribute)
+  // Lấy thuộc tính sản phẩm
+
+  // Danh sách danh mục
+  const categoryList= await CategoryProduct
+    .find({
+      _id: { $in: productDetail.category },
+      deleted: false,
+      status: "active"
+    })
+    .select("name slug");
+  productDetail.categoryList = categoryList;
+  // Hết Danh sách danh mục
+
 
   res.render("client/pages/product-detail", {
     pageTitle: productDetail.name,
     productDetail: productDetail,
+    listAttribute: listAttribute
   });
 
 }

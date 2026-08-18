@@ -8,6 +8,7 @@ import Product from "../../models/product.model"
 import AttributeProduct from "../../models/attribute-product.model"
 import { Parser } from 'json2csv';
 import Papa from 'papaparse';
+import { generateRandomString } from "../../helpers/generate.helper"
 
 // Danh mục sản phẩm
 export const categoryProduct = async (req: Request, res: Response) => {
@@ -308,7 +309,7 @@ export const createProductPost = async (req: Request, res: Response) => {
 
     req.body.variants = JSON.parse(req.body.variants);
     req.body.tags = JSON.parse(req.body.tags);
-
+    req.body.sku = generateRandomString(10).toUpperCase();
     
     if(req.body.priceOld) {
       req.body.priceOld = parseInt(req.body.priceOld);
@@ -507,6 +508,9 @@ export const editPatch = async (req: Request, res: Response) => {
     req.body.variants = JSON.parse(req.body.variants);
 
     req.body.tags = JSON.parse(req.body.tags);
+    if(!productDetail.sku) {
+      req.body.sku = generateRandomString(10).toUpperCase();
+    }
 
     await Product.updateOne({
       _id: id,
