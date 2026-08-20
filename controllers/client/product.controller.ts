@@ -329,13 +329,47 @@ export const detail = async (req: Request, res: Response) => {
       }
     // Hết Sản phẩm mua kèm
 
+    // sản phẩm đã xem 
+    const productHistoryViewd = req.cookies.productHistoryViewd ? JSON.parse(req.cookies.productHistoryViewd) : [];
+      // lấy ra danh sách sản phẩm
+      const listProductViewed: any = await Product.find({
+        _id: {$in: productHistoryViewd},
+         deleted: false,
+        status: "active"
+      })
+    if (listProductViewed.length > 0){
+      for(const item of listProductViewed){
+      item.discount = Math.floor(((item.priceOld - item.priceNew) / item.priceOld) * 100)
+      // màu sắc
+      // chỉ lọc ra bản ghi nào status : true
+      const setColor = new Set();
+      item.variants.filter( (variant : any) => variant.status).forEach((variant : any) => {
+        variant.attributeValue.forEach((attri: any) => {
+            if(attri.attriType =="color"){
+              setColor.add(attri.value)
+            }
+        } )
+      })
+      item.listColor = [...setColor]
+      }
+    }
+    if(!productHistoryViewd.includes(productDetail.id)) {
+      productHistoryViewd.unshift(productDetail.id);
+      res.cookie("productHistoryViewd", JSON.stringify(productHistoryViewd), {
+        httpOnly: true, // Chỉ cho phép server truy cập cookie, JavaScript ở client không thể đọc được
+        secure: process.env.NODE_ENV === 'production', // true: nếu là https, false: nếu là http
+        sameSite: 'strict', // Chỉ gửi cookie khi request từ cùng domain
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 ngày
+      });
+    }
 
   res.render("client/pages/product-detail", {
     pageTitle: productDetail.name,
     productDetail: productDetail,
     listAttribute: listAttribute,
     listProductRelated: listProductRelated,
-    boughtTogetherProducts: boughtTogetherProducts
+    boughtTogetherProducts: boughtTogetherProducts,
+    listProductViewed: listProductViewed
   });
 
 }
