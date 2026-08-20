@@ -11,6 +11,7 @@ const schema = new mongoose.Schema(
     priceNew: Number,
     stock: Number,
     tags: [String],
+    boughtTogether: [String],
     discount: {
       type: Number,
       default: 0

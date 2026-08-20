@@ -268,10 +268,24 @@ export const createProduct = async (req: Request, res: Response) => {
   const attributeList = await AttributeProduct.find({
     deleted: false
   })
+    // Danh sách sản phẩm
+  const productList = await Product
+    .find({
+      deleted: false,
+      status: "active"
+    })
+    .sort({
+      position: "desc"
+    })
+    .select("id name")
+    .lean();
+  // Hết Danh sách sản phẩm
+
   res.render("admin/pages/product-create", {
       pageTitle: "Tạo sản phẩm",
       categoryList : categoryTree,
-      attributeList: attributeList
+      attributeList: attributeList,
+      productList: productList
     }); 
 }
 export const createProductPost = async (req: Request, res: Response) => {
@@ -310,6 +324,7 @@ export const createProductPost = async (req: Request, res: Response) => {
     req.body.variants = JSON.parse(req.body.variants);
     req.body.tags = JSON.parse(req.body.tags);
     req.body.sku = generateRandomString(10).toUpperCase();
+    req.body.boughtTogether = JSON.parse(req.body.boughtTogether);
     
     if(req.body.priceOld) {
       req.body.priceOld = parseInt(req.body.priceOld);
@@ -399,7 +414,7 @@ export const editProduct = async (req: Request, res: Response) => {
       deleted: false
     })
     const id = req.params.id
-    const recordProduct = await Product.findOne({
+    const recordProduct: any = await Product.findOne({
       _id: id
     })
     if(!recordProduct){
@@ -416,6 +431,20 @@ export const editProduct = async (req: Request, res: Response) => {
         }
       }
     }
+        // Danh sách sản phẩm
+    const productList = await Product
+      .find({
+        _id: { $ne: recordProduct.id },
+        deleted: false,
+        status: "active"
+      })
+      .sort({
+        position: "desc"
+      })
+      .select("id name")
+      .lean();
+    // Hết Danh sách sản phẩm
+
 
 
     res.render("admin/pages/product-edit", {
@@ -423,7 +452,8 @@ export const editProduct = async (req: Request, res: Response) => {
       recordProduct: recordProduct,
       categoryList: categoryTree,
       attributeList: attributeList,
-      arrayNameAttri: arrayNameAttri
+      arrayNameAttri: arrayNameAttri,
+      productList: productList
     }); 
   } catch (error) {
     res.json({
@@ -504,7 +534,7 @@ export const editPatch = async (req: Request, res: Response) => {
     }
 
     req.body.attributes = JSON.parse(req.body.attributes);
-
+    req.body.boughtTogether = JSON.parse(req.body.boughtTogether);
     req.body.variants = JSON.parse(req.body.variants);
 
     req.body.tags = JSON.parse(req.body.tags);

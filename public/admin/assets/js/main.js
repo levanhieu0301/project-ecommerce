@@ -1234,6 +1234,11 @@ if(productCreateForm) {
       const selectElement = document.querySelector(`select[name="tags"]`)
       const tags = Array.from(selectElement.selectedOptions).map(option => option.value);
       // end Tags
+      // boughtTogether
+      const selectBoughtTogether = document.querySelector(`select[name="boughtTogether"]`);
+      const boughtTogether = Array.from(selectBoughtTogether.selectedOptions).map(option => option.value);
+      // End boughtTogether
+
 
       //  mình muốn lưu variant : {
       //   status: true hay false
@@ -1289,6 +1294,7 @@ if(productCreateForm) {
       formData.append("attributes", JSON.stringify(attributes));
       formData.append("variants", JSON.stringify(variants));
       formData.append("tags", JSON.stringify(tags));
+      formData.append("boughtTogether", JSON.stringify(boughtTogether));
       
       fetch(`/${pathAdmin}/product/create`, {
         method: "POST",
@@ -1591,18 +1597,24 @@ if(btnCreateVariant){
 //end Tạo biến thể
 
 //Tags
-const selectTag = document.querySelector("[select-tags]")
-if(selectTag){
-  new Selectr('[select-tags]', {
-    taggable: true
+const listSelectTag = document.querySelectorAll("[select-tags]")
+if(listSelectTag){
+  listSelectTag.forEach(selectTag => {
+    const attributeTaggable = selectTag.getAttribute("taggable")
+    new Selectr(selectTag, {
+      taggable: attributeTaggable == "false" ? false : true
   });
-
+  
   // Ngăn chặn hành vi submit 
-  const inputTags = document.querySelector(".selectr-tag-input")
-  inputTags.addEventListener("keydown", (event) => {
+  const inputTags = selectTag.closest(".selectr-container").querySelector(".selectr-tag-input")
+  if (inputTags){
+    inputTags.addEventListener("keydown", (event) => {
     if(event.key == "Enter"){
       event.preventDefault()
     }
+  })
+  }
+
   })
 }
 //End Tags
@@ -1645,6 +1657,12 @@ if(productEditForm) {
       const selectElement = document.querySelector(`select[name="tags"]`)
       const tags = Array.from(selectElement.selectedOptions).map(option => option.value);
       // end Tags
+      
+      // Tags
+      const selectProductBoughtTogether = document.querySelector(`select[name="boughtTogether"]`)
+      const boughtTogether = Array.from(selectProductBoughtTogether.selectedOptions).map(option => option.value);
+      // end Tags
+
 
       //  mình muốn lưu variant : {
       //   status: true hay false
@@ -1700,6 +1718,7 @@ if(productEditForm) {
       formData.append("attributes", JSON.stringify(attributes));
       formData.append("variants", JSON.stringify(variants));
       formData.append("tags", JSON.stringify(tags));
+      formData.append("boughtTogether", JSON.stringify(boughtTogether));
       
       fetch(`/${pathAdmin}/product/edit/${id}`, {
         method: "PATCH",

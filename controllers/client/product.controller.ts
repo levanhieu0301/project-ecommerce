@@ -302,13 +302,40 @@ export const detail = async (req: Request, res: Response) => {
   }
   //Hết Danh sách sản phẩm liên quan (cùng danh mục)
 
+    // Sản phẩm mua kèm
+    const boughtTogetherProducts: any = await Product
+      .find({
+        _id: { $in: productDetail.boughtTogether },
+        deleted: false,
+        status: "active"
+      })
+      .sort({
+        position: "desc"
+      });
+
+     for(const item of boughtTogetherProducts){
+      item.discount = Math.floor(((item.priceOld - item.priceNew) / item.priceOld) * 100)
+      // màu sắc
+      // chỉ lọc ra bản ghi nào status : true
+      const setColor = new Set();
+      item.variants.filter( (variant : any) => variant.status).forEach((variant : any) => {
+        variant.attributeValue.forEach((attri: any) => {
+            if(attri.attriType =="color"){
+              setColor.add(attri.value)
+            }
+        } )
+      })
+      item.listColor = [...setColor]
+      }
+    // Hết Sản phẩm mua kèm
 
 
   res.render("client/pages/product-detail", {
     pageTitle: productDetail.name,
     productDetail: productDetail,
     listAttribute: listAttribute,
-    listProductRelated: listProductRelated
+    listProductRelated: listProductRelated,
+    boughtTogetherProducts: boughtTogetherProducts
   });
 
 }

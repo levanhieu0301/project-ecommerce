@@ -37,7 +37,7 @@ router.get('/edit/:id', productController.editProduct)
 router.patch(
   '/edit/:id', 
   upload.none(), 
-  checkPermissions("product-edit") ,
+  checkPermissions("product-edit"),
   productValidate.createProductPost, 
   productController.editPatch
 );
