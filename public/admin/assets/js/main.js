@@ -1295,7 +1295,7 @@ if(productCreateForm) {
       formData.append("variants", JSON.stringify(variants));
       formData.append("tags", JSON.stringify(tags));
       formData.append("boughtTogether", JSON.stringify(boughtTogether));
-      
+
       fetch(`/${pathAdmin}/product/create`, {
         method: "POST",
         body: formData

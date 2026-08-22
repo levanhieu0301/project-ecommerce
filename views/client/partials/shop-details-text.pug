@@ -1,4 +1,6 @@
 div(class="shop_details_text")
+  script. 
+    const productVariant = !{JSON.stringify(productDetail.variants)}
   //- p.category Computers & Tablets
   h2(class="details_title") #{productDetail.name}
   .d-flex.flex-wrap.align-items-center
@@ -16,8 +18,8 @@ div(class="shop_details_text")
       i.fas.fa-star
       span (0 Đánh giá)
   h3.price
-    | #{productDetail.priceNew.toLocaleString("vi-VN")}đ
-    del #{productDetail.priceOld.toLocaleString("vi-VN")}đ
+    div.price-new #{productDetail.priceNew.toLocaleString("vi-VN")}đ
+    del.price-old #{productDetail.priceOld.toLocaleString("vi-VN")}đ
   div(class="short_description")
     | !{productDetail.description}
   each attribute of listAttribute
@@ -26,11 +28,18 @@ div(class="shop_details_text")
       if (attribute.type == "color")
         ul(class="details_variant_color")
           each item in attribute.setAttribute
-            li(style= `background: ${item};`)
+            li(
+              attribute-id=attribute.id
+              value = item
+              style= `background: ${item};`
+              )
       else if (attribute.type == "text")
         ul(class="details_variant_size")
-          each item in attribute.attributeSetLabel
-            li #{item}
+          each item, index in attribute.attributeSetLabel
+            li( 
+              attribute-id = attribute.id
+              value = attribute.setAttribute[index]
+              ) #{item}
   //- div(class="details_single_variant")
   //-   p(class="variant_title") Kích cỡ :
   //-   ul(class="details_variant_size")
