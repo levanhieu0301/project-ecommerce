@@ -209,6 +209,10 @@ if(changeAttribute){
   const priceNew = changeAttribute.querySelector(".price-new")
   const priceOld = changeAttribute.querySelector(".price-old")
   const stock = changeAttribute.querySelector(".stock")
+  const inputQuantity = changeAttribute.querySelector(".input-quantity");
+  const buttonPlus = changeAttribute.querySelector(".plus");
+  const buttonMinus = changeAttribute.querySelector(".minus");
+
   // const dataFinal = {
   //   6a7ae45f1569c8b55b734ddb: s,
   //   6a7ae692cdecee1d6772c810: red
@@ -238,14 +242,37 @@ if(changeAttribute){
           if(variantFinal.stock > 0){
             stock.innerHTML = `Còn hàng (${variantFinal.stock})`;
             stock.classList.remove("out_stock");
+            inputQuantity.value = 1;
           }else {
             stock.innerHTML = `Hết hàng`;
             stock.classList.add("out_stock");
+            inputQuantity.value = 0;
           }
+           // Gán lại số lượng tối đa được phép đặt
+          inputQuantity.max = variantFinal.stock;
+
         }
       }
     })
   })
+
+  // Tăng số lượng
+  buttonPlus.addEventListener("click", (event) => {
+    const valueCurrent = parseInt(inputQuantity.value)
+    const max = parseInt(inputQuantity.max)
+    if (valueCurrent < max){
+      inputQuantity.value = valueCurrent + 1
+    }
+  })
+   // Giảm số lượng
+  buttonMinus.addEventListener("click", () => {
+    const quantity = parseInt(inputQuantity.value);
+    const min = parseInt(inputQuantity.min);
+    if(quantity > min) {
+      inputQuantity.value = quantity - 1;
+    }
+  })
+
   
 }
 // End Chọn biến thể thay đổi giá trị tương ứng
