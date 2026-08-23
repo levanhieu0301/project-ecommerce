@@ -241,6 +241,18 @@ if(!existCart ){
 }
 // End Tạo biến cart khi vào trang
 
+
+// Số lượng giỏ hàng
+const miniCartQuantity = () => {
+  const cart = JSON.parse(localStorage.getItem("cart"));
+  const elementMiniCartQuantity = document.querySelector("[mini-cart-quantity]");
+  elementMiniCartQuantity.innerHTML = cart.length;
+
+}
+miniCartQuantity()
+// End Số lượng giỏ hàng
+
+
 // Chọn biến thể thay đổi giá trị tương ứng
 const changeAttribute = document.querySelector(".shop_details_text")
 if(changeAttribute){
@@ -365,6 +377,7 @@ if(changeAttribute){
         }
       }
       localStorage.setItem("cart", JSON.stringify(cart))
+      miniCartQuantity()
 
     }
 
