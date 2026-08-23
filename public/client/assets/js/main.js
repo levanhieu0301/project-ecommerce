@@ -241,12 +241,95 @@ if(!existCart ){
 }
 // End Tạo biến cart khi vào trang
 
+const drawCart = () => {
+  const cart = JSON.parse(localStorage.getItem("cart"))
+  if (cart.length > 0){
+    fetch(`/cart/list`, {
+      method: "POST",
+      headers:{
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(cart)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.code == "error"){
+        localStorage.setItem("cart", JSON.stringify([]));
+      }
+      if (data.code == "success"){
+        localStorage.setItem("cart", JSON.stringify(data.cart));
+          let subTotal = 0;
+          const arrayHtml = data.cart.map(item => {
+          const {detail}  = item
+          let priceNew = 0
+          let priceOld = 0
+          let htmlVariant = "";
+          if (item.attributeValue){
+              // Tìm đúng biến thể khớp trong danh sách
+            const variantMatched = detail.variants.find(variantItem => {
+              return (
+                variantItem.attributeValue.every(attr => {
+                  const selected = item.attributeValue.find(v => v.attriId === attr.attriId);
+                  return selected && selected.value === attr.value;
+                })
+              );
+            });
+            priceOld = variantMatched.priceOld;
+            priceNew = variantMatched.priceNew;
+              detail.attributeList.forEach(attr => {
+              const variant = item.attributeValue.find(v => v.attriId === attr._id);
+              htmlVariant += `
+                <span>
+                  <b>${attr.name}:</b> ${variant.label}
+                </span>
+              `;
+            })
+          }else{
+            priceNew = detail.priceNew
+            priceOld = detail.priceOld
+          }
+          subTotal += priceNew * item.quantity;
+
+          return `
+          <li>
+            <a class="cart_img" href="/product/detail/${detail.slug}">
+              <img class="img-fluid w-100" alt="${detail.name}" src="${domainCDN}${detail.images[0]}">
+            </a>
+            <div class="cart_text">
+              <a class="cart_title" href="/product/detail/${detail.slug}">${detail.name}</a>
+              <p>
+                ${priceNew.toLocaleString("vi-VN")}đ
+                <del>${priceOld.toLocaleString("vi-VN")}đ</del>
+              </p>
+              <span>
+                <b>Số lượng:</b> ${item.quantity}
+              </span>
+              ${htmlVariant}
+            </div>
+            <a class="del_icon" href="#">
+              <i class="fal fa-times" aria-hidden="true"></i>
+            </a>
+          </li>
+          `
+          })
+        const ulMiniCart = miniCart.querySelector(".offcanvas-body ul");
+        ulMiniCart.innerHTML = arrayHtml.join("");
+
+        const elementSubTotal = miniCart.querySelector("[sub-total]");
+        elementSubTotal.innerHTML = subTotal.toLocaleString("vi-VN");
+
+      }
+    })
+  }
+}
 
 // Số lượng giỏ hàng
 const miniCartQuantity = () => {
   const cart = JSON.parse(localStorage.getItem("cart"));
-  const elementMiniCartQuantity = document.querySelector("[mini-cart-quantity]");
-  elementMiniCartQuantity.innerHTML = cart.length;
+  const elementMiniCartQuantity = document.querySelectorAll("[mini-cart-quantity]");
+  elementMiniCartQuantity.forEach(item => {
+    item.innerHTML = cart.length;
+  })
 
 }
 miniCartQuantity()
@@ -378,6 +461,7 @@ if(changeAttribute){
       }
       localStorage.setItem("cart", JSON.stringify(cart))
       miniCartQuantity()
+      drawCart()
 
     }
 
@@ -385,3 +469,10 @@ if(changeAttribute){
 
 }
 // End Chọn biến thể thay đổi giá trị tương ứng
+
+// mini cart
+const miniCart = document.querySelector("[mini-cart]")
+if(miniCart){
+  drawCart()
+}
+// End mini cart
