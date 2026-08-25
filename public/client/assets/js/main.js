@@ -273,8 +273,71 @@ const removeItemCart = () =>{
   })
 
 }
-
 // End Xóa item trong giỏ hàng
+
+// Cập nhật số lượng trong giỏ hàng
+const updateQuantityCart = () => {
+  const listBoxQuantity = document.querySelectorAll("[cart-table] .cart_page_quantity");
+  listBoxQuantity.forEach(box => {
+    const inputQuantity = box.querySelector("input");
+    const buttonPlus = box.querySelector(".plus");
+    const buttonMinus = box.querySelector(".minus");
+    const item = box.closest("[cart-item]");
+    const productId = item.getAttribute("product-id");
+    let attributeValue = item.getAttribute("attributeValue");
+    if(attributeValue) {
+      attributeValue = JSON.parse(decodeURIComponent(attributeValue));
+    }
+    
+    const cart = JSON.parse(localStorage.getItem("cart"));
+    const itemUpdate = cart.find(cartItem => {
+      // So sánh giống productId
+      const sameProduct = cartItem.productId == productId;
+
+      // So sánh giống variant
+      const variantItemInCart = cartItem.attributeValue ? JSON.stringify(cartItem.attributeValue) : "[]";
+      const variantItemRemove = attributeValue ? JSON.stringify(attributeValue) : "[]";
+      const sameVariant = variantItemInCart == variantItemRemove;
+
+      return (sameProduct && sameVariant);
+    })
+    if(itemUpdate) {
+      // Nếu số lượng không đủ in ra thông báo
+      const quantity = parseInt(inputQuantity.value);
+      const max = parseInt(inputQuantity.max);
+      if(quantity > max) {
+        const itemAlert = document.createElement("div");
+        itemAlert.style.color = "red";
+        itemAlert.style.fontSize = "12px";
+        itemAlert.innerHTML = `Chỉ còn ${max} sản phẩm!`;
+        box.appendChild(itemAlert);
+      }
+      
+      // Tăng số lượng
+      buttonPlus.addEventListener("click", () => {
+        const quantity = parseInt(inputQuantity.value);
+        const max = parseInt(inputQuantity.max);
+        if(quantity < max) {
+          itemUpdate.quantity = quantity + 1;
+          localStorage.setItem("cart", JSON.stringify(cart));
+          drawCart();
+        }
+      })
+       // Giảm số lượng
+      buttonMinus.addEventListener("click", () => {
+        const quantity = parseInt(inputQuantity.value);
+        const min = parseInt(inputQuantity.min);
+        if(quantity > min) {
+          itemUpdate.quantity = quantity - 1;
+          localStorage.setItem("cart", JSON.stringify(cart));
+          drawCart();
+        }
+      })
+    }
+  })
+
+  }
+// End Cập nhật số lượng trong giỏ hàng
 
 
 const drawCart = () => {
@@ -300,6 +363,7 @@ const drawCart = () => {
           data.cart.forEach(item => {
           const {detail}  = item
           let priceNew = 0
+          let stock = 0
           let priceOld = 0
           let htmlVariant = "";
           if (item.attributeValue){
@@ -314,6 +378,7 @@ const drawCart = () => {
             });
             priceOld = variantMatched.priceOld;
             priceNew = variantMatched.priceNew;
+            stock = variantMatched.stock
               detail.attributeList.forEach(attr => {
               const variant = item.attributeValue.find(v => v.attriId === attr._id);
               htmlVariant += `
@@ -325,6 +390,7 @@ const drawCart = () => {
           }else{
             priceNew = detail.priceNew
             priceOld = detail.priceOld
+            stock = detail.stock;
           }
           subTotal += priceNew * item.quantity;
 
@@ -357,7 +423,7 @@ const drawCart = () => {
           <tr
             cart-item
             product-id=${item.productId}
-            ${item.variant ? `variant="${encodeURIComponent(JSON.stringify(item.variant))}"` : ''}
+            ${item.attributeValue ? `attributeValue="${encodeURIComponent(JSON.stringify(item.attributeValue))}"` : ''}
           >
             <td class="cart_page_checkbox">
               <div class="form-check">
@@ -385,7 +451,7 @@ const drawCart = () => {
                 <button class="minus">
                   <i class="fal fa-minus" aria-hidden="true"></i>
                 </button>
-                <input value="${item.quantity}" type="number" readonly="" />
+                <input value="${item.quantity}" type="number" min="1" max="${stock}" readonly="" />
                 <button class="plus">
                   <i class="fal fa-plus" aria-hidden="true"></i>
                 </button>
@@ -414,6 +480,7 @@ const drawCart = () => {
         const elementSubTotal = miniCart.querySelector("[sub-total]");
         elementSubTotal.innerHTML = subTotal.toLocaleString("vi-VN");
         removeItemCart()
+        updateQuantityCart()
       }
     })
   }else {
