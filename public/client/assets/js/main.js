@@ -241,6 +241,42 @@ if(!existCart ){
 }
 // End Tạo biến cart khi vào trang
 
+// Xóa item trong giỏ hàng
+const removeItemCart = () =>{
+  const listButtonRemove = document.querySelectorAll("[button-remove-item]")
+  listButtonRemove.forEach(button => {
+    button.addEventListener("click", () => {
+      const elementParent = button.closest("[cart-item]")
+      const productId = elementParent.getAttribute("product-id")
+      let attributeValue = elementParent.getAttribute("attributeValue")
+      if(attributeValue){
+        attributeValue = JSON.parse(decodeURIComponent(attributeValue))
+      }
+      let cart = JSON.parse(localStorage.getItem("cart"));
+      cart = cart.filter(cartItem => {
+        // check productId
+        const sameProductId = cartItem.productId === productId
+
+        // check biến thể
+        const attributeValueInCart = cartItem.attributeValue ? JSON.stringify(cartItem.attributeValue) : "[]"
+        const attributeValueInButton = attributeValue ?  JSON.stringify(attributeValue) : "[]"
+        const sameVariant = attributeValueInCart == attributeValueInButton;
+
+        return !(sameProductId && sameVariant)
+      })
+      localStorage.setItem("cart", JSON.stringify(cart));
+      drawCart();
+      miniCartQuantity();
+
+
+    })
+  })
+
+}
+
+// End Xóa item trong giỏ hàng
+
+
 const drawCart = () => {
   const cart = JSON.parse(localStorage.getItem("cart"))
   if (cart.length > 0){
@@ -291,7 +327,11 @@ const drawCart = () => {
           subTotal += priceNew * item.quantity;
 
           return `
-          <li>
+          <li 
+            cart-item
+            product-id=${item.productId}
+            ${item.attributeValue ? `attributeValue=${encodeURIComponent(JSON.stringify(item.attributeValue))}` : ""}
+          >
             <a class="cart_img" href="/product/detail/${detail.slug}">
               <img class="img-fluid w-100" alt="${detail.name}" src="${domainCDN}${detail.images[0]}">
             </a>
@@ -306,7 +346,7 @@ const drawCart = () => {
               </span>
               ${htmlVariant}
             </div>
-            <a class="del_icon" href="#">
+            <a class="del_icon" href="javascript:;" button-remove-item>
               <i class="fal fa-times" aria-hidden="true"></i>
             </a>
           </li>
@@ -317,9 +357,16 @@ const drawCart = () => {
 
         const elementSubTotal = miniCart.querySelector("[sub-total]");
         elementSubTotal.innerHTML = subTotal.toLocaleString("vi-VN");
-
+        removeItemCart()
       }
     })
+  }else {
+    const ulMiniCart = miniCart.querySelector(".offcanvas-body ul");
+    ulMiniCart.innerHTML = "Giỏ hàng trống.";
+
+    const elementSubTotal = miniCart.querySelector("[sub-total]");
+    elementSubTotal.innerHTML = 0;
+
   }
 }
 
@@ -462,6 +509,8 @@ if(changeAttribute){
       localStorage.setItem("cart", JSON.stringify(cart))
       miniCartQuantity()
       drawCart()
+      removeItemCart()
+
 
     }
 
@@ -476,3 +525,4 @@ if(miniCart){
   drawCart()
 }
 // End mini cart
+
