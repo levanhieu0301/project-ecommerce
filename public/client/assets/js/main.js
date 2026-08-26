@@ -339,6 +339,53 @@ const updateQuantityCart = () => {
   }
 // End Cập nhật số lượng trong giỏ hàng
 
+// Tính tiền những ô chỉ checked
+const updateChangeBox = () => {
+  const listInput = document.querySelectorAll("[cart-table] .cart_page_checkbox input")
+  listInput.forEach(input => {
+    input.addEventListener("change", () => {
+      const checked = input.checked
+      const itemParent = input.closest("[cart-item]")
+      const productId = itemParent.getAttribute("product-id")
+      let attributeValue = itemParent.getAttribute("attributeValue")
+      if(attributeValue){
+        attributeValue = JSON.parse(decodeURIComponent(attributeValue))
+      }
+      const  cart = JSON.parse(localStorage.getItem("cart"))
+      let itemUpdate = cart.find(item => {
+        // So sánh productId
+        const sameProductId = item.productId == productId
+
+        // So sánh thuộc tính
+        const attributeValueUpdate = attributeValue ? JSON.stringify(attributeValue): "[]";
+        const attributeValueCart = item.attributeValue ? JSON.stringify(item.attributeValue): "[]";
+        const sameAttributeValue =attributeValueUpdate == attributeValueCart
+         
+        return (sameProductId && sameAttributeValue)
+      })
+      itemUpdate.checked = checked;
+      localStorage.setItem("cart", JSON.stringify(cart));
+      drawCart();
+
+    })
+  })
+
+}
+// End Tính tiền những ô chỉ checked
+
+// CheckALL giỏ hàng
+const inputCheckAll = document.querySelector("[input-cart-check-all]")
+if(inputCheckAll){
+  inputCheckAll.addEventListener("change", () => {
+    const checked = inputCheckAll.checked
+    const cart = JSON.parse(localStorage.getItem("cart"))
+    cart.forEach(item => item.checked = checked)
+    localStorage.setItem("cart", JSON.stringify(cart));
+    drawCart();
+
+  })
+}
+// End CheckALL giỏ hàng
 
 const drawCart = () => {
   const cart = JSON.parse(localStorage.getItem("cart"))
@@ -398,7 +445,9 @@ const drawCart = () => {
             priceOld = detail.priceOld
             stock = detail.stock;
           }
-          subTotal += priceNew * item.quantity;
+          if (item.checked){
+            subTotal += priceNew * item.quantity;
+          }
 
           htmlMiniCart += `
           <li 
@@ -433,7 +482,7 @@ const drawCart = () => {
           >
             <td class="cart_page_checkbox">
               <div class="form-check">
-                <input class="form-check-input" value="" type="checkbox" />
+                <input class="form-check-input" value="" type="checkbox" ${item.checked == true ? "checked" : ""} />
               </div>
             </td>
             <td class="cart_page_img">
@@ -473,19 +522,21 @@ const drawCart = () => {
             </td>
         </tr>
           `
-          htmlSummary += `
-          <li>
-            <a class="img" href="/product/detail/${detail.slug}">
-              <img class="img-fluid w-100" alt="${detail.name}" 
-              src="${domainCDN}${detail.images[0]}">
-            </a>
-            <div class="text">
-              <a class="title" href="/product/detail/${detail.slug}">${detail.name}</a>
-              <p>${priceNew.toLocaleString("vi-VN")}đ × ${item.quantity}</p>
-              ${htmlVariantSummary}
-            </div>
-          </li>
-          `
+          if (item.checked){
+            htmlSummary += `
+            <li>
+              <a class="img" href="/product/detail/${detail.slug}">
+                <img class="img-fluid w-100" alt="${detail.name}" 
+                src="${domainCDN}${detail.images[0]}">
+              </a>
+              <div class="text">
+                <a class="title" href="/product/detail/${detail.slug}">${detail.name}</a>
+                <p>${priceNew.toLocaleString("vi-VN")}đ × ${item.quantity}</p>
+                ${htmlVariantSummary}
+              </div>
+            </li>
+            `
+          }
 
           })
           let discount = 0;
@@ -518,6 +569,7 @@ const drawCart = () => {
 
         removeItemCart()
         updateQuantityCart()
+        updateChangeBox()
       }
     })
   }else {
@@ -641,7 +693,8 @@ if(changeAttribute){
       const dataCart = {
         productId: productId,
         // attributeValue: variantCart.attributeValue,
-        quantity: quantity
+        quantity: quantity,
+        checked: true
       }
       const cart = JSON.parse(localStorage.getItem("cart"))
       if (variantCart && productVariant && productVariant.length > 0){
