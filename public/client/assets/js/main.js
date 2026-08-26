@@ -360,12 +360,14 @@ const drawCart = () => {
           let subTotal = 0;
           let htmlMiniCart = "";
           let htmlCartTable = "";
+          let htmlSummary = "";
           data.cart.forEach(item => {
           const {detail}  = item
           let priceNew = 0
           let stock = 0
           let priceOld = 0
           let htmlVariant = "";
+          let htmlVariantSummary = ""
           if (item.attributeValue){
               // Tìm đúng biến thể khớp trong danh sách
             const variantMatched = detail.variants.find(variantItem => {
@@ -386,6 +388,10 @@ const drawCart = () => {
                   <b>${attr.name}:</b> ${variant.label}
                 </span>
               `;
+              htmlVariantSummary += `
+                  <p>${attr.name}: ${variant.label}</p>
+                `;
+
             })
           }else{
             priceNew = detail.priceNew
@@ -467,18 +473,49 @@ const drawCart = () => {
             </td>
         </tr>
           `
+          htmlSummary += `
+          <li>
+            <a class="img" href="/product/detail/${detail.slug}">
+              <img class="img-fluid w-100" alt="${detail.name}" 
+              src="${domainCDN}${detail.images[0]}">
+            </a>
+            <div class="text">
+              <a class="title" href="/product/detail/${detail.slug}">${detail.name}</a>
+              <p>${priceNew.toLocaleString("vi-VN")}đ × ${item.quantity}</p>
+              ${htmlVariantSummary}
+            </div>
+          </li>
+          `
 
           })
+          let discount = 0;
+          let total = subTotal - discount;
+
         const ulMiniCart = miniCart.querySelector(".offcanvas-body ul");
         ulMiniCart.innerHTML = htmlMiniCart
         const cartTable = document.querySelector("[cart-table]");
           if(cartTable) {
             cartTable.innerHTML = htmlCartTable;
           }
+        const cartSummary = document.querySelector("[cart-summary]");
+          if(cartSummary) {
+            cartSummary.innerHTML = htmlSummary;
+          }
+         const listElementSubTotal = document.querySelectorAll("[sub-total]");
+          listElementSubTotal.forEach(item => {
+            item.innerHTML = subTotal.toLocaleString("vi-VN");
+          })
 
+          const elementDiscount = document.querySelector("[discount]");
+          if(elementDiscount) {
+            elementDiscount.innerHTML = discount.toLocaleString("vi-VN");
+          }
 
-        const elementSubTotal = miniCart.querySelector("[sub-total]");
-        elementSubTotal.innerHTML = subTotal.toLocaleString("vi-VN");
+          const elementTotal = document.querySelector("[total]");
+          if(elementTotal) {
+            elementTotal.innerHTML = total.toLocaleString("vi-VN");
+          }
+
         removeItemCart()
         updateQuantityCart()
       }
@@ -496,9 +533,15 @@ const drawCart = () => {
           </tr>
         `;
       }
+    const cartSummary = document.querySelector("[cart-summary]");
+      if(cartSummary) {
+        cartSummary.innerHTML = "";
+      }
+    const listElementSubTotal = document.querySelectorAll("[sub-total]");
+    listElementSubTotal.forEach(item => {
+      item.innerHTML = 0;
+    })
 
-    const elementSubTotal = miniCart.querySelector("[sub-total]");
-    elementSubTotal.innerHTML = 0;
 
   }
 }
