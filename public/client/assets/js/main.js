@@ -240,6 +240,13 @@ if(!existCart ){
   localStorage.setItem("cart", JSON.stringify([]))
 }
 // End Tạo biến cart khi vào trang
+// Tạo localstorage compare
+const compare = localStorage.getItem("compare")
+if(!compare){
+  localStorage.setItem("compare", JSON.stringify([]))
+}
+// End Tạo localstorage compare
+
 
 // Xóa item trong giỏ hàng
 const removeItemCart = () =>{
@@ -609,7 +616,14 @@ const miniCartQuantity = () => {
 }
 miniCartQuantity()
 // End Số lượng giỏ hàng
-
+// Cập nhật số lượng hiển thị trên compare
+const miniCompareQuantity = () => {
+  const elementQuantityCompare = document.querySelector("[mini-compare-quantity]")
+  const compareLocalStorage = JSON.parse(localStorage.getItem("compare"))
+  elementQuantityCompare.innerHTML = compareLocalStorage.length
+}
+miniCompareQuantity()
+// End Cập nhật số lượng hiển thị trên compare
 
 // Chọn biến thể thay đổi giá trị tương ứng
 const changeAttribute = document.querySelector(".shop_details_text")
@@ -621,6 +635,8 @@ if(changeAttribute){
   const buttonPlus = changeAttribute.querySelector(".plus");
   const buttonMinus = changeAttribute.querySelector(".minus");
   const buttonAddCart = changeAttribute.querySelector("[button-add-cart]")
+  const buttonAddCompare = changeAttribute.querySelector("[button-add-compare]")
+
   let variantCart = null;
   // const dataFinal = {
   //   6a7ae45f1569c8b55b734ddb: s,
@@ -745,6 +761,63 @@ if(changeAttribute){
 
   })
 
+  // Thêm vào so sánh
+  buttonAddCompare.addEventListener("click", () => {
+    const productId = buttonAddCompare.getAttribute("product-id")
+    if (productId){
+      const dataCompare = {
+        productId: productId,
+        // attributeValue: variantCart.attributeValue,
+      }
+      const compare = JSON.parse(localStorage.getItem("compare"))
+      if (compare.length < 5){
+        if (variantCart && productVariant && productVariant.length > 0){
+          dataCompare.attributeValue = variantCart.attributeValue
+          // Check sản phẩm trùng
+          const existProduct = compare.find(item => {
+            if(item.productId != dataCompare.productId){
+              return false
+            }
+            // Kiểm tra thuộc tính
+            const oldAttri = item.attributeValue
+            const newAttri = dataCompare.attributeValue
+            if(oldAttri.length !== newAttri.length){
+              return false
+            }
+            return oldAttri.every(attri => {
+              const match =  newAttri.find(a => a.attriId == attri.attriId && a.value == attri.value)
+              return match ? true : false;
+            })
+
+          })
+          if(existProduct){
+            notyf.success("Sản phẩm đã có trong so sánh!");
+          }else {
+            compare.push(dataCompare)
+            notyf.success("Đã thêm vào so sánh!");
+          }
+        }else {
+          // Tìm xem có sản phẩm trùng productId hay không
+          const existItem = compare.find(item => item.productId === dataCompare.productId);
+
+          if(existItem) {
+            notyf.success("Sản phẩm đã có trong so sánh!");
+          } else {
+            compare.push(dataCompare);
+            notyf.success("Đã thêm vào so sánh!");
+          }
+        }
+        localStorage.setItem("compare", JSON.stringify(compare))
+        miniCompareQuantity()
+
+      }else {
+        notyf.error("Số lượng sản phẩm so sánh đã đủ!");
+      }
+
+    }
+
+  })
+
 }
 // End Chọn biến thể thay đổi giá trị tương ứng
 
@@ -754,4 +827,3 @@ if(miniCart){
   drawCart()
 }
 // End mini cart
-

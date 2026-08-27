@@ -46,13 +46,13 @@ nav.d-none.d-lg-block(class="main_menu_2 main_menu")
                     a(href=`/article/category/${item.slug}`) #{item.name}
           ul(class="menu_icon")
             li
-              a(href="compare.html")
+              a(href="/compare")
                 b
                   img.img-fluid(
                     alt="Wishlist" 
                     src="/client/assets/images/compare_black.svg"
                     )
-                span 2
+                span(mini-compare-quantity) 0
             li
               a(href="wishlist.html")
                 b
