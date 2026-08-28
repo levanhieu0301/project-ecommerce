@@ -827,3 +827,126 @@ if(miniCart){
   drawCart()
 }
 // End mini cart
+
+const drawCompare = () => {
+  const compare = JSON.parse(localStorage.getItem("compare"))
+  if(compare.length > 0){
+    fetch("/compare/list", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(compare)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.code == "error"){
+        localStorage.setItem("compare", JSON.stringify([]));
+      }
+      if (data.code == "success"){
+        localStorage.setItem("compare", JSON.stringify(data.compare));
+        const element1 = document.querySelector("[html-1]")
+        const element2 = document.querySelector("[html-2]")
+        const element3 = document.querySelector("[html-3]")
+        const element4 = document.querySelector("[html-4]")
+        const element5 = document.querySelector("[html-5]")
+        const element6 = document.querySelector("[html-6]")
+        let html1 = ""
+        let html2 = ""
+        let html3 = ""
+        let html4 = ""
+        let html5 = ""
+        let html6 = ""
+        data.compare.forEach(item => {
+          const {detail} = item
+          let priceNew = 0
+          let priceOld = 0
+          let stock = 0
+            let htmlVariant = ""
+          if(item.attributeValue){
+            const variantMatched = detail.variants.find(attri => {
+              return (
+                attri.attributeValue.every(att => {
+                  const selected = item.attributeValue.find(v => v.attriId == att.attriId)
+                  return selected && selected.value == att.value
+                })
+              )
+            })
+            priceNew = variantMatched.priceNew
+            priceOld = variantMatched.priceOld
+            stock = variantMatched.stock
+            detail.attributeList.forEach(attr => {
+              const variant = item.attributeValue.find(v => v.attriId === attr._id);
+              htmlVariant += `
+                <p>${attr.name}: ${variant.label}</p>
+              `;
+              })
+          }else {
+            priceNew = detail.priceNew
+            priceOld = detail.priceOld
+            stock = detail.stock
+          }
+
+          html1 += `
+            <td>
+              <img class="img-fluid w-100" alt="${detail.name}" src="${domainCDN}${detail.images[0]}">
+              <a class="title" href="/product/detail/${detail.slug}">${detail.name}</a>
+            </td>`
+          html2 += `
+            <td>
+              <p>${detail.description}</p>
+            </td>
+            `
+          html3 += `
+            <td>
+              <p>
+                ${priceNew.toLocaleString("vi-VN")}đ
+                <del>${priceOld.toLocaleString("vi-VN")}đ</del>
+              </p>
+            </td>
+            `;
+
+          html4 += `
+            <td>
+              ${htmlVariant}
+            </td>
+          `;
+          html5 += `
+            <td>
+              <p class="rating">
+                <i class="fas fa-star" aria-hidden="true"></i>
+                <i class="fas fa-star" aria-hidden="true"></i>
+                <i class="fas fa-star" aria-hidden="true"></i>
+                <i class="fas fa-star" aria-hidden="true"></i>
+                <i class="fas fa-star" aria-hidden="true"></i>
+                <i class="fal fa-star" aria-hidden="true"></i>
+              </p>
+            </td>
+          `;
+
+          html6 += `
+            <td>
+              <a class="common_btn" href="#">Thêm vào giỏ</a>
+              <a class="remove common_btn" href="#">
+                <i class="fal fa-trash" aria-hidden="true"></i>
+              </a>
+            </td>
+          `;
+        })
+        element1.outerHTML = html1
+        element2.outerHTML = html2
+        element3.outerHTML = html3
+        element4.outerHTML = html4
+        element5.outerHTML = html5
+        element6.outerHTML = html6
+      }
+
+    })
+  }
+}
+// Trang so sánh
+const comparePage = document.querySelector(".compare_page");
+if(comparePage) {
+  drawCompare();
+}
+// Hết Trang so sánh

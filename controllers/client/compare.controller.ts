@@ -4,9 +4,10 @@ import AttributeProduct from '../../models/attribute-product.model';
 
 export const list = async (req: Request, res: Response) => {
   try {
-    const cart = req.body;
-    const cartDetail = []
-    for(const item of cart){
+    const compare = req.body
+
+    const compareDetail = []
+    for(const item of compare){
       const productDetail = await Product.findOne({
         _id: item.productId,
         deleted: false,
@@ -27,19 +28,20 @@ export const list = async (req: Request, res: Response) => {
             name: productDetail.name,
             priceNew: productDetail.priceNew,
             priceOld: productDetail.priceOld,
+            description: productDetail.description,
             stock: productDetail.stock,
             attributeList: attributeList,
             variants: productDetail.variants
           }
         }
-        cartDetail.push(itemDetail)
+        compareDetail.push(itemDetail)
       }
     }
 
     res.json({
       code: "success",
       message: "Thành công!",
-      cart: cartDetail
+      compare: compareDetail
     })
   } catch (error) {
     res.json({
@@ -50,6 +52,7 @@ export const list = async (req: Request, res: Response) => {
 }
 
 export const compare = async (req: Request, res: Response) => {
+
   res.render("client/pages/compare", {
     pageTitle: "So sánh"
   });
