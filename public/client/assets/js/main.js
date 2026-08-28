@@ -827,6 +827,65 @@ if(miniCart){
   drawCart()
 }
 // End mini cart
+// Nút thêm vào giỏ hàng ở trang So sánh
+const eventAddItemToCartInCompare = () => {
+  const listButtonAdd = document.querySelectorAll("[button-add]");
+  listButtonAdd.forEach(button => {
+    button.addEventListener("click", () => {
+      const index = button.getAttribute("button-add")
+      const compare = JSON.parse(localStorage.getItem("compare"))
+      const compareItem = compare[index]
+      const dataItem = {
+        productId: compareItem.productId,
+        quantity: 1,
+        checked: true
+      }
+      const cart =  JSON.parse(localStorage.getItem("cart"))
+      if(compareItem.attributeValue){
+        dataItem.attributeValue = compareItem.attributeValue
+        const variantMatched = cart.find(item => {
+          if(item.productId !== dataItem.productId){
+            return false;
+          }
+          const oldAttri = item.attributeValue
+          const newAttri = dataItem.attributeValue
+          // Số lượng thuộc tính phải trùng
+          if(oldAttri.length !== newAttri.length) {
+            return false;
+          }
+
+          // Kiểm tra từng attrId và value
+          return oldAttri.every(attr => {
+            const match = newAttri.find(a => a.attriId === attr.attriId && a.value === attr.value);
+            return match ? true : false;
+          });
+        })
+        if(variantMatched) {
+          notyf.success("Sản phẩm đã có trong giỏ hàng!");
+        } else {
+          cart.unshift(dataItem);
+          notyf.success("Đã thêm vào giỏ hàng!");
+        }
+      }else{
+        // Tìm xem có sản phẩm trùng productId hay không
+        const existItem = cart.find(item => item.productId === dataItem.productId);
+
+        if(existItem) {
+          notyf.success("Sản phẩm đã có trong giỏ hàng!");
+        } else {
+          cart.unshift(dataItem);
+          notyf.success("Đã thêm vào giỏ hàng!");
+        }
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      miniCartQuantity();
+      drawCart();
+    })
+  })
+ 
+}
+// Hết Nút thêm vào giỏ hàng ở trang So sánh
+
 
 const drawCompare = () => {
   const compare = JSON.parse(localStorage.getItem("compare"))
@@ -857,7 +916,7 @@ const drawCompare = () => {
         let html4 = ""
         let html5 = ""
         let html6 = ""
-        data.compare.forEach(item => {
+        data.compare.forEach((item, index) => {
           const {detail} = item
           let priceNew = 0
           let priceOld = 0
@@ -926,7 +985,11 @@ const drawCompare = () => {
 
           html6 += `
             <td>
-              <a class="common_btn" href="#">Thêm vào giỏ</a>
+              ${stock > 0 ?
+                `<a class="common_btn" href="javascript:;" button-add ="${index}">Thêm vào giỏ</a>`
+                : 
+                `<div class="text-danger">Đã hết hàng</div>`
+              } 
               <a class="remove common_btn" href="#">
                 <i class="fal fa-trash" aria-hidden="true"></i>
               </a>
@@ -940,6 +1003,7 @@ const drawCompare = () => {
         element5.outerHTML = html5
         element6.outerHTML = html6
       }
+      eventAddItemToCartInCompare()
 
     })
   }
