@@ -77,7 +77,11 @@ div(class="shop_details_text")
         i.fas.fa-long-arrow-right
   ul(class="details_list_btn")
     li
-      a(href="#")
+      a(
+        href="javascript:;"
+        product-id = productDetail.id
+        button-add-wishlist
+      )
         i.fal.fa-heart
         | Yêu thích
     li

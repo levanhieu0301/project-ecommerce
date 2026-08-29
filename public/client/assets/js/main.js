@@ -247,6 +247,14 @@ if(!compare){
 }
 // End Tạo localstorage compare
 
+// Tạo localstorage wishlist
+const wishlist = localStorage.getItem("wishlist")
+if(!wishlist){
+  localStorage.setItem("wishlist", JSON.stringify([]))
+}
+// End Tạo localstorage wishlist
+
+
 
 // Xóa item trong giỏ hàng
 const removeItemCart = () =>{
@@ -616,6 +624,7 @@ const miniCartQuantity = () => {
 }
 miniCartQuantity()
 // End Số lượng giỏ hàng
+
 // Cập nhật số lượng hiển thị trên compare
 const miniCompareQuantity = () => {
   const elementQuantityCompare = document.querySelector("[mini-compare-quantity]")
@@ -624,6 +633,16 @@ const miniCompareQuantity = () => {
 }
 miniCompareQuantity()
 // End Cập nhật số lượng hiển thị trên compare
+
+// mini-wishlist-quantity
+const miniWishlistQuantity = () => {
+  const wishlist = JSON.parse(localStorage.getItem("wishlist"));
+  const miniWishlistQuantity = document.querySelector("[mini-wishlist-quantity]");
+  miniWishlistQuantity.innerHTML = wishlist.length;
+}
+miniWishlistQuantity();
+// End mini-wishlist-quantity
+
 
 // Chọn biến thể thay đổi giá trị tương ứng
 const changeAttribute = document.querySelector(".shop_details_text")
@@ -817,6 +836,64 @@ if(changeAttribute){
     }
 
   })
+  // Thêm vào yêu thích
+  const buttonAddWishlist = changeAttribute.querySelector("[button-add-wishlist]");
+  buttonAddWishlist.addEventListener("click", () => {
+    const productId = buttonAddWishlist.getAttribute("product-id")
+    const quantity = parseInt(inputQuantity.value)
+    if (productId && quantity > 0){
+      const dataCart = {
+        productId: productId,
+        // attributeValue: variantCart.attributeValue,
+        quantity: quantity,
+      }
+      const wishlist = JSON.parse(localStorage.getItem("wishlist"))
+      if (variantCart && productVariant && productVariant.length > 0){
+        dataCart.attributeValue = variantCart.attributeValue
+        // Check sản phẩm trùng
+        const existProduct = wishlist.find(item => {
+          if(item.productId != dataCart.productId){
+            return false
+          }
+          // Kiểm tra thuộc tính
+          const oldAttri = item.attributeValue
+          const newAttri = dataCart.attributeValue
+          if(oldAttri.length !== newAttri.length){
+            return false
+          }
+          return oldAttri.every(attri => {
+            const match =  newAttri.find(a => a.attriId == attri.attriId && a.value == attri.value)
+            return match ? true : false;
+          })
+
+        })
+        if(existProduct){
+          existProduct.quantity = dataCart.quantity
+          notyf.success("Đã cập nhật lại số lượng!");
+        }else {
+          wishlist.unshift(dataCart)
+          notyf.success("Đã thêm vào yêu thích!");
+        }
+      }else {
+        // Tìm xem có sản phẩm trùng productId hay không
+        const existItem = cart.find(item => item.productId === dataCart.productId);
+
+        if(existItem) {
+          existItem.quantity = dataCart.quantity;
+          notyf.success("Đã cập nhật số lượng!");
+        } else {
+          wishlist.unshift(dataCart);
+          notyf.success("Đã thêm vào yêu thích!");
+        }
+      }
+      localStorage.setItem("wishlist", JSON.stringify(wishlist))
+      miniWishlistQuantity();
+
+    }
+
+  })
+
+
 
 }
 // End Chọn biến thể thay đổi giá trị tương ứng
@@ -885,6 +962,21 @@ const eventAddItemToCartInCompare = () => {
  
 }
 // Hết Nút thêm vào giỏ hàng ở trang So sánh
+// Nút xóa item khỏi trang so sánh
+const eventRemoveItemInCompare = () => {
+  const listButtonRemove = document.querySelectorAll("[button-remove]");
+  listButtonRemove.forEach(button => {
+    button.addEventListener("click", () => {
+      const index = parseInt(button.getAttribute("button-remove"));
+      const compareList = JSON.parse(localStorage.getItem("compare"));
+      compareList.splice(index, 1);
+      localStorage.setItem("compare", JSON.stringify(compareList));
+      drawNotify("success", "Đã xóa sản phẩm khỏi so sánh!");
+      window.location.reload();
+    })
+  })
+}
+// Hết Nút xóa item khỏi trang so sánh
 
 
 const drawCompare = () => {
@@ -990,7 +1082,7 @@ const drawCompare = () => {
                 : 
                 `<div class="text-danger">Đã hết hàng</div>`
               } 
-              <a class="remove common_btn" href="#">
+              <a class="remove common_btn" href="javascript:;" button-remove="${index}">
                 <i class="fal fa-trash" aria-hidden="true"></i>
               </a>
             </td>
@@ -1004,6 +1096,7 @@ const drawCompare = () => {
         element6.outerHTML = html6
       }
       eventAddItemToCartInCompare()
+      eventRemoveItemInCompare()
 
     })
   }
