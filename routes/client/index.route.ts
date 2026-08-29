@@ -9,9 +9,11 @@ import wishlistRoutes from "./wishlist.route";
 import authRoutes from "./auth.route";
 import * as categoryMiddleware from "../../middlewares/client/category.middleware"
 import * as attributeMiddleware from "../../middlewares/client/attribute.middleware"
+import * as authMiddleware from "../../middlewares/client/auth.middleware";
 
 router.use(categoryMiddleware.category)
 router.use(attributeMiddleware.attribute)
+router.use(authMiddleware.verifyToken);
 router.use('/', homeRoute)
 router.use('/article', articleRoute)
 router.use('/product', productRoute)
