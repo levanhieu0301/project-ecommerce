@@ -145,3 +145,7 @@ export const loginPost = async (req: Request, res: Response) => {
     });
   }
 }
+export const logout = async (req: Request, res: Response) => {
+  res.clearCookie("tokenUser");
+  res.redirect("/auth/login");
+}

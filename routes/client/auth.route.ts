@@ -18,5 +18,6 @@ router.post(
   authValidate.loginPost, 
   authController.loginPost
 );
+router.get('/logout', authController.logout);
 
 export default router;
