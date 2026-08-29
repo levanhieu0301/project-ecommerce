@@ -1013,7 +1013,7 @@ const drawCompare = () => {
           let priceNew = 0
           let priceOld = 0
           let stock = 0
-            let htmlVariant = ""
+          let htmlVariant = ""
           if(item.attributeValue){
             const variantMatched = detail.variants.find(attri => {
               return (
@@ -1107,3 +1107,119 @@ if(comparePage) {
   drawCompare();
 }
 // Hết Trang so sánh
+
+// Vẽ danh sách yêu thích
+const drawWishlistPage = () => {
+  const wishlist = JSON.parse(localStorage.getItem("wishlist"));
+  if(wishlist.length > 0) {
+    fetch(`/wishlist/list`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(wishlist)
+    })
+      .then(res => res.json())
+      .then(data => {
+        if(data.code == "error") {
+          localStorage.setItem("wishlist", JSON.stringify([]));
+        }
+
+        if(data.code == "success") {
+          localStorage.setItem("wishlist", JSON.stringify(data.wishlist));
+          
+          let htmlWishlistTable = "";
+
+          data.wishlist.forEach(item => {
+            const { detail } = item;
+            let priceOld = 0;
+            let priceNew = 0;
+            let stock = 0;
+            let htmlVariant = "";
+            if(item.attributeValue){
+              const variantMatched = detail.variants.find(attri => {
+                return (
+                  attri.attributeValue.every(att => {
+                    const selected = item.attributeValue.find(v => v.attriId == att.attriId)
+                    return selected && selected.value == att.value
+                  })
+                )
+              })
+              priceNew = variantMatched.priceNew
+              priceOld = variantMatched.priceOld
+              stock = variantMatched.stock
+              detail.attributeList.forEach(attr => {
+                const variant = item.attributeValue.find(v => v.attriId === attr._id);
+                htmlVariant += `
+                  <p>${attr.name}: ${variant.label}</p>
+                `;
+                })
+            }else {
+              priceNew = detail.priceNew
+              priceOld = detail.priceOld
+              stock = detail.stock
+            }
+            htmlWishlistTable += `
+              <tr
+                cart-item 
+                product-id="${item.productId}" 
+                ${item.attributeValue ? `attributeValue="${encodeURIComponent(JSON.stringify(item.attributeValue))}"` : ''}
+              >
+                <td class="cart_page_img">
+                  <div class="img">
+                    <img class="img-fluid w-100" alt="${detail.name}" src="${domainCDN}${detail.images[0]}">
+                  </div>
+                </td>
+                <td class="cart_page_details">
+                  <a class="title" href="/product/detail/${detail.slug}">${detail.name}</a>
+                  <p>
+                    ${priceNew.toLocaleString("vi-VN")}đ
+                    <del>${priceOld.toLocaleString("vi-VN")}đ</del>
+                  </p>
+                  ${htmlVariant}
+                </td>
+                <td class="cart_page_price">
+                  <h3>${priceNew.toLocaleString("vi-VN")}đ</h3>
+                </td>
+                <td class="cart_page_quantity">
+                  <div class="details_qty_input">
+                    <button class="minus">
+                      <i class="fal fa-minus" aria-hidden="true"></i>
+                    </button>
+                    <input 
+                      value="${item.quantity}" 
+                      type="number" 
+                      readonly="" 
+                      min="1" 
+                      max="${stock}" 
+                    />
+                    <button class="plus">
+                      <i class="fal fa-plus" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </td>
+                <td class="cart_page_price">
+                  <h3>${(item.quantity*priceNew).toLocaleString("vi-VN")}đ</h3>
+                </td>
+                <td class="cart_page_action">
+                  <a class="common_btn" href="#">Thêm vào giỏ</a>
+                  <a class="remove common_btn" href="#">Xóa</a>
+                </td>
+              </tr>
+            `;
+          })
+
+          const wishlistTable = document.querySelector("[wishlist-table]");
+          wishlistTable.innerHTML = htmlWishlistTable;
+        }
+      })
+  }
+}
+// Hết Vẽ danh sách yêu thích
+
+// Trang yêu thích
+const wishlistPage = document.querySelector(".wishlist_page");
+if(wishlistPage) {
+  drawWishlistPage();
+}
+// Hết Trang yêu thích
