@@ -11,5 +11,12 @@ router.post(
   authValidate.registerPost, 
   authController.registerPost
 );
+router.get('/login', authController.login);
+
+router.post(
+  '/login', 
+  authValidate.loginPost, 
+  authController.loginPost
+);
 
 export default router;
