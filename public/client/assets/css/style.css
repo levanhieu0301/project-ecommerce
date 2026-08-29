@@ -12271,3 +12271,9 @@ footer {
     font-weight: 500;
 }
 /* End .header_2 form */
+.single_input .just-validate-error-label {
+    position: absolute;
+    font-size: 11px;
+    bottom: 0;
+    left: 20px;
+}
