@@ -149,3 +149,25 @@ export const logout = async (req: Request, res: Response) => {
   res.clearCookie("tokenUser");
   res.redirect("/auth/login");
 }
+export const completeGoogle = async (req: Request, res: Response) => {
+  const existAccount = req.user as any
+   const tokenUser = jwt.sign(
+      {
+        id: existAccount.id,
+        email: existAccount.email
+      },
+      `${process.env.JWT_SECRET}`,
+      {
+        expiresIn: "1d"
+      }
+    );
+
+    res.cookie("tokenUser", tokenUser, {
+      httpOnly: true,
+      maxAge:  24 * 60 * 60 * 1000, 
+      sameSite: "lax"
+    });
+
+ res.redirect('/');
+}
+

@@ -26,8 +26,6 @@ router.get('/google', passport.authenticate('google', {
 }));
 router.get('/google/callback', passport.authenticate('google', {
   failureRedirect: '/auth/login',
-}), (req, res) => {
-  res.redirect('/');
-});
+}), authController.completeGoogle);
 
 export default router;
