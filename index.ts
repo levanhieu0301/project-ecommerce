@@ -4,6 +4,10 @@ import { domainCDN, pathAdmin } from "./configs/variable.config"
 import { connectDB } from "./configs/database.config"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
+import session from "express-session";
+import passport from "passport";
+import { loginGoogle } from './configs/googleOauth.config';
+
 const app = express()
 const port = 5000
 // Tích hợp giao diện pug
@@ -15,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 dotenv.config();
 // Kết nối database
 connectDB();
+
 
 // Middleware tắt cache (áp dụng cho tất cả GET request)
 app.use((req, res, next) => {
@@ -42,11 +47,24 @@ app.locals.domainCDN = domainCDN;
 // Cho phép gửi JSON
 app.use(express.json())
 
+// Cấu hình session
+app.use(session({
+  secret: `${process.env.SESSION_SECRET}`,
+  resave: false,
+  saveUninitialized: true,
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+loginGoogle(passport);
+
 // Router client
 import clientRoute from "./routes/client/index.route"
 app.use('/', clientRoute)
 // Router admin
 import adminRoute from "./routes/admin/index.route"
+import { loginPost } from "./controllers/client/auth.controller"
 app.use(`/${pathAdmin}`, adminRoute)
 
 
