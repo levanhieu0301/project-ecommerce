@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as authController from "../../controllers/client/auth.controller";
 import * as authValidate from "../../validates/client/auth.validate";
+import * as authMiddleware from "../../middlewares/client/auth.middleware"
 import passport from "passport";
 
 const router = Router();
@@ -27,5 +28,24 @@ router.get('/google', passport.authenticate('google', {
 router.get('/google/callback', passport.authenticate('google', {
   failureRedirect: '/auth/login',
 }), authController.completeGoogle);
+
+router.get('/forgot-password', authController.forgotPassword);
+router.post('/forgot-password',authValidate.forgotPasswordPost, authController.forgotPasswordPost);
+router.get('/otp-password', authController.otpPassword);
+
+router.post(
+  '/otp-password', 
+  authValidate.otpPasswordPost, 
+  authController.otpPasswordPost
+);
+
+router.get('/reset-password', authController.resetPassword);
+router.post(
+  '/reset-password', 
+  authMiddleware.verifyToken,
+  authValidate.resetPasswordPost, 
+  authController.resetPasswordPost
+);
+
 
 export default router;
