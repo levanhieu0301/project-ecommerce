@@ -23,5 +23,10 @@ router.post(
   dashboardController.addressCreatePost
 );
 
+router.patch(
+  '/address/change-default/:id', 
+  dashboardController.addressChangeDefaultPatch
+);
+
 
 export default router;
