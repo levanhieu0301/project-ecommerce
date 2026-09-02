@@ -11,6 +11,7 @@ import dashboardRoutes from "./dashboard.route";
 import * as categoryMiddleware from "../../middlewares/client/category.middleware"
 import * as attributeMiddleware from "../../middlewares/client/attribute.middleware"
 import * as authMiddleware from "../../middlewares/client/auth.middleware";
+import * as dashboardController from "../../controllers/client/dashboard.controller";
 
 router.use(categoryMiddleware.category)
 router.use(attributeMiddleware.attribute)
@@ -22,7 +23,7 @@ router.use('/cart', cartRoutes);
 router.use('/compare', compareRoutes);
 router.use('/wishlist', wishlistRoutes);
 router.use('/auth', authRoutes);
-router.use('/dashboard', dashboardRoutes);
+router.use('/dashboard', authMiddleware.loggedIn, dashboardRoutes);
 
 
 
