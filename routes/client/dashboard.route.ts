@@ -27,6 +27,10 @@ router.patch(
   '/address/change-default/:id', 
   dashboardController.addressChangeDefaultPatch
 );
+router.delete(
+  '/address/delete/:id', 
+  dashboardController.addressDelete
+);
 
 
 export default router;
