@@ -1978,7 +1978,6 @@ if(boxMap) {
     const coord = ol.proj.toLonLat(event.coordinate);
     const lon = coord[0];
     const lat = coord[1];
-    console.log(`Kinh độ: ${lon}, Vĩ độ: ${lat}`);
     setMarker(lon, lat);
 
     // Gọi API Nominatim để lấy địa chỉ chi tiết
@@ -1986,7 +1985,6 @@ if(boxMap) {
       .then(res => res.json())
       .then(data => {
         if(data && data.display_name) {
-          console.log(data);
           const inputAddress = document.querySelector(`[name="address"]`);
           inputAddress.value = data.display_name;
 
@@ -2015,7 +2013,6 @@ if(boxMap) {
       .then(res => res.json())
       .then(data => {
         if(data && data.length > 0) {
-          console.log(data);
           const firstResult = data[0];
           const lon = parseFloat(firstResult.lon);
           const lat = parseFloat(firstResult.lat);
@@ -2129,3 +2126,35 @@ if(dashboardAddressEditForm) {
   ;
 }
 // End Dashboard Address Edit Form
+// Ảnh đại diện client
+const inputAvatarClient = document.querySelector("#profile_photo");
+if(inputAvatarClient) {
+  inputAvatarClient.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if(file){
+      // Handle file selection logic here
+      const formData = new FormData();
+      formData.append("avatar", file);
+      
+      fetch(`/dashboard/profile/change-avatar`, {
+        method: "PATCH",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if(data.code == "error") {
+            notyf.error(data.message);
+          }
+
+          if(data.code == "success") {
+            const profilePhotoPreview = document.querySelector("[profile-photo-preview]");
+            profilePhotoPreview.src = `${domainCDN}${data.linkAvatar}`;
+            notyf.success(data.message);
+
+          }
+        })
+      }
+
+  })
+}
+// End Ảnh đại diện client

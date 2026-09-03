@@ -1,6 +1,8 @@
 import { Router } from "express";
 import * as dashboardController from "../../controllers/client/dashboard.controller";
 import * as dashboardValidate from "../../validates/client/dashboard.validate";
+import multer from "multer";
+const  upload = multer()
 
 const router = Router();
 
@@ -38,6 +40,7 @@ router.patch(
   dashboardValidate.addressCreatePost,
   dashboardController.addressEditPatch
 );
+router.patch('/profile/change-avatar', upload.single('avatar'), dashboardController.profileChangeAvatar);
 
 
 export default router;
