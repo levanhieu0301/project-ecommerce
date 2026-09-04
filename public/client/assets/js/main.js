@@ -556,6 +556,35 @@ const drawCart = () => {
 
           })
           let discount = 0;
+          let couponDetail = sessionStorage.getItem("coupon");
+          if(couponDetail) {
+            couponDetail = JSON.parse(couponDetail);
+
+            // Kiểm tra giá trị đơn hàng tối thiểu
+            if (subTotal >= couponDetail.minOrderValue) {
+              if (couponDetail.typeDiscount === "percentage") {
+                discount = (subTotal * couponDetail.value) / 100;
+
+                // Giới hạn mức giảm tối đa (nếu có)
+                if (couponDetail.maxDiscountValue > 0 && discount > couponDetail.maxDiscountValue) {
+                  discount = couponDetail.maxDiscountValue;
+                }
+
+              } else if (couponDetail.typeDiscount === "fixed") {
+                discount = couponDetail.value;
+              }
+
+              const elementViewCoupon = document.querySelector("#applyCouponForm .inner-view-coupon");
+              const elementCoupon = elementViewCoupon.querySelector(".coupon-code");
+              elementViewCoupon.style.display = "flex";
+              elementCoupon.innerHTML = couponDetail.code;
+            } else {
+              // Nếu chưa đủ điều kiện áp dụng mã
+              notyf.error(`Đơn hàng chưa đạt giá trị tối thiểu: ${couponDetail.minOrderValue}đ`);
+              sessionStorage.removeItem("couponDetail");
+            }
+          }
+          
           let total = subTotal - discount;
 
         const ulMiniCart = miniCart.querySelector(".offcanvas-body ul");
@@ -2158,3 +2187,64 @@ if(inputAvatarClient) {
   })
 }
 // End Ảnh đại diện client
+function checkCoupon(coupon) {
+  const elementViewCoupon = document.querySelector("#applyCouponForm .inner-view-coupon");
+  const elementCoupon = elementViewCoupon.querySelector(".coupon-code");
+
+  const dataFinal = {
+    coupon: coupon,
+  };
+
+  fetch(`/coupon/check`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(dataFinal)
+  })
+    .then(res => res.json())
+    .then(data => {
+      if(data.code == "error") {
+        notyf.error(data.message);
+        elementViewCoupon.style.display = "none";
+        elementCoupon.innerHTML = "";
+        sessionStorage.removeItem("coupon");
+      }
+
+      if(data.code == "success") {
+        notyf.success(data.message);
+        // Lưu thông tin coupon vào sessionStorage
+        sessionStorage.setItem("coupon", JSON.stringify(data.coupon));
+        elementViewCoupon.style.display = "flex";
+        elementCoupon.innerHTML = data.coupon.code;
+      }
+      drawCart();
+    })
+}
+// Apply Coupon Form
+const applyCouponForm = document.querySelector("#applyCouponForm");
+if(applyCouponForm) {
+  applyCouponForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const coupon = event.target.coupon.value;
+
+    if(!coupon) {
+      notyf.error("Vui lòng nhập mã giảm giá!");
+      return;
+    }
+    checkCoupon(coupon);
+  })
+    // Xóa mã giảm giá
+  const buttonRemove = document.querySelector("#applyCouponForm .inner-view-coupon .inner-remove");
+  if(buttonRemove) {
+    const elementViewCoupon = document.querySelector("#applyCouponForm .inner-view-coupon");
+    buttonRemove.addEventListener("click", () => {
+      elementViewCoupon.style.display = "none";
+      sessionStorage.removeItem("coupon");
+      drawCart();
+    })
+  }
+
+}
+// End Apply Coupon Form
