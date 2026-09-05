@@ -1955,9 +1955,10 @@ if(listButtonApi.length > 0) {
 
 // Map
 const boxMap = document.querySelector("#boxMap");
+let map = null;
 if(boxMap) {
   // Khởi tạo bản đồ
-  const map = new ol.Map({
+  map = new ol.Map({
     target: 'boxMap',
     layers: [
       new ol.layer.Tile({
@@ -2248,3 +2249,42 @@ if(applyCouponForm) {
 
 }
 // End Apply Coupon Form
+
+// radio button change Address
+
+const checkoutPage = document.querySelector(".checkout_page");
+if(checkoutPage) {
+  const listRadioAddress = document.querySelectorAll("input[name='userAddress']");
+    const collapseEl = checkoutPage.querySelector("#collapseThree");
+  const collapse = new bootstrap.Collapse(collapseEl, { toggle: false })
+
+  listRadioAddress.forEach(input  => {
+    input.addEventListener("change", () => {
+      // Cách 1:
+      // // Loại bỏ check hết tất cả
+      // listRadioAddress.forEach(i => {
+      //   i.checked = false
+      // })
+      // // Check lại radio button vừa chọn
+      // input.checked = true;
+
+      // Cách 2: 
+      listRadioAddress.forEach(i => {
+        if(input.value == i.value){
+          i.checked = true
+        }else {
+          i.checked = false
+        }
+      })
+       if(input.value == "") {
+        collapse.show();
+      } else {
+        collapse.hide();
+      }
+      if(map) {
+        map.updateSize();
+      }
+    })
+  })
+}
+// End radio button change Address
