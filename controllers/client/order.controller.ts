@@ -180,3 +180,27 @@ export const createPost = async (req: Request, res: Response) => {
       phone: dataFinal.phone
     })
 }
+export const success = async (req: Request, res: Response) => {
+  const { orderCode, phone } = req.query as any;
+
+  if(!orderCode || !phone) {
+    res.redirect("/");
+    return;
+  }
+
+  const orderDetail: any = await Order.findOne({
+    code: orderCode,
+    phone: phone,
+    deleted: false
+  });
+
+  if(!orderDetail) {
+    res.redirect("/");
+    return;
+  }
+  
+  res.render("client/pages/order-success", {
+    pageTitle: "Đặt hàng thành công!",
+    orderCode: orderCode
+  });
+}
