@@ -1,61 +1,30 @@
 div(class="checkout_payment")
-  h3 payment method
+  h3 Phương thức thanh toán
   .form-check
-    input#flexRadioDefault1.form-check-input(
-      name="flexRadioDefault" 
+    input#paymentMethodMoney.form-check-input(
+      name="paymentMethod" 
       type="radio"
+      value="money"
       )
-    label.form-check-label(for="flexRadioDefault1") Direct Bank Transfer
+    label.form-check-label(for="paymentMethodMoney") Thanh toán khi nhận hàng
   .form-check
-    input#flexRadioDefault2.form-check-input(
-      name="flexRadioDefault" 
+    input#paymentMethodVNPay.form-check-input(
+      name="paymentMethod" 
       type="radio"
+      value="vnpay"
       )
-    label.form-check-label(for="flexRadioDefault2") Cheque Payment
+    label.form-check-label(for="paymentMethodVNPay") Thanh toán qua VNPay
   .form-check
-    input#flexRadioDefault3.form-check-input(
-      name="flexRadioDefault" 
+    input#paymentMethodZaloPay.form-check-input(
+      name="paymentMethod" 
       type="radio"
+      value="zalopay"
       )
-    label.form-check-label(for="flexRadioDefault3") Cash on Delivery
-  div(class="checkout_card")
-    p Card Payment
-    ul
-      li
-        img.img-fluid.w-100(
-          alt="Payment" 
-          src="/client/assets/images/payment-1.jpg"
-          )
-      li.active
-        img.img-fluid.w-100(
-          alt="Payment" 
-          src="/client/assets/images/payment-2.jpg"
-          )
-      li
-        img.img-fluid.w-100(
-          alt="Payment" 
-          src="/client/assets/images/payment-3.jpg"
-          )
-      li
-        img.img-fluid.w-100(
-          alt="Payment" 
-          src="/client/assets/images/payment-4.jpg"
-          )
-      li
-        img.img-fluid.w-100(
-          alt="Payment" 
-          src="/client/assets/images/payment-5.jpg"
-          )
-  .terms
-    .form-check
-      input#flexCheckDefaultterms.form-check-input(
-        value="" 
-        type="checkbox"
-        )
-      label.form-check-label(for="flexCheckDefaultterms") I have read and agree to the website.
+    label.form-check-label(for="paymentMethodZaloPay") Thanh toán qua ZaloPay
   button(
+    button-order
     class="common_btn" 
     type="submit"
     )
-    | Place order
+    | Đặt Hàng
     i.fas.fa-long-arrow-right

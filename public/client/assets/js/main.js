@@ -2288,3 +2288,89 @@ if(checkoutPage) {
   })
 }
 // End radio button change Address
+
+// order
+const buttonOrder = document.querySelector("[button-order]");
+if(buttonOrder) {
+  buttonOrder.addEventListener("click", () => {
+    // Lấy thông tin khách hàng
+    const inputAddressChecked = document.querySelector("input[name='userAddress']:checked");
+    if(!inputAddressChecked) {
+      notyf.error("Vui lòng chọn địa chỉ giao hàng!");
+      return;
+    }
+    const dataItem = {}
+    if(inputAddressChecked.value) {
+      const elementDataInfo = inputAddressChecked.getAttribute("data-info");
+      const dataInfo = JSON.parse(elementDataInfo);
+      dataItem.fullName = dataInfo.fullName;
+      dataItem.phone = dataInfo.phone;
+      dataItem.address = dataInfo.address;
+      dataItem.longitude = dataInfo.longitude;
+      dataItem.latitude = dataInfo.latitude;
+    }else{
+      const fromAddressCheckout = document.querySelector("#checkoutForm");
+      dataItem.fullName = fromAddressCheckout.fullName.value;
+      dataItem.phone = fromAddressCheckout.phone.value;
+      dataItem.address = fromAddressCheckout.address.value;
+      dataItem.longitude = parseFloat(fromAddressCheckout.longitude.value);
+      dataItem.latitude = parseFloat(fromAddressCheckout.latitude.value);
+    }
+    const textareaNote = document.querySelector(`textarea[name="note"]`);
+    dataItem.note = textareaNote.value;
+    // Lấy ra thông tin sản phẩm
+    let dataCart = JSON.parse(localStorage.getItem("cart"));
+    dataCart = dataCart.filter(product => {
+      delete product.detail;
+      return product.checked == true
+    })
+    // Lấy ra thông tin coupon
+     // Mã giảm giá
+    let dataCoupon = "";
+    let coupon = sessionStorage.getItem("coupon");
+    if(coupon) {
+      coupon = JSON.parse(coupon);
+      dataCoupon = coupon.code;
+    }
+     // Phương thức thanh toán
+    const inputPaymentMethodChecked = document.querySelector(`input[name="paymentMethod"]:checked`);
+    const dataPaymentMethod = inputPaymentMethodChecked.value;
+    // Dữ liệu hoàn chỉnh
+    const dataFinal = {
+      ...dataItem,
+      items: dataCart,
+      coupon: dataCoupon,
+      paymentMethod: dataPaymentMethod
+    };
+    // Gửi lên backend
+    fetch(`/order/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(dataFinal)
+    })
+      .then(res => res.json())
+      .then(data => {
+        if(data.code == "error") {
+          notyf.error(data.message);
+        }
+
+        if(data.code == "success") {
+          //Xóa item đã đặt khỏi giỏ hàng
+          let cart = JSON.parse(localStorage.getItem("cart"));
+          cart = cart.filter(item => item.checked == false);
+          localStorage.setItem("cart", JSON.stringify(cart));
+
+          // Xóa mã giảm giá
+          sessionStorage.removeItem("coupon");
+
+          // Chuyển sang trang Đặt hàng thành công
+          drawNotify(data.code, data.message);
+
+          window.location.href = `/order/success?orderCode=${data.orderCode}&phone=${data.phone}`;
+        }
+      })
+  })
+}
+// End order

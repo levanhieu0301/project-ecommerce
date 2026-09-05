@@ -24,6 +24,7 @@ form(class="checkout_form_area" id="checkoutForm")
                 label Họ và tên *
                 input(
                   placeholder="Ví dụ: Nguyễn Văn A" 
+                  name="fullName"
                   type="text"
                   )
             .col-md-6
@@ -31,6 +32,7 @@ form(class="checkout_form_area" id="checkoutForm")
                 label Số điện thoại *
                 input(
                   placeholder="Ví dụ: 0123456789" 
+                  name="phone"
                   type="text"
                   )
             .col-md-12.mt-4
@@ -68,4 +70,6 @@ form(class="checkout_form_area" id="checkoutForm")
       label Ghi chú
       textarea(
         rows="2"
+        name="note"
+        placeholder="Ghi chú cho đơn hàng của bạn..."
         )
