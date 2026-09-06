@@ -2461,10 +2461,19 @@ if(buttonOrder) {
           // Xóa mã giảm giá
           sessionStorage.removeItem("coupon");
 
-          // Chuyển sang trang Đặt hàng thành công
-          drawNotify(data.code, data.message);
+          switch (dataPaymentMethod) {
+            case "money":
+              drawNotify(data.code, data.message);
+              window.location.href = `/order/success?orderCode=${data.orderCode}&phone=${data.phone}`;
+              break;
+            case "zalopay":
+              window.location.href = `/order/payment-zalopay?orderCode=${data.orderCode}&phone=${data.phone}`;
+              break;
+            default:
+              window.location.href = "/"
+              break;
+          }
 
-          window.location.href = `/order/success?orderCode=${data.orderCode}&phone=${data.phone}`;
         }
       })
   })
