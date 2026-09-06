@@ -4,6 +4,8 @@ import Order from '../../models/order.model';
 import Product from '../../models/product.model';
 import AttributeProduct from '../../models/attribute-product.model';
 import Coupon from '../../models/coupon.model';
+import axios from 'axios';
+import { getInfoAddress } from '../../helpers/location.helper';
 
 export const createPost = async (req: Request, res: Response) => {
   const dataFinal: any = {};
@@ -164,9 +166,70 @@ export const createPost = async (req: Request, res: Response) => {
     }
   }
   // Hết trường discount
+  // Trường shippingMethod
+  // Tọa độ của người gửi
+  const shopLocation = {
+    lat: parseFloat(`${process.env.LATITUDE}`),
+    lng: parseFloat(`${process.env.LONGITUDE}`)
+  };
+
+  const shopInfoAddress = await getInfoAddress(shopLocation.lat, shopLocation.lng);
+  
+  const userInfoAddress = await getInfoAddress(dataFinal.latitude, dataFinal.longitude);
+
+  // Tính trọng lượng đơn hàng
+  const totalWeight = dataFinal.items.reduce((total: number, item: any) => total + item.quantity * 500, 0); // mỗi 1 sản phẩm nặng 500gram
+
+  const dataGoShip = {
+    shipment: {
+      rate: req.body.shippingMethod,
+      payer: 0, // Người trả phí, 1: Người gửi, 0: Người nhận
+      address_from: {
+        name: "Nguyễn Văn A",
+        phone: "0912345678",
+        street: "11 Sư Vạn Hạnh, Phường 12, Quận 10, Thành phố Hồ Chí Minh 700000, Việt Nam",
+        city: shopInfoAddress.city,
+        district: shopInfoAddress.district,
+        ward: shopInfoAddress.ward
+      },
+      address_to: {
+        name: dataFinal.fullName,
+        phone: dataFinal.phone,
+        street: dataFinal.address,
+        city: userInfoAddress.city,
+        district: userInfoAddress.district,
+        ward: userInfoAddress.ward
+      },
+      parcel: {
+        cod: `${dataFinal.subTotal - dataFinal.discount}`,
+        amount: `${dataFinal.subTotal - dataFinal.discount}`,
+        weight: `${totalWeight}`,
+        width: "10",
+        height: "10",
+        length: "10",
+        metadata: "Hàng dễ vỡ, vui lòng nhẹ tay."
+      }
+    }
+  };
+
+  const goshipRes = await axios.post("https://sandbox.goship.io/api/v2/shipments", dataGoShip, {
+    headers: {
+      Authorization: `Bearer ${process.env.GOSHIP_TOKEN}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  dataFinal.shipping = {
+    goshipOrderId: goshipRes.data.id,
+    carrierName: goshipRes.data.carrier,
+    carrierCode: goshipRes.data.carrier_short_name,
+    fee: goshipRes.data.fee,
+    cod: goshipRes.data.cod,
+  };
+
 
   // Trường total
-  dataFinal.total = dataFinal.subTotal - dataFinal.discount;
+  dataFinal.total = dataFinal.subTotal + dataFinal.shipping.fee - dataFinal.discount;
 
   // Lưu dữ liệu vào CSDL
   const newRecord = new Order(dataFinal);

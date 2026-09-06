@@ -403,15 +403,55 @@ if(inputCheckAll){
 }
 // End CheckALL giỏ hàng
 
+const getUserAddress = () => {
+  let userAddress = null;
+  const inputAddressChecked = document.querySelector("input[name='userAddress']:checked");
+  if(inputAddressChecked) {
+    const dataInfo = inputAddressChecked.getAttribute("data-info");
+    // Trường hợp có địa chỉ
+    if(dataInfo) {
+      userAddress = JSON.parse(dataInfo);
+    }else{
+      // trường hợp không có địa chỉ mặc định
+      const inputLongitude = document.querySelector(`input[name="longitude"]`);
+      const inputLatitude = document.querySelector(`input[name="latitude"]`);
+      const longitude = inputLongitude.value;
+      const latitude = inputLatitude.value;
+      if(longitude && latitude) {
+        userAddress = {
+          longitude: parseFloat(longitude),
+          latitude: parseFloat(latitude)
+        };
+      }
+    }
+  }
+  return userAddress;
+}
+
+// Lựa chọn hãng vận chuyển
+const eventCheckShipping = () => {
+  const listInput = document.querySelectorAll(`[shipping-list] input[name="shippingMethod"]`);
+  listInput.forEach(input => {
+    input.addEventListener("change", () => {
+      drawCart();
+    })
+  })
+}
+// Hết Lựa chọn hãng vận chuyển
 const drawCart = () => {
   const cart = JSON.parse(localStorage.getItem("cart"))
+  const userAddress = getUserAddress()
+
   if (cart.length > 0){
     fetch(`/cart/list`, {
       method: "POST",
       headers:{
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(cart)
+      body: JSON.stringify({
+        cart: cart,
+        userAddress: userAddress
+      })
     })
     .then(res => res.json())
     .then(data => {
@@ -421,9 +461,11 @@ const drawCart = () => {
       if (data.code == "success"){
         localStorage.setItem("cart", JSON.stringify(data.cart));
           let subTotal = 0;
+          let shippingFee = 0;
           let htmlMiniCart = "";
           let htmlCartTable = "";
           let htmlSummary = "";
+          let htmlShipping = ""
           data.cart.forEach(item => {
           const {detail}  = item
           let priceNew = 0
@@ -553,6 +595,42 @@ const drawCart = () => {
             </li>
             `
           }
+          // Hiển thị hãng vận chuyển
+          if(data.shippingOptions) {
+            // Hiển thị lựa chọn mặc định
+            const inputChecked = document.querySelector(`[shipping-list] [name="shippingMethod"]:checked`);
+            let idInputChecked = null;
+            if(inputChecked) {
+              idInputChecked = inputChecked.id;
+            }
+            data.shippingOptions.forEach((item, index) => {
+              const checked = idInputChecked == `shippingMethod${index}` ? "checked" : "";
+
+              htmlShipping += `
+                <div class="form-check">
+                  <input 
+                    ${checked}
+                    class="form-check-input" 
+                    id="shippingMethod${index}" 
+                    name="shippingMethod" 
+                    type="radio"
+                    value="${item.id}"
+                  >
+                  <label class="form-check-label" for="shippingMethod${index}">
+                    <small>${item.carrier_name}-(${item.expected}):</small>
+                    <span>
+                      <span>(+) </span>
+                      <span>${item.total_fee.toLocaleString("vi-VN")}đ</span>
+                    </span>
+                  </label>
+                </div>
+              `;
+              if(checked == "checked"){
+                shippingFee = item.total_fee;
+              }
+            });
+          }
+
 
           })
           let discount = 0;
@@ -585,7 +663,7 @@ const drawCart = () => {
             }
           }
           
-          let total = subTotal - discount;
+         let total = subTotal + shippingFee - discount;
 
         const ulMiniCart = miniCart.querySelector(".offcanvas-body ul");
         ulMiniCart.innerHTML = htmlMiniCart
@@ -601,6 +679,11 @@ const drawCart = () => {
           listElementSubTotal.forEach(item => {
             item.innerHTML = subTotal.toLocaleString("vi-VN");
           })
+          const elementShippingList = document.querySelector("[shipping-list]");
+          if(elementShippingList) {
+            elementShippingList.innerHTML = htmlShipping;
+          }
+
 
           const elementDiscount = document.querySelector("[discount]");
           if(elementDiscount) {
@@ -615,6 +698,7 @@ const drawCart = () => {
         removeItemCart()
         updateQuantityCart()
         updateChangeBox()
+        eventCheckShipping()
       }
     })
   }else {
@@ -928,7 +1012,7 @@ if(changeAttribute){
 }
 // End Chọn biến thể thay đổi giá trị tương ứng
 
-// mini cart
+// mini cart 
 const miniCart = document.querySelector("[mini-cart]")
 if(miniCart){
   drawCart()
@@ -2023,6 +2107,8 @@ if(boxMap) {
 
           const inputLat = document.querySelector(`[name="latitude"]`);
           inputLat.value = lat;
+          // cập nhật lại giỏ hàng
+          drawCart()
         } else {
           notyf.error("Không tìm thấy địa chỉ!");
         }
@@ -2284,6 +2370,7 @@ if(checkoutPage) {
       if(map) {
         map.updateSize();
       }
+      drawCart()
     })
   })
 }
@@ -2335,12 +2422,21 @@ if(buttonOrder) {
      // Phương thức thanh toán
     const inputPaymentMethodChecked = document.querySelector(`input[name="paymentMethod"]:checked`);
     const dataPaymentMethod = inputPaymentMethodChecked.value;
+    // Hãng vận chuyển
+    const inputShippingMethodChecked = document.querySelector(`input[name="shippingMethod"]:checked`);
+    const dataShippingMethod = inputShippingMethodChecked?.value;
+    if(!dataShippingMethod) {
+      notyf.error("Vui lòng chọn phương thức vận chuyển!");
+      return;
+    }
+
     // Dữ liệu hoàn chỉnh
     const dataFinal = {
       ...dataItem,
       items: dataCart,
       coupon: dataCoupon,
-      paymentMethod: dataPaymentMethod
+      paymentMethod: dataPaymentMethod,
+      shippingMethod: dataShippingMethod
     };
     // Gửi lên backend
     fetch(`/order/create`, {

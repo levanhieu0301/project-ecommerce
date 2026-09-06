@@ -1,10 +1,14 @@
 import { Request, Response } from 'express';
 import Product from '../../models/product.model';
 import AttributeProduct from '../../models/attribute-product.model';
+import axios from 'axios';
+import { getInfoAddress } from '../../helpers/location.helper';
 
 export const list = async (req: Request, res: Response) => {
   try {
-    const cart = req.body;
+    const {cart, userAddress} = req.body;
+
+
     const cartDetail = []
     for(const item of cart){
       const productDetail = await Product.findOne({
@@ -35,11 +39,62 @@ export const list = async (req: Request, res: Response) => {
         cartDetail.push(itemDetail)
       }
     }
+  // Tính phí ship
+    let shippingOptions = null;
+    if(userAddress) {
+      // Tọa độ của người gửi
+      const shopLocation = {
+        lat: parseFloat(`${process.env.LATITUDE}`),
+        lng: parseFloat(`${process.env.LONGITUDE}`)
+      };
+      
+      const shopInfoAddress = await getInfoAddress(shopLocation.lat, shopLocation.lng);
+
+      // Thông tin người nhận
+      const userInfoAddress = await getInfoAddress(userAddress.latitude, userAddress.longitude);
+       // Tính trọng lượng đơn hàng
+      const totalWeight = cartDetail.reduce((total, item) => total + item.quantity * 500, 0); // mỗi 1 sản phẩm nặng 500gram
+
+      const dataGoShip = {
+        shipment: {
+          address_from: {
+            city: shopInfoAddress.city, // Lấy từ API: /cities
+            district: shopInfoAddress.district, // Lấy từ API: /districs
+            ward: shopInfoAddress.ward // Lấy từ API: /wards
+          },
+          address_to: {
+            city: userInfoAddress.city,
+            district: userInfoAddress.district,
+            ward: userInfoAddress.ward
+          },
+          parcel: {
+            cod: "0", // Tiền thu hộ
+            amout: "0", // Giá trị khai giá
+            weight: totalWeight,
+            width: "10",
+            height: "10",
+            length: "10"
+          }
+        }
+      };
+
+      const goshipRes = await axios.post("https://sandbox.goship.io/api/v2/rates", dataGoShip, {
+        headers: {
+          Authorization: `Bearer ${process.env.GOSHIP_TOKEN}`,
+          "Content-Type": "application/json"
+        }
+      });
+      // console.log(goshipRes.data)
+      shippingOptions = goshipRes.data.data;
+    }
+    // Hết Tính phí ship
+
 
     res.json({
       code: "success",
       message: "Thành công!",
-      cart: cartDetail
+      cart: cartDetail,
+      shippingOptions: shippingOptions
     })
   } catch (error) {
     res.json({
