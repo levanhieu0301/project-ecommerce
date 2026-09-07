@@ -43,4 +43,5 @@ router.patch(
 router.patch('/profile/change-avatar', upload.single('avatar'), dashboardController.profileChangeAvatar);
 
 
+router.get('/order/list', dashboardController.orderList);
 export default router;
