@@ -12,6 +12,7 @@ router.post('/payment-zalopay-result', orderController.paymentZalopayResult);
 
 router.get('/payment-vnpay', orderController.paymentVNPay);
 router.get('/payment-vnpay-result', orderController.paymentVNPayResult);
+router.get('/export-pdf', orderController.exportPdf);
 
 
 export default router;

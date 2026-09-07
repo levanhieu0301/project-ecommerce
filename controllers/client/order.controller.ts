@@ -6,6 +6,9 @@ import AttributeProduct from '../../models/attribute-product.model';
 import Coupon from '../../models/coupon.model';
 import axios from 'axios';
 import { getInfoAddress } from '../../helpers/location.helper';
+import { renderFile } from 'pug'
+import fs from "fs"
+import puppeteer from 'puppeteer';
 
 import moment from 'moment';
 import hmacSHA256 from 'crypto-js/hmac-sha256';
@@ -267,7 +270,8 @@ export const success = async (req: Request, res: Response) => {
   
   res.render("client/pages/order-success", {
     pageTitle: "Đặt hàng thành công!",
-    orderCode: orderCode
+    orderCode: orderCode,
+    phone: phone
   });
 }
 export const paymentZaloPay = async (req: Request, res: Response) => {
@@ -463,6 +467,46 @@ export const paymentVNPayResult = async (req: Request, res: Response) => {
   }
 
 }
+export const exportPdf = async (req: Request, res: Response) => {
+  const { orderCode, phone } = req.query as any;
+  
+  const orderDetail = await Order.findOne({
+    code: orderCode,
+    phone: phone,
+    deleted: false
+  });
+
+  if(!orderDetail) {
+    res.redirect("/");
+    return;
+  }
+
+  const css = fs.readFileSync("public/client/assets/css/invoice.css", "utf8");
+
+  // Render PUG sang HTML
+  const renderedHtml = await renderFile('views/client/pages/invoice.pug', {
+    orderDetail: orderDetail // thông tin mong muốn trả về
+  });
+
+  const html = `
+    <style>${css}</style>
+    ${renderedHtml}
+  `;
+  
+  // Tạo PDF từ HTML sử dụng Puppeteer
+  const browser = await puppeteer.launch(); // Mở trình duyệt ẩn
+  const page = await browser.newPage(); // Mở tab mới
+  await page.setContent(html, { waitUntil: 'load' }); // Đặt nội dung HTML
+  const pdfBuffer = await page.pdf({ format: 'a4' }); // Tạo PDF dưới dạng buffer
+  await browser.close(); // Đóng trình duyệt
+
+  // Gửi file PDF về client
+  res.setHeader('Content-Type', 'application/pdf'); // Thiết lập header để trình duyệt nhận biết đây là file PDF
+  res.setHeader('Content-Disposition', `attachment; filename=invoice_${orderCode}.pdf`); // Thiết lập tên file khi tải về
+  res.send(pdfBuffer); // Gửi buffer PDF về client
+
+}
+
 function sortObject(obj: any) {
   let sorted: any = {};
   let str: string[] = [];

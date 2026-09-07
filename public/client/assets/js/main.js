@@ -2467,7 +2467,7 @@ if(buttonOrder) {
               window.location.href = `/order/success?orderCode=${data.orderCode}&phone=${data.phone}`;
               break;
             case "vnpay":
-              // Chuyển sang trang thanh toán bằng VNPay
+              // Chuyển sang trang thanh toán bằng VNPay - trang thanh toán của người ta vnpay
               window.location.href = `/order/payment-vnpay?orderCode=${data.orderCode}&phone=${data.phone}`;
               break;
             case "zalopay":
