@@ -11660,7 +11660,7 @@ footer {
 
 .dashboard_order_table table tr td {
     color: var(--paraColor);
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 400;
 }
 
@@ -11774,7 +11774,7 @@ footer {
 }
 
 .dashboard_invoice_header .text {
-    width: 45%;
+    width: 100%;
 }
 
 .dashboard_invoice_header .text p {
@@ -11798,7 +11798,7 @@ footer {
     color: var(--colorBlack);
     text-transform: capitalize;
     display: inline-block;
-    width: 80px;
+    width: 200px;
 }
 
 .invoice_table {
