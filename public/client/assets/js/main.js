@@ -2589,3 +2589,38 @@ if (listbtnOrderReview){
 }
 
 // End đánh giá đơn hàng
+
+// filterRating
+const listInputFilterRating = document.querySelectorAll(`.sidebar_rating input[name="rating"]`);
+if(listInputFilterRating.length > 0) {
+  const url = new URL(window.location.href);
+
+  listInputFilterRating.forEach(input => {
+    input.addEventListener("change", () => {
+      const listInputChecked = document.querySelectorAll(`.sidebar_rating input[name="rating"]:checked`);
+      if(listInputChecked.length > 0) {
+        const listValue = [];
+        listInputChecked.forEach(input => {
+          listValue.push(input.value);
+        });
+        url.searchParams.set("rating", listValue.join(","));
+      } else {
+        url.searchParams.delete("rating");
+      }
+      window.location.href = url.href;
+    })
+  })
+
+  // Hiển thị lựa chọn mặc định
+  const rating = url.searchParams.get("rating");
+  if(rating) {
+    const listRating = rating.split(",");
+    listRating.forEach(item => {
+      const input = document.querySelector(`.sidebar_rating input[name="rating"][value="${item}"]`);
+      if(input) {
+        input.checked = true;
+      }
+    })
+  }
+}
+// End filterRating

@@ -42,47 +42,18 @@ div(id="sticky_sidebar")
                   )
                 label.form-check-label(for=`${item.type}-${item.id}-${option.value}` ) #{option.label}
     div(class="sidebar_rating")
-      h3 Rating
-      .form-check
-        input#defaultCheck4.form-check-input(
-          value="" 
-          type="checkbox"
+      h3 Đánh giá
+      each star in [5,4,3,2,1]
+        .form-check
+          input.form-check-input(
+            id=`filterRating${star}`
+            name="rating"
+            value=star
+            type="checkbox"
           )
-        label.form-check-label(for="defaultCheck4")
-          i.fas.fa-star(aria-hidden="true")
-          | 5 star
-      .form-check
-        input#defaultCheck5.form-check-input(
-          value="" 
-          type="checkbox"
-          )
-        label.form-check-label(for="defaultCheck5")
-          i.fas.fa-star(aria-hidden="true")
-          | 4 star or above
-      .form-check
-        input#defaultCheck6.form-check-input(
-          value="" 
-          type="checkbox"
-          )
-        label.form-check-label(for="defaultCheck6")
-          i.fas.fa-star(aria-hidden="true")
-          | 3 star or above
-      .form-check
-        input#defaultCheck7.form-check-input(
-          value="" 
-          type="checkbox"
-          )
-        label.form-check-label(for="defaultCheck7")
-          i.fas.fa-star(aria-hidden="true")
-          | 2 star or above
-      .form-check
-        input#defaultCheck8.form-check-input(
-          value="" 
-          type="checkbox"
-          )
-        label.form-check-label(for="defaultCheck8")
-          i.fas.fa-star(aria-hidden="true")
-          | 1 star or above
+          label.form-check-label(for=`filterRating${star}`)
+            i.fas.fa-star.me-1(aria-hidden="true")
+            | #{star} sao
     div(class="sidebar_related_product")
       h3 Top Rated Products
       ul

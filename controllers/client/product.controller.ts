@@ -128,6 +128,23 @@ export const category =async (req: Request, res: Response) => {
     }
   }
   // Hết Còn hàng
+  // Đánh giá
+  if(req.query.rating) {
+    const ratings = `${req.query.rating}`
+      .split(",")
+      .map(r => parseInt(r));
+
+    if (ratings.length > 0) {
+      find.$or = ratings.map(star => ({
+        ratingAvg: {
+          $gte: star,
+          $lt: star + 1
+        }
+      }));
+    }
+  }
+  // Hết Đánh giá
+
   // Thuộc tính
   const filterAttribute: any[] = []
   // console.log(Object.keys(req.query)) // chuyển đối tượng thành mảng: (req.query->đối tượng)
