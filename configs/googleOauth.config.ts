@@ -2,13 +2,16 @@ import passport from "passport";
 import {Strategy as GoogleStrategy} from "passport-google-oauth20"
 import AccountUser from "../models/account-user.model";
 import slugify from "slugify"
+import { getApiLoginSocial } from "./setting.config";
 
 
-export const loginGoogle = function(passportInstan: typeof passport) {
+export const loginGoogle = async  function(passportInstan: typeof passport) {
+  const apiLoginSocial = await getApiLoginSocial();
   passportInstan.use(new GoogleStrategy({
-      clientID: `${process.env.GOOGLE_CLIENT_ID}`,
-      clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
-      callbackURL: `${process.env.GOOGLE_CLIENT_URL}`,
+      clientID: `${apiLoginSocial.googleClientId}`,
+      clientSecret: `${apiLoginSocial.googleClientSecret}`,
+      callbackURL: `${apiLoginSocial.googleCallbackUrl}`,
+
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

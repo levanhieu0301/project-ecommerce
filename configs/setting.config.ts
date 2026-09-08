@@ -13,3 +13,9 @@ export const getApiPayment = async () => {
   });
   return setting ? setting.data : null;
 }
+export const getApiLoginSocial = async () => {
+  const setting = await Setting.findOne({
+    key: "apiLoginSocial"
+  });
+  return setting ? setting.data : null;
+}
