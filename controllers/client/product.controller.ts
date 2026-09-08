@@ -204,12 +204,27 @@ export const category =async (req: Request, res: Response) => {
       })
       category.listColor = [...setColor]
     }
+  // Sản phẩm được đánh giá cao
+  const topRatedProducts: any = await Product
+    .find({
+      deleted: false,
+      status: "active",
+      ratingAvg: { $gte: 4 }
+    })
+    .sort({
+      ratingAvg: "desc"
+    })
+    .limit(5)
+    .lean();
+  // Hết Sản phẩm được đánh giá cao
+
 
   res.render("client/pages/product-by-category", {
     pageTitle: "Danh sách sản phẩm theo danh mục",
     categoryDetail: categoryDetail,
     listProductByCategory: listProductByCategory,
-    pagination: pagination
+    pagination: pagination,
+    topRatedProducts: topRatedProducts
   })
 }
 export const suggest = async (req: Request, res: Response) => {
