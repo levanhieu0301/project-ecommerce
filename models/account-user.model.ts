@@ -21,6 +21,14 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    totalPoint: {
+      type: Number,
+      default: 0 // tổng điểm đã tích
+    },
+    usedPoint: {
+      type: Number,
+      default: 0 // điểm đã sử dụng
+    },
     deletedAt: Date,
   },
   {

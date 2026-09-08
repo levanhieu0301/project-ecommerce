@@ -9,9 +9,11 @@ import { getInfoAddress } from '../../helpers/location.helper';
 import { renderFile } from 'pug'
 import fs from "fs"
 import puppeteer from 'puppeteer';
-
 import moment from 'moment';
 import hmacSHA256 from 'crypto-js/hmac-sha256';
+import { addPointAfterPayment } from '../../helpers/point.helper';
+import { pointConfig } from '../../configs/variable.config';
+import AccountUser from '../../models/account-user.model';
 
 export const createPost = async (req: Request, res: Response) => {
   const dataFinal: any = {};
@@ -233,13 +235,30 @@ export const createPost = async (req: Request, res: Response) => {
     cod: goshipRes.data.cod,
   };
 
-
+  
+  // Trường usedPoint và pointDiscount
+  dataFinal.usedPoint = 0;
+  dataFinal.pointDiscount = 0;
+  if(res.locals.accountUser) {
+    dataFinal.usedPoint = res.locals.accountUser.totalPoint - res.locals.accountUser.usedPoint;
+    dataFinal.pointDiscount = dataFinal.usedPoint * pointConfig.POINT_TO_MONEY;
+  }
   // Trường total
-  dataFinal.total = dataFinal.subTotal + dataFinal.shipping.fee - dataFinal.discount;
+  dataFinal.total = dataFinal.subTotal + dataFinal.shipping.fee - dataFinal.discount - dataFinal.pointDiscount;
 
   // Lưu dữ liệu vào CSDL
   const newRecord = new Order(dataFinal);
   await newRecord.save();
+  
+  // Cập nhật lại số điểm của người dùng
+  if(res.locals.accountUser) {
+    await AccountUser.updateOne({
+      _id: res.locals.accountUser.id
+    }, {
+      usedPoint: res.locals.accountUser.totalPoint
+    });
+  }
+  // Hết Cập nhật lại số điểm của người dùng
 
 
   res.json({
@@ -327,6 +346,7 @@ export const paymentZaloPay = async (req: Request, res: Response) => {
   const response = await axios.post(config.endpoint, null, { params: order })
   res.redirect(response.data.order_url);
 
+
 }
 export const paymentZalopayResult = async (req: Request, res: Response) => {
   const config = {
@@ -361,6 +381,10 @@ export const paymentZalopayResult = async (req: Request, res: Response) => {
       }, {
         paymentStatus: "paid"
       });
+      // Tích điểm khi đặt hàng thành công
+      await addPointAfterPayment(orderCode)
+       // End Tích điểm khi đặt hàng thành công
+
 
       result.return_code = 1;
       result.return_message = "success";
@@ -460,6 +484,9 @@ export const paymentVNPayResult = async (req: Request, res: Response) => {
     }, {
       paymentStatus: 'paid'
     })
+    // Tích điểm khi đặt hàng thành công
+      await addPointAfterPayment(orderCode)
+    // End Tích điểm khi đặt hàng thành công
 
     res.redirect(`${process.env.DOMAIN_WEBSITE}/order/success?orderCode=${orderCode}&phone=${phone}`);
   } else{

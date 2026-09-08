@@ -662,8 +662,12 @@ const drawCart = () => {
               sessionStorage.removeItem("couponDetail");
             }
           }
-          
-         let total = subTotal + shippingFee - discount;
+        
+        let pointDiscount = 0;
+        if(data.point && data.point.canUsePoint) {
+          pointDiscount = data.point.canUsePoint * data.point.POINT_TO_MONEY;
+        }
+        let total = subTotal + shippingFee - discount - pointDiscount;
 
         const ulMiniCart = miniCart.querySelector(".offcanvas-body ul");
         ulMiniCart.innerHTML = htmlMiniCart
@@ -684,6 +688,10 @@ const drawCart = () => {
             elementShippingList.innerHTML = htmlShipping;
           }
 
+          const elementPointDiscount = document.querySelector("[point-discount]");
+            if(elementPointDiscount) {
+              elementPointDiscount.innerHTML = pointDiscount.toLocaleString("vi-VN");
+            }
 
           const elementDiscount = document.querySelector("[discount]");
           if(elementDiscount) {
