@@ -10,6 +10,8 @@ import accountRoute from "./account.route"
 import productRoute from "./product.route"
 import couponRoute from "./coupon.route"
 import accountUserRoutes from "./account-user.route";
+import settingRoutes from "./setting.route";
+
 import * as AuthMiddleware from "../../middlewares/admin/account.middleware"
 
 router.use('/dashboard', AuthMiddleware.verifyToken,dashboardRoute)
@@ -21,5 +23,6 @@ router.use('/account-admin',  AuthMiddleware.verifyToken,accountAdminRoute)
 router.use('/product',  AuthMiddleware.verifyToken,productRoute)
 router.use('/coupon',  AuthMiddleware.verifyToken,couponRoute)
 router.use('/account-user', AuthMiddleware.verifyToken, accountUserRoutes);
+router.use('/setting', AuthMiddleware.verifyToken, settingRoutes);
 router.use('/account', accountRoute)
 export default router;
