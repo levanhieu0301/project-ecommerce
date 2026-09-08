@@ -1,0 +1,43 @@
+extends ../layouts/default.pug
+
+
+block main
+  .card
+    .card-header
+      .row.align-items-center
+        .col
+          h4 #{pageTitle}
+    .card-body.pt-0
+      form(id="settingGeneralForm")
+        .row
+          .col-md-12.col-lg-12
+            .mb-3
+              label.form-label(for="domainWebsite") Tên miền website
+              input(id="domainWebsite" name="domainWebsite" class="form-control" value=`${record ? record.data.domainWebsite : ''}`)
+          .col-md-6.col-lg-6
+            .mb-3
+              div(form-group-file)
+                label.form-label(for="avatar") Logo
+                .input-group
+                  span.btn.btn-outline-info(
+                    btn-file-manager
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalFileManager"
+                    ) Chọn file
+                  input.form-control(id="avatar" type="text" name="logo" input-file placeholder="Đường dẫn file..." value=record.data.logo)
+                .preview-file(preview-file)
+                  img(record ? src=`${domainCDN}${record.data.logo}` : "")
+          .col-md-6.col-lg-6
+            .mb-3
+              div(form-group-file)
+                label.form-label(for="avatar") Favicon
+                .input-group
+                  span.btn.btn-outline-info(
+                    btn-file-manager
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalFileManager"
+                    ) Chọn file
+                  input.form-control(id="avatar" type="text" name="favicon" input-file placeholder="Đường dẫn file..." value=record.data.favicon)
+                .preview-file(preview-file)
+                  img(record ? src=`${domainCDN}${record.data.favicon}` : "")
+        button.btn.btn-primary(type="submit") Cập nhật

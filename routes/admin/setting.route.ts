@@ -17,4 +17,8 @@ router.get('/api-app-password', settingController.apiAppPassword);
 
 router.patch('/api-app-password', settingController.apiAppPasswordPatch);
 
+router.get('/general', settingController.general);
+
+router.patch('/general', settingController.generalPatch);
+
 export default router;

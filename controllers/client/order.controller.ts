@@ -14,7 +14,7 @@ import hmacSHA256 from 'crypto-js/hmac-sha256';
 import { addPointAfterPayment } from '../../helpers/point.helper';
 import { pointConfig } from '../../configs/variable.config';
 import AccountUser from '../../models/account-user.model';
-import { getApiPayment, getApiShipping } from '../../configs/setting.config';
+import { getApiPayment, getApiShipping, getGeneral } from '../../configs/setting.config';
 
 export const createPost = async (req: Request, res: Response) => {
   const dataFinal: any = {};
@@ -316,10 +316,11 @@ export const paymentZaloPay = async (req: Request, res: Response) => {
     key2: `${apiPayment.zaloPayKey2}`,
     endpoint: `${apiPayment.zaloPayDomain}/v2/create`
 };
+  const settingGeneral = await getGeneral();
 
   const embed_data = {
     // Khi thanh toán thành công sẽ chuyển sang trang này
-    redirecturl: `${process.env.DOMAIN_WEBSITE}/order/success?orderCode=${orderCode}&phone=${phone}`
+    redirecturl: `${settingGeneral.domainWebsite}/order/success?orderCode=${orderCode}&phone=${phone}`
     //redirecturl: `https://lankiness-puritan-fidgeting.ngrok-free.dev/order/success?orderCode=${orderCode}&phone=${phone}`
   };
 
@@ -338,7 +339,7 @@ export const paymentZaloPay = async (req: Request, res: Response) => {
     mac: "",
     // Đường dẫn tự định nghĩa để cập nhật trạng thái đơn hàng-phải là đường link api thật đã đẩy lên mạng
     // Để test dùng: ngrok
-    callback_url: `${process.env.DOMAIN_WEBSITE}/order/payment-zalopay-result`
+    callback_url: `${settingGeneral.domainWebsite}/order/payment-zalopay-result`
      //callback_url: `https://lankiness-puritan-fidgeting.ngrok-free.dev/order/payment-zalopay-result`
   };
 
@@ -422,11 +423,11 @@ export const paymentVNPay = async (req: Request, res: Response) => {
     req.socket.remoteAddress
 
   const apiPayment = await getApiPayment();
-  
+   const settingGeneral = await getGeneral();
   let tmnCode = `${apiPayment.vnPayTmnCode}`;
   let secretKey = `${apiPayment.vnPayHashSecret}`;
   let vnpUrl = `${apiPayment.vnPayURL}`;
-  let returnUrl =`${process.env.DOMAIN_WEBSITE}/order/payment-vnpay-result`; // Đường dẫn mình định nghĩa khi thanh toán thành công để trả thông tin về chúng ta
+  let returnUrl =`${settingGeneral.domainWebsite}/order/payment-vnpay-result`; // Đường dẫn mình định nghĩa khi thanh toán thành công để trả thông tin về chúng ta
   let orderId = `${phone}-${orderCode}-${Date.now()}`;
   let amount =orderDetail.total || 0;
   let bankCode = ""
@@ -464,6 +465,7 @@ export const paymentVNPay = async (req: Request, res: Response) => {
 }
 
 export const paymentVNPayResult = async (req: Request, res: Response) => {
+  
    let vnp_Params = req.query;
 
     let secureHash = vnp_Params['vnp_SecureHash'];
@@ -497,7 +499,9 @@ export const paymentVNPayResult = async (req: Request, res: Response) => {
       await addPointAfterPayment(orderCode)
     // End Tích điểm khi đặt hàng thành công
 
-    res.redirect(`${process.env.DOMAIN_WEBSITE}/order/success?orderCode=${orderCode}&phone=${phone}`);
+    const settingGeneral = await getGeneral();
+    res.redirect(`${settingGeneral.domainWebsite}/order/success?orderCode=${orderCode}&phone=${phone}`);
+
   } else{
     res.render('success', {code: '97'})
   }
