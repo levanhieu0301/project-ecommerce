@@ -46,5 +46,11 @@ router.patch('/profile/change-avatar', upload.single('avatar'), dashboardControl
 router.get('/order/list', dashboardController.orderList);
 
 router.get('/order/detail/:id', dashboardController.orderDetail);
+router.get('/order/review/:id', dashboardController.orderReview);
+router.post(
+  '/order/review', 
+  upload.array("images"),
+  dashboardController.orderReviewPost
+);
 
 export default router;

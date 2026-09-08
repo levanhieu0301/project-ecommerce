@@ -2483,3 +2483,109 @@ if(buttonOrder) {
   })
 }
 // End order
+
+// Đánh giá đơn hàng
+const listbtnOrderReview = document.querySelectorAll("[data-bs-target='#modalReview']")
+if (listbtnOrderReview){
+  // lấy ra từng modal
+  const modalReview = document.querySelector("#modalReview")
+  const formReview = document.querySelector("[form-review]");
+  let productName = "";
+  let orderItemId = ""
+  let variant = "";
+  listbtnOrderReview.forEach(button => {
+    button.addEventListener("click", () => {
+      productName = button.getAttribute("product-name");
+      orderItemId = button.getAttribute("order-item-id");
+      variant = button.getAttribute("variant");
+      variant = variant ? `(${variant})` : "";
+
+      // Cập nhật tiêu đề modal
+      const modalTitle = modalReview.querySelector("[product-name]");
+      modalTitle.innerHTML = `${productName} ${variant}`;
+      // Thêm orderItemId vào form
+      formReview.orderItemId.value = orderItemId;
+
+
+      // reset data rating
+      const listRating = formReview.querySelectorAll("[rating] i")
+      listRating.forEach(rating => rating.classList.remove("active"))
+      // reset comment
+      formReview.comment.value = "";
+      // reset images
+      // Xóa ảnh cũ
+      const listPreviewImage = formReview.querySelectorAll("[images] .gallery .apnd-img");
+      listPreviewImage.forEach(img => img.remove());
+      const listInputImage = formReview.querySelectorAll("[images] .gallery input");
+      listInputImage.forEach(input => input.remove());
+    })
+    // Để đánh giá cần gửi thồn tin 
+    // data = {
+    //   Ai là người đánh giá: userId 
+    //   Đánh giá cho đơn hàng nào: orderId 
+    //   Đánh giá cho sản phẩm nào: itemId
+    //   Số sao,
+    //   comment,
+    //   hình ảnh,
+    //   ... 
+    // }
+  })
+  if(formReview){
+  formReview.addEventListener("submit", (event) => {
+    event.preventDefault()
+    const orderId = formReview.orderId.value;
+    const orderItemId = formReview.orderItemId.value;
+    const rating = formReview.querySelectorAll(`[rating] i.active`).length;
+    const comment = formReview.comment.value.trim();
+    const inputImages = formReview.querySelectorAll("[images] .gallery input");
+    const images = [];
+    inputImages.forEach(input => {
+      if(input.files[0]) {
+        images.push(input.files[0]);
+      }
+    });
+    if(!orderId || !orderItemId) {
+      notyf.error("Đã có lỗi xảy ra, vui lòng thử lại!");
+      return;
+    }
+
+    if(rating == 0) {
+      notyf.error("Vui lòng chọn số sao đánh giá!");
+      return;
+    }
+    if(comment.length == 0) {
+      notyf.error("Vui lòng nhập bình luận đánh giá!");
+      return;
+    }
+    if(comment.length > 300) {
+      notyf.error("Bình luận không được vượt quá 300 ký tự!");
+      return;
+    }
+    //Tạo FormData
+    const formData = new FormData();
+    formData.append("orderId", orderId);
+    formData.append("orderItemId", orderItemId);
+    formData.append("rating", rating);
+    formData.append("comment", comment);
+    images.forEach(image => {
+      formData.append(`images`, image);
+    });
+    fetch(`/dashboard/order/review`, {
+      method: "POST",
+      body: formData
+    })
+      .then(res => res.json())
+      .then(data => {
+        if(data.code == "error") {
+          notyf.error(data.message);
+        }
+        if(data.code == "success") {
+          drawNotify(data.code, data.message);
+          window.location.reload();
+        }
+      })
+  })
+  }
+}
+
+// End đánh giá đơn hàng
