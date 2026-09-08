@@ -139,8 +139,8 @@ block main
                 span Tên sản phẩm: 
                 span(product-name)
               form(form-review)
-                input(type="text" name="orderId" value=orderDetail.id )
-                input(type="text" name="orderItemId" value="" )
+                input(type="text" name="orderId" value=orderDetail.id class="d-none")
+                input(type="text" name="orderItemId" value="" class="d-none")
                 div(class="select_rating" rating)
                   span Đánh giá của bạn:
                   i.fas.fa-star

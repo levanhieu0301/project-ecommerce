@@ -38,12 +38,8 @@ mixin product-item-2(item)
         if (item.priceOld)
         del #{item.priceOld.toLocaleString("vi-VN")}đ
       p.rating
-        i.fas.fa-star
-        i.fas.fa-star
-        i.fas.fa-star
-        i.fas.fa-star-half-alt
-        i.far.fa-star
-        span (0 Đánh giá)
+        +stars(item)
+        span (#{item.ratingCount} Đánh giá)
       if ( item.listColor.length > 0)
         ul.color
           each color in item.listColor

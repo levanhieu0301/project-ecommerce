@@ -34,6 +34,14 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    ratingAvg: {
+      type: Number,
+      default: 0
+    },
+    ratingCount: {
+      type: Number,
+      default: 0
+    },
     search: String,
     deletedAt: Date
 

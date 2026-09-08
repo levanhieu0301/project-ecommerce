@@ -8,6 +8,7 @@ import axios from 'axios';
 import { domainCDN } from '../../configs/variable.config';
 import Order from '../../models/order.model';
 import Review from '../../models/review.modal';
+import Product from '../../models/product.model';
 
 export const profile = (req: Request, res: Response) => {
   res.render("client/pages/dashboard-profile", {
@@ -414,8 +415,7 @@ export const orderReviewPost = async (req: Request, res: Response) => {
     const userId = res.locals.accountUser.id;
     const { orderId, orderItemId, rating, comment } = req.body;
     const files = req.files as Express.Multer.File[];
-    console.log(files)
-    
+
     const orderDetail: any = await Order.findOne({
       _id: orderId,
       userId: userId,
@@ -512,6 +512,20 @@ export const orderReviewPost = async (req: Request, res: Response) => {
       images: imageLinks
     });
     await newReview.save()
+     // Cập nhật đánh giá cho sản phẩm
+    const product = await Product.findOne({
+      _id: productId,
+      deleted: false
+    });
+    if(product) {
+      const newRatingCount = product.ratingCount + 1;
+      const newRatingAvg = ((product.ratingAvg * product.ratingCount) + parseInt(rating)) / newRatingCount;
+      product.ratingAvg = newRatingAvg;
+      product.ratingCount = newRatingCount;
+      await product.save();
+    }
+    // Hết Cập nhật đánh giá cho sản phẩm
+
     res.json({
       code: "success",
       message: "Cảm ơn bạn đã đánh giá sản phẩm!"

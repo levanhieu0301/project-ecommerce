@@ -1,3 +1,5 @@
+include ../mixins/stars.pug
+
 div(class="shop_details_text")
   script. 
     const productVariant = !{JSON.stringify(productDetail.variants)}
@@ -11,12 +13,8 @@ div(class="shop_details_text")
       <p class="out_stock stock">Hết hàng</p>
       // out of stock
     p.rating
-      i.fas.fa-star
-      i.fas.fa-star
-      i.fas.fa-star
-      i.fas.fa-star
-      i.fas.fa-star
-      span (0 Đánh giá)
+      +stars(productDetail)
+      span (#{productDetail.ratingCount} Đánh giá)
   h3.price
     div.price-new #{productDetail.priceNew.toLocaleString("vi-VN")}đ
     del.price-old #{productDetail.priceOld.toLocaleString("vi-VN")}đ
