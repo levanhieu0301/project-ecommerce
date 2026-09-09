@@ -4,5 +4,6 @@ import * as dashboardController from "../../controllers/admin/dashboard.controll
 import { checkPermissions } from "../../middlewares/admin/account.middleware";
 
 router.get('/',checkPermissions("dashboard"), dashboardController.dashboard)
+router.get('/revenue-by-time', dashboardController.revenueByTime);
 
 export default router;
