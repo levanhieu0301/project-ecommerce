@@ -4,6 +4,8 @@ import CategoryProduct from "../../models/category-product.model"
 import { listProduct } from "../admin/product.controller"
 import slugify from "slugify"
 import AttributeProduct from "../../models/attribute-product.model"
+import Review from "../../models/review.modal"
+import AccountUser from "../../models/account-user.model"
 
 export const category =async (req: Request, res: Response) => {
   const slug = req.params.slug
@@ -395,13 +397,38 @@ export const detail = async (req: Request, res: Response) => {
       });
     }
 
+     // Danh sách đánh giá
+    const reviewList: any = await Review
+      .find({
+        productId: productDetail.id,
+        status: "approved"
+      })
+      .sort({
+        createdAt: "desc"
+      });
+
+    for (const item of reviewList) {
+      const accountInfo = await AccountUser.findOne({
+        _id: item.userId
+      })
+      if(accountInfo) {
+        item.user = {
+          fullName: accountInfo.fullName,
+          avatar: accountInfo.avatar
+        };
+      }
+    }
+    // Hết Danh sách đánh giá
+
+
   res.render("client/pages/product-detail", {
     pageTitle: productDetail.name,
     productDetail: productDetail,
     listAttribute: listAttribute,
     listProductRelated: listProductRelated,
     boughtTogetherProducts: boughtTogetherProducts,
-    listProductViewed: listProductViewed
+    listProductViewed: listProductViewed,
+    reviewList: reviewList
   });
 
 }
