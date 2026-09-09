@@ -25,6 +25,11 @@ const schema = new mongoose.Schema(
       max: 5,
       required: true
     },
+    status: {
+      type: String,
+      enum: ["approved", "rejected"], // approved – Đã duyệt, rejected – Từ chối
+      default: null
+    },
     comment: String,
     images: [String],
   },

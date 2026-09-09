@@ -61,28 +61,30 @@ block main
                         span(class="badge bg-dark") Chưa duyệt
                     td #{item.createdAt.toLocaleString("vi-VN")}
                     td.text-end
+                      if (item.status != "approved")
+                        a(
+                          href="javascript:;"
+                          btn-deleted 
+                          method="PATCH"
+                          api=`/${pathAdmin}/review/change-status/${item.id}/approved`
+                          class="btn btn-sm btn-success text-white ms-1"
+                        )
+                          | Duyệt
+                      if (item.status != "rejected")
+                        a(
+                          href="javascript:;"
+                          btn-deleted 
+                          method="PATCH"
+                          api=`/${pathAdmin}/review/change-status/${item.id}/rejected`
+                          class="btn btn-sm btn-warning text-white ms-1"
+                        )
+                          | Ẩn
                       a(
                         href="javascript:;"
-                        button-api
-                        data-method="PATCH"
-                        data-api=`/${pathAdmin}/review/change-status/${item.id}/approved`
-                        class="btn btn-sm btn-success text-white ms-1"
-                      )
-                        | Duyệt
-                      a(
-                        href="javascript:;"
-                        button-api
-                        data-method="PATCH"
-                        data-api=`/${pathAdmin}/review/change-status/${item.id}/rejected`
-                        class="btn btn-sm btn-warning text-white ms-1"
-                      )
-                        | Ẩn
-                      a(
-                        href="javascript:;"
-                        button-api
-                        data-method="DELETE"
-                        data-api=`/${pathAdmin}/review/delete/${item.id}`
                         class="btn btn-sm btn-danger text-white ms-1"
+                        btn-deleted 
+                        method="DELETE"
+                        api=`/${pathAdmin}/review/delete/${item.id}`
                       )
                         | Xóa
           +pagination()
