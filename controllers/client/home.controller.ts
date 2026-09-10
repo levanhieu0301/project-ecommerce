@@ -1,14 +1,25 @@
 import  { Request, Response } from "express"
-
 import { getGeneral } from '../../configs/setting.config';
 import Product from '../../models/product.model';
 import Blog from '../../models/blog.model';
-import { pathAdmin } from "../../configs/variable.config";
+import { domainCDN, pathAdmin } from "../../configs/variable.config";
+import Block from "../../models/block.model";
+import path from "path";
+import pug from "pug"
+import { renderHTML } from "../../helpers/block.helper";
 
-export const home = (req: Request, res: Response) => {
-    res.render("client/pages/index", {
-      title: "Trang chủ"
-    })
+export const home = async (req: Request, res: Response) => {
+  const blockList = await Block.find({
+    deleted: false,
+    status: "active"
+  });
+ 
+  const blocksHtml = renderHTML(req, res, blockList);
+
+  res.render("client/pages/index", {
+    title: "Trang chủ",
+    blocksHtml: blocksHtml
+  })
 }
 export const sitemap = async (req: Request, res: Response) => {
   try {
