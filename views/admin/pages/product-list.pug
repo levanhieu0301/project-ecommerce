@@ -100,15 +100,20 @@ block main
                       td #{item.view}
                       td.text-end
                         if (permissionList.includes("product-edit"))
-                          a(href=`/${pathAdmin}/product/edit/${item.id}`)
-                            i.las.la-pen.text-secondary.fs-20
+                          a(href=`/${pathAdmin}/product/edit/${item.id}`
+                            class="btn btn-sm btn-warning text-white ms-1"
+                          ) Sửa
+                        a(
+                          href=`/${pathAdmin}/product/edit-seo/${item.id}`
+                          class="btn btn-sm btn-warning text-white ms-1"
+                          ) Sửa SEO
                         if (permissionList.includes("product-delete"))
                           a(
                             href="javascript:;"
                             btn-deleted 
                             method="PATCH"
                             api=`/${pathAdmin}/product/delete/${item.id}` 
-                          )
-                            i.las.la-trash-alt.text-secondary.fs-20
+                            class="btn btn-sm btn-danger text-white ms-1"
+                          ) Xóa
             +pagination()
       // end col

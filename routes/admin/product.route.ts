@@ -79,5 +79,15 @@ router.post(
   productValidate.importCSVPost,
   productController.importCSVPost
 );
+// SEO
+router.get('/edit-seo/:id', productController.editSEO);
+
+router.patch(
+  '/edit-seo/:id', 
+  upload.none(), 
+  productValidate.editSEOPatch,
+  productController.editSEOPatch
+);
+
 
 export default router;
