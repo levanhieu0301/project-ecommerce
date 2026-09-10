@@ -9,4 +9,9 @@ router.get('/create', blockController.create);
 
 router.post('/create', blockController.createPost);
 
+
+router.get('/edit/:id', blockController.edit);
+
+router.patch('/edit/:id', blockController.editPatch);
+
 export default router;
