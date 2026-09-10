@@ -6,6 +6,7 @@ import { pathAdmin } from "../../configs/variable.config"
 import Blog from "../../models/blog.model"
 import { logAdminAction } from "../../helpers/log-admin.helper"
 import { RequestAccount } from "../../interfaces/request-account.interface"
+import { pingGoogleSitemap } from "../../helpers/ping-google.helper"
 
 export const category = async (req: Request, res: Response) => {
   const find : {
@@ -351,6 +352,9 @@ export const articleCreatePost = async (req: RequestAccount, res: Response) => {
     const newRecord = new Blog(req.body);
     await newRecord.save();
     logAdminAction(req, `Đã tạo bài viết: ${req.body.name} (ID: ${newRecord.id})`)
+     // Ping Google
+    await pingGoogleSitemap();
+
     res.json({
       code: "success",
       message: "Tạo bài viết thành công!"

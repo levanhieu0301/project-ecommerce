@@ -9,6 +9,7 @@ import AttributeProduct from "../../models/attribute-product.model"
 import { Parser } from 'json2csv';
 import Papa from 'papaparse';
 import { generateRandomString } from "../../helpers/generate.helper"
+import { pingGoogleSitemap } from "../../helpers/ping-google.helper"
 
 // Danh mục sản phẩm
 export const categoryProduct = async (req: Request, res: Response) => {
@@ -365,6 +366,9 @@ export const createProductPost = async (req: Request, res: Response) => {
     await newRecord.save();
 
     logAdminAction(req, `Đã tạo sản phẩm: ${req.body.name} (Id: ${newRecord.id})`);
+    // Ping Google
+    await pingGoogleSitemap();
+
 
     res.json({
       code: "success",
