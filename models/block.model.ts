@@ -23,3 +23,5 @@ const schema = new mongoose.Schema(
 );
 
 const Block = mongoose.model('Block', schema, "blocks");
+
+export default Block;
