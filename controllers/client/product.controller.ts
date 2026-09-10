@@ -428,7 +428,8 @@ export const detail = async (req: Request, res: Response) => {
     listProductRelated: listProductRelated,
     boughtTogetherProducts: boughtTogetherProducts,
     listProductViewed: listProductViewed,
-    reviewList: reviewList
+    reviewList: reviewList,
+    seo: productDetail.seo
   });
 
 }
