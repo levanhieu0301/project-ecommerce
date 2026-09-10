@@ -51,8 +51,6 @@
                   li.nav-item
                     a.nav-link(href=`/${pathAdmin}/dashboard/customer-statistic`) Thống kê khách hàng
                   // end nav-item
-
-
             // end startbarDashboards
           // end nav-item
           if (permissionList.includes("article"))
@@ -127,13 +125,6 @@
                     li.nav-item
                       a.nav-link(href=`/${pathAdmin}/coupon/list`) Danh sách mã giảm giá
                     // end nav-item
-          if (permissionList.includes("file-manager"))
-            li.nav-item
-              a.nav-link(
-                href=`/${pathAdmin}/file-manager/iframe`
-                )
-                i.iconoir-page-star.menu-icon
-                span Quản lý file
           if (permissionList.includes("role"))
             li.nav-item
               a.nav-link(
@@ -176,62 +167,73 @@
                     li.nav-item
                       a.nav-link(href=`/${pathAdmin}/account-admin/list`) Danh sách tài khoản
                     // end nav-item
+          li.nav-item
+            a.nav-link(
+              aria-controls="sidebarAccountUser" 
+              aria-expanded="false" 
+              role="button" 
+              data-bs-toggle="collapse" 
+              href="#sidebarAccountUser"
+              )
+              i.iconoir-user-crown.menu-icon
+              span Tài khoản người dùng
+            #sidebarAccountUser.collapse
+              ul.nav.flex-column
+                li.nav-item
+                  a.nav-link(href=`/${pathAdmin}/account-user/list`) Danh sách tài khoản
+              // end nav-item
+          if (permissionList.includes("file-manager"))
             li.nav-item
               a.nav-link(
-                href=`/${pathAdmin}/order/list`
+                href=`/${pathAdmin}/file-manager/iframe`
                 )
-                i.iconoir-bag.menu-icon
-                span Quản lý đơn hàng
-            li.nav-item
-              a.nav-link(
-                href=`/${pathAdmin}/review/list`
-                )
-                i.iconoir-star.menu-icon
-                span Quản lý đánh giá
-            li.nav-item
-              a.nav-link(
-                aria-controls="sidebarAccountUser" 
-                aria-expanded="false" 
-                role="button" 
-                data-bs-toggle="collapse" 
-                href="#sidebarAccountUser"
-                )
-                i.iconoir-user-crown.menu-icon
-                span Tài khoản người dùng
-              #sidebarAccountUser.collapse
-                ul.nav.flex-column
-                  li.nav-item
-                    a.nav-link(href=`/${pathAdmin}/account-user/list`) Danh sách tài khoản
+                i.iconoir-page-star.menu-icon
+                span Quản lý file
+          li.nav-item
+            a.nav-link(
+              href=`/${pathAdmin}/order/list`
+              )
+              i.iconoir-bag.menu-icon
+              span Quản lý đơn hàng
+          li.nav-item
+            a.nav-link(
+              href=`/${pathAdmin}/review/list`
+              )
+              i.iconoir-star.menu-icon
+              span Quản lý đánh giá
+          li.nav-item
+            a.nav-link(
+              href=`/${pathAdmin}/block/list`
+              )
+              i.iconoir-orthogonal-view.menu-icon
+              span Quản lý block
+          li.nav-item
+            a.nav-link(
+              aria-controls="sidebarSetting" 
+              aria-expanded="false" 
+              role="button" 
+              data-bs-toggle="collapse" 
+              href="#sidebarSetting"
+              )
+              i.iconoir-settings.menu-icon
+              span Cài đặt
+            #sidebarSetting.collapse
+              ul.nav.flex-column
+                li.nav-item
+                  a.nav-link(href=`/${pathAdmin}/setting/api-shipping`) API hãng vận chuyển
                 // end nav-item
-            li.nav-item
-              a.nav-link(
-                aria-controls="sidebarSetting" 
-                aria-expanded="false" 
-                role="button" 
-                data-bs-toggle="collapse" 
-                href="#sidebarSetting"
-                )
-                i.iconoir-settings.menu-icon
-                span Cài đặt
-              #sidebarSetting.collapse
-                ul.nav.flex-column
-                  li.nav-item
-                    a.nav-link(href=`/${pathAdmin}/setting/api-shipping`) API hãng vận chuyển
-                  // end nav-item
-                  li.nav-item
-                    a.nav-link(href=`/${pathAdmin}/setting/api-payment`) API cổng thanh toán
-                  // end nav-item
-                  li.nav-item
-                    a.nav-link(href=`/${pathAdmin}/setting/api-login-social`) API đăng nhập MXH
-                  // end nav-item
-                  li.nav-item
-                    a.nav-link(href=`/${pathAdmin}/setting/api-app-password`) API Mật khẩu ứng dụng
-                  // end nav-item
-                  li.nav-item
-                    a.nav-link(href=`/${pathAdmin}/setting/general`) Cài đặt chung
-                  // end nav-item
-
-
+                li.nav-item
+                  a.nav-link(href=`/${pathAdmin}/setting/api-payment`) API cổng thanh toán
+                // end nav-item
+                li.nav-item
+                  a.nav-link(href=`/${pathAdmin}/setting/api-login-social`) API đăng nhập MXH
+                // end nav-item
+                li.nav-item
+                  a.nav-link(href=`/${pathAdmin}/setting/api-app-password`) API Mật khẩu ứng dụng
+                // end nav-item
+                li.nav-item
+                  a.nav-link(href=`/${pathAdmin}/setting/general`) Cài đặt chung
+                // end nav-item
 
 // end startbar
 .startbar-overlay.d-print-none
