@@ -4,15 +4,12 @@ import Product from '../../models/product.model';
 import Blog from '../../models/blog.model';
 import { domainCDN, pathAdmin } from "../../configs/variable.config";
 import Block from "../../models/block.model";
-import path from "path";
-import pug from "pug"
-import { renderHTML } from "../../helpers/block.helper";
+import { getBlockListByTemplate, renderHTML } from "../../helpers/block.helper";
+import Template from "../../models/template.model";
 
 export const home = async (req: Request, res: Response) => {
-  const blockList = await Block.find({
-    deleted: false,
-    status: "active"
-  });
+  const blockList = await getBlockListByTemplate("/");
+
  
   const blocksHtml = renderHTML(req, res, blockList);
 
