@@ -6,6 +6,7 @@ import Block from "../models/block.model";
 import Template from "../models/template.model";
 import CategoryProduct from "../models/category-product.model";
 import Product from "../models/product.model";
+import { getProductByCategory } from "./product.helper";
 
 export const renderHTML = async (req: Request, res: Response, blockList: any) => {
   const blocksHtml: string[] = [];
@@ -15,65 +16,31 @@ export const renderHTML = async (req: Request, res: Response, blockList: any) =>
       // Lấy ra sản phẩm
       let productList: any[] = [];
       if (block.data?.getByCategory?.type === "product") {
-        const { getByCategory } = block.data;
-
-        // Tạo đối tượng tìm kiếm
-        const find: any = {
-          deleted: false,
-          status: "active"
-        };
-
-        // Lấy mảng id các danh mục
-        if(getByCategory.category && getByCategory.category.length) {
-          const categoryList = await CategoryProduct.find({
-            slug: { $in: getByCategory.category },
-            deleted: false,
-            status: "active"
-          });
-          const categoryIds = categoryList.map((category: any) => category.id);
-          find.category = { $in: categoryIds };
-        }
-
-        // Lấy giới hạn sản phẩm
-        let limit = 10;
-        if(getByCategory.limit) {
-          limit = getByCategory.limit;
-        }
-
-        // Sắp xếp
-        const sort: any = {};
-        if(getByCategory.sort && getByCategory.sort.by && getByCategory.sort.type) {
-          sort[getByCategory.sort.by] = getByCategory.sort.type;
-        }
-
-        // Lấy ra sản phẩm
-        productList = await Product
-          .find(find)
-          .sort(sort)
-          .limit(limit);
-        
-        for(const item of productList){
-          item.discount = Math.floor(((item.priceOld - item.priceNew) / item.priceOld) * 100)
-          // màu sắc
-          // chỉ lọc ra bản ghi nào status : true
-          const setColor = new Set();
-          item.variants.filter( (variant : any) => variant.status).forEach((variant : any) => {
-            variant.attributeValue.forEach((attri: any) => {
-                if(attri.attriType =="color"){
-                  setColor.add(attri.value)
-                }
-            } )
-          })
-          item.listColor = [...setColor]
-        }
+        productList = await getProductByCategory(block.data.getByCategory);
       }
       // Hết Lấy ra sản phẩm
+      // Lấy ra dữ liệu theo tab
+      let tabList: any[] = [];
+      if(block.data?.tabs?.length > 0) {
+        for(const tab of block.data.tabs) {
+          if(tab.getByCategory?.type === "product") {
+            const productListByTab = await getProductByCategory(tab.getByCategory);
+            tabList.push({
+              ...tab,
+              productList: productListByTab
+            });
+          }
+        }
+      }
+      // Hết Lấy ra dữ liệu theo tab
+
 
       const html = pug.renderFile(blockPath, {
         listCategoryProduct: res.locals.listCategoryProduct,
         domainCDN: domainCDN,
         blockData: block.data,
-        blockProductList: productList
+        blockProductList: productList,
+        blockTabList: tabList
       });
       blocksHtml.push(html);
     } catch (error) {
