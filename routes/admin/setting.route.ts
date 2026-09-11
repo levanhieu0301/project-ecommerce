@@ -20,5 +20,6 @@ router.patch('/api-app-password', settingController.apiAppPasswordPatch);
 router.get('/general', settingController.general);
 
 router.patch('/general', settingController.generalPatch);
+router.patch('/remove-cache', settingController.removeCachePatch);
 
 export default router;
