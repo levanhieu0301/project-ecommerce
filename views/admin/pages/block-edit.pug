@@ -17,6 +17,10 @@ block main
             .mb-3
               label.form-label(for="name") Tên block *
               input.form-control(id="name" type="text" name="name" value=blockDetail.name)
+          .col-md-12
+            .mb-3
+              label.form-label(for="data") Dữ liệu block (Dữ liệu dạng JSON)
+              div(json-editor style="height: 500px" data=blockDetail.data)
           .col-md-6
             .mb-3
               label.form-label(for="fileName") File giao diện *

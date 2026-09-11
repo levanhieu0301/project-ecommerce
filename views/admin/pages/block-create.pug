@@ -13,6 +13,10 @@ block main
             .mb-3
               label.form-label(for="name") Tên block *
               input.form-control(id="name" type="text" name="name")
+        .col-md-12
+          .mb-3
+            label.form-label(for="data") Dữ liệu block (Dữ liệu dạng JSON)
+            div(json-editor style="height: 500px")
           .col-md-6
             .mb-3
               label.form-label(for="fileName") File giao diện *
@@ -25,6 +29,6 @@ block main
               label.form-label(for="status") Trạng thái
               select.form-select(id="status" name="status")
                 option(value="active") Hoạt động
-                option(value="inactive") Tạm dừng
+                option(value="inactive") Tạm 
         button.btn.btn-primary(type="submit") Tạo mới
         a.btn.btn-danger.ms-1(href=`/${pathAdmin}/block/list`) Hủy
