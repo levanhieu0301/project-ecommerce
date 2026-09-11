@@ -6,7 +6,7 @@ import Block from "../models/block.model";
 import Template from "../models/template.model";
 import CategoryProduct from "../models/category-product.model";
 import Product from "../models/product.model";
-import { getProductByCategory } from "./product.helper";
+import { getBlogByCategory, getProductByCategory } from "./product.helper";
 
 export const renderHTML = async (req: Request, res: Response, blockList: any) => {
   const blocksHtml: string[] = [];
@@ -19,6 +19,7 @@ export const renderHTML = async (req: Request, res: Response, blockList: any) =>
         productList = await getProductByCategory(block.data.getByCategory);
       }
       // Hết Lấy ra sản phẩm
+
       // Lấy ra dữ liệu theo tab
       let tabList: any[] = [];
       if(block.data?.tabs?.length > 0) {
@@ -34,13 +35,22 @@ export const renderHTML = async (req: Request, res: Response, blockList: any) =>
       }
       // Hết Lấy ra dữ liệu theo tab
 
+      // Lấy ra bài viết
+      let blogList: any[] = [];
+      if (block.data?.getByCategory?.type === "blog") {
+        blogList = await getBlogByCategory(block.data.getByCategory);
+      }
+      // Hết Lấy ra bài viết
+
+
 
       const html = pug.renderFile(blockPath, {
         listCategoryProduct: res.locals.listCategoryProduct,
         domainCDN: domainCDN,
         blockData: block.data,
         blockProductList: productList,
-        blockTabList: tabList
+        blockTabList: tabList,
+        blockBlogList: blogList
       });
       blocksHtml.push(html);
     } catch (error) {
