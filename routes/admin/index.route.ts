@@ -15,6 +15,7 @@ import orderRoutes from "./order.route";
 import reviewRoutes from "./review.route";
 import blockRoutes from "./block.route";
 
+import chatRoutes from "./chat.route";
 import templateRoutes from "./template.route";
 import * as AuthMiddleware from "../../middlewares/admin/account.middleware"
 
@@ -32,5 +33,7 @@ router.use('/order', AuthMiddleware.verifyToken, orderRoutes);
 router.use('/review', AuthMiddleware.verifyToken, reviewRoutes);
 router.use('/block', AuthMiddleware.verifyToken, blockRoutes);
 router.use('/template', AuthMiddleware.verifyToken, templateRoutes);
+router.use('/chat', AuthMiddleware.verifyToken, chatRoutes);
+
 router.use('/account', accountRoute)
 export default router;

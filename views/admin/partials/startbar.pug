@@ -182,6 +182,21 @@
                 li.nav-item
                   a.nav-link(href=`/${pathAdmin}/account-user/list`) Danh sách tài khoản
               // end nav-item
+          li.nav-item
+            a.nav-link(
+              aria-controls="sidebarChat" 
+              aria-expanded="false" 
+              role="button" 
+              data-bs-toggle="collapse" 
+              href="#sidebarChat"
+              )
+              i.iconoir-chat-bubble.menu-icon
+              span Tin nhắn
+            #sidebarChat.collapse
+              ul.nav.flex-column
+                li.nav-item
+                  a.nav-link(href=`/${pathAdmin}/chat/list/my-chat`) Của bạn
+                // end nav-item
           if (permissionList.includes("file-manager"))
             li.nav-item
               a.nav-link(
