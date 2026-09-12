@@ -7,9 +7,14 @@ import cookieParser from "cookie-parser"
 import session from "express-session";
 import passport from "passport";
 import { loginGoogle } from './configs/googleOauth.config';
+import { createServer } from 'node:http';
+import { Server } from 'socket.io';
 
 const app = express()
 const port = 5000
+// Khởi tạo SocketIO bên Server
+const server = createServer(app);
+const io = new Server(server);
 // Tích hợp giao diện pug
 app.set('views', path.join(__dirname, "views"))
 app.set('view engine', 'pug')
@@ -64,11 +69,11 @@ import clientRoute from "./routes/client/index.route"
 app.use('/', clientRoute)
 // Router admin
 import adminRoute from "./routes/admin/index.route"
-import { loginPost } from "./controllers/client/auth.controller"
+import { initSocket } from "./sockets/index.socket"
 app.use(`/${pathAdmin}`, adminRoute)
+// Khởi tạo Socket bên Server
+initSocket(io)
 
-
-
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
