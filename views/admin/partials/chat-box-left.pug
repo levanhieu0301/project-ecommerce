@@ -3,13 +3,13 @@
     .row
       .col 
         each item in chatRoomList
-          .p-2.border-dashed.border-theme-color.rounded.mb-2
+          .p-2.border-dashed.border-theme-color.rounded.mb-2(class=`${chatRoomDetail && item.id === chatRoomDetail.id ? 'bg-light' : ''}`)
             a(href=`/${pathAdmin}/chat/detail/${item.id}`)
               .d-flex.align-items-start
                 .position-relative
                   img.thumb-lg.rounded-circle(
                     alt="" 
-                    src=`${domainCDN}${item.infoUser.avatar}`
+                    src=(item.infoUser.googleId ? `${item.infoUser.avatar}` : `${domainCDN}${item.infoUser.avatar}`)
                     )
                   span.position-absolute.bottom-0.end-0
                     i.fa-solid.fa-circle.text-success.fs-10.border-2.border-theme-color

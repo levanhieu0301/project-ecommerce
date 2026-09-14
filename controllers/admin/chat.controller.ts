@@ -3,37 +3,52 @@ import ChatMessage from '../../models/chat-message.model';
 import ChatRoom from '../../models/chat-room.model';
 import AccountUser from '../../models/account-user.model';
 import { timeAgo } from '../../helpers/format.helper';
+import { getChatRoomList } from '../../helpers/chat.helper';
 
 export const myChatList = async (req: Request, res: Response) => {
-  const chatRoomList: any = await ChatRoom.find({
-    adminId:  res.locals.accountAdmin.id
-  })
-  // Lấy ra thông tin người dùng
-  for (const item of chatRoomList) {
-    // Thông tin
-    const infoAccount = await AccountUser.findOne({
-      _id: item.userId
-    })
-    item.infoUser = {
-      fullName: infoAccount?.fullName,
-      avatar: infoAccount?.avatar
-    };
-    // Tin nhắn gần nhất
-    const lastMessage: any = await ChatMessage
-      .findOne({
-        roomId: item.id
-      })
-      .sort({
-        createdAt: "desc"
-      })
-    if(lastMessage){
-      item.lastMessage = lastMessage
-      item.lastMessage.createdAtFormat = timeAgo(item.lastMessage.createdAt);
-    }
+  // Danh sách phòng chat
+    const chatRoomList: any = await getChatRoomList(res.locals.accountAdmin.id);
 
-  }
   res.render("admin/pages/my-chat-list", {
     pageTitle: "Danh sách tin nhắn của bạn",
     chatRoomList: chatRoomList
+  });
+}
+export const detail = async (req: Request, res: Response) => {
+  // Danh sách phòng chat
+  const chatRoomList: any = await getChatRoomList(res.locals.accountAdmin.id);
+  
+   // Chi tiết phòng chat
+    const id = req.params.id;
+    const chatRoomDetail = await ChatRoom.findOne({
+      _id: id
+    });
+    if(!chatRoomDetail) {
+      res.redirect('/admin/dashboard');
+      return;
+    }
+     // Thông tin người dùng
+    const infoUser = await AccountUser.findOne({
+      _id: chatRoomDetail.userId
+    });
+    if(!infoUser) {
+      res.redirect('/admin/dashboard');
+      return;
+    }
+    
+    // Danh sách tin nhắn
+    const chatMessages: any = await ChatMessage.find({
+      roomId: id
+    });
+
+    for (const item of chatMessages) {
+      item.createdAtFormat = timeAgo(item.createdAt);
+    }
+  res.render("admin/pages/chat-detail", {
+    pageTitle: "Chi tiết tin nhắn",
+    chatRoomList: chatRoomList,
+    chatRoomDetail: chatRoomDetail,
+    infoUser: infoUser,
+    chatMessages: chatMessages
   });
 }
