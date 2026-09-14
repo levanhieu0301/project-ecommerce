@@ -53,6 +53,7 @@ try {
       res.locals.permissionList = permissionList
       //trả về file pug
       res.locals.accountAdmin = {
+        id: existAccount.id,
         fullName: existAccount.fullName,
         email: existAccount.email,
         avatar: existAccount.avatar,
