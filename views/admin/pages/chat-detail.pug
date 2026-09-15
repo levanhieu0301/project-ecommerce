@@ -48,12 +48,13 @@ block main
                         p #{item.content}
                   // end media-body
         // end chat-body
-        .chat-footer
+        .chat-footer(form-chat)
           .row
             .col-12.col-md-8
               input.form-control(
                 placeholder="Nội dung tin nhắn..." 
                 type="text"
+                input-content
                 )
             // col-8
             .col-4.text-end
@@ -62,7 +63,7 @@ block main
                   i.iconoir-camera
                 a(href="#")
                   i.iconoir-attachment
-                a.text-primary(href="#")
+                a.text-primary(href="javascript:;" button-send)
                   i.iconoir-send-solid
             // end col
           // end row
