@@ -108,3 +108,6 @@
   flex: 1;
 }
 /* End option-list */
+.chat-box-right .chat-body {
+  overflow-y: auto;
+}
