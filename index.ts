@@ -1,6 +1,10 @@
 import express, { Request, Response } from "express"
 import path from "path"
 import { domainCDN, pathAdmin } from "./configs/variable.config"
+// Router client
+import clientRoute from "./routes/client/index.route"
+// Router admin
+import adminRoute from "./routes/admin/index.route"
 import { connectDB } from "./configs/database.config"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
@@ -9,12 +13,14 @@ import passport from "passport";
 import { loginGoogle } from './configs/googleOauth.config';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
+import { initSocket } from "./sockets/index.socket"
 
 const app = express()
 const port = 5000
 // Khởi tạo SocketIO bên Server
 const server = createServer(app);
 const io = new Server(server);
+
 // Tích hợp giao diện pug
 app.set('views', path.join(__dirname, "views"))
 app.set('view engine', 'pug')
@@ -64,15 +70,10 @@ app.use(passport.session());
 
 loginGoogle(passport);
 
-// Router client
-import clientRoute from "./routes/client/index.route"
 app.use('/', clientRoute)
-// Router admin
-import adminRoute from "./routes/admin/index.route"
-import { initSocket } from "./sockets/index.socket"
 app.use(`/${pathAdmin}`, adminRoute)
 // Khởi tạo Socket bên Server
-initSocket(io)
+initSocket(io);
 
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

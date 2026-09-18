@@ -11,15 +11,12 @@ block main
             .flex-shrink-0
               img.rounded-circle.thumb-lg(
                 alt=infoUser.fullName
-                src=(infoUser.googleId ? `${infoUser.avatar}` : `${domainCDN}${infoUser.avatar}`)
+                src=`${domainCDN}${infoUser.avatar}`
                 )
-            // media-left
             .flex-grow-1.ms-2.align-self-center
               div
                 h6.my-0.fw-medium.text-dark.fs-14 #{infoUser.fullName}
                 p.text-success.mb-0 Đang online
-            // end media-body
-          // end media
           .d-none.d-sm-inline-block.align-self-center
             a.me-2.text-muted(
               data-bs-custom-class="tooltip-primary" 
@@ -29,34 +26,28 @@ block main
               href="#"
               )
               i.iconoir-trash.fs-22
-        // end chat-header
         .chat-body(data-simplebar="")
           .chat-detail
             if (chatMessages)
               each item in chatMessages
                 if (item.senderRole === 'user')
                   .d-flex
-                    .ms-1.chat-box.w-100
+                    .chat-box.w-100
                       .user-chat(title=item.createdAtFormat)
                         p #{item.content}
-                    // end media-body
-                  // end media
                 else if (item.senderRole === 'admin')
                   .d-flex.flex-row-reverse
-                    .me-1.chat-box.w-100.reverse
+                    .chat-box.w-100.reverse
                       .user-chat(title=item.createdAtFormat)
                         p #{item.content}
-                  // end media-body
-        // end chat-body
         .chat-footer(form-chat)
           .row
             .col-12.col-md-8
               input.form-control(
                 placeholder="Nội dung tin nhắn..." 
                 type="text"
-                input-content
+                 input-content
                 )
-            // col-8
             .col-4.text-end
               .d-none.d-sm-inline-block.chat-features
                 a(href="#")
@@ -65,8 +56,3 @@ block main
                   i.iconoir-attachment
                 a.text-primary(href="javascript:;" button-send)
                   i.iconoir-send-solid
-            // end col
-          // end row
-        // end chat-footer
-      // end chat-box-right
-    // end col

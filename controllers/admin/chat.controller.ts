@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import ChatMessage from '../../models/chat-message.model';
 import ChatRoom from '../../models/chat-room.model';
 import AccountUser from '../../models/account-user.model';
+import ChatMessage from '../../models/chat-message.model';
 import { timeAgo } from '../../helpers/format.helper';
 import { getChatRoomList } from '../../helpers/chat.helper';
 
 export const myChatList = async (req: Request, res: Response) => {
   // Danh sách phòng chat
-    const chatRoomList: any = await getChatRoomList(res.locals.accountAdmin.id);
+   const chatRoomList: any = await getChatRoomList(res.locals.accountAdmin.id);
 
   res.render("admin/pages/my-chat-list", {
     pageTitle: "Danh sách tin nhắn của bạn",
@@ -15,27 +15,31 @@ export const myChatList = async (req: Request, res: Response) => {
   });
 }
 export const detail = async (req: Request, res: Response) => {
-  // Danh sách phòng chat
-  const chatRoomList: any = await getChatRoomList(res.locals.accountAdmin.id);
-  
-   // Chi tiết phòng chat
+  try {
+    // Danh sách phòng chat
+    const chatRoomList: any = await getChatRoomList(res.locals.accountAdmin.id);
+
+    // Chi tiết phòng chat
     const id = req.params.id;
     const chatRoomDetail = await ChatRoom.findOne({
       _id: id
     });
+
     if(!chatRoomDetail) {
       res.redirect('/admin/dashboard');
       return;
     }
-     // Thông tin người dùng
+
+    // Thông tin người dùng
     const infoUser = await AccountUser.findOne({
       _id: chatRoomDetail.userId
     });
+
     if(!infoUser) {
       res.redirect('/admin/dashboard');
       return;
     }
-    
+
     // Danh sách tin nhắn
     const chatMessages: any = await ChatMessage.find({
       roomId: id
@@ -44,11 +48,15 @@ export const detail = async (req: Request, res: Response) => {
     for (const item of chatMessages) {
       item.createdAtFormat = timeAgo(item.createdAt);
     }
-  res.render("admin/pages/chat-detail", {
-    pageTitle: "Chi tiết tin nhắn",
-    chatRoomList: chatRoomList,
-    chatRoomDetail: chatRoomDetail,
-    infoUser: infoUser,
-    chatMessages: chatMessages
-  });
+  
+    res.render("admin/pages/chat-detail", {
+      pageTitle: "Chi tiết tin nhắn",
+      chatRoomList: chatRoomList,
+      chatRoomDetail: chatRoomDetail,
+      infoUser: infoUser,
+      chatMessages: chatMessages
+    });
+  } catch (error) {
+    res.redirect('/admin/dashboard');
+  }
 }

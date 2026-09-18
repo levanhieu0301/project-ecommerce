@@ -26,7 +26,6 @@ router.use(seoMiddleware.canonical);
 router.use(settingMiddleware.assetVersion);
 router.use(chatMiddleware.getChatMessage);
 
-
 router.use('/', homeRoute)
 router.use('/article', articleRoute)
 router.use('/product', productRoute)

@@ -14,7 +14,6 @@ export const getChatRoomList = async (adminId: string) => {
       _id: item.userId
     })
     item.infoUser = {
-      googleId: infoAccount?.googleId,
       fullName: infoAccount?.fullName,
       avatar: infoAccount?.avatar
     };

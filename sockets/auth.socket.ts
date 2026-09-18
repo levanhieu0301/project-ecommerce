@@ -1,35 +1,42 @@
-import { Socket } from "socket.io"
-// @ts-expect-error cookie's package exports require node16/nodenext/bundler resolution.
+import { Socket } from "socket.io";
 import * as cookie from 'cookie';
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export const authSocket = (socket: Socket, next: any) => {
- try {
-  const cookieString = socket.handshake.headers.cookie
-  if(cookieString){
-    const cookieParse = cookie.parseCookie(cookieString);
-    let token: string = ""
-    let role: string =""
-    if(cookieParse.tokenAdmin){
-      token = cookieParse.tokenAdmin
-      role= "admin"
-    }else if(cookieParse.tokenUser){
-      token = cookieParse.tokenUser
-      role= "user"
-    }
-    if(token && role){
-      const decoded = jwt.verify(token, `${process.env.JWT_SECRET}`) as JwtPayload
-      if(decoded && decoded.id && decoded.email) {
-      socket.data.account= {
-        id: decoded.id,
-        email: decoded.email,
-        role: role
-       }
+  try {
+    const cookieString = socket.handshake.headers.cookie;
+    if(cookieString) {
+      const cookieParsed = cookie.parse(cookieString);
+      
+      let token: string = "";
+      let role: string = "";
+      let roomId: string = "";
+
+      if(cookieParsed.tokenAdmin) {
+        token = cookieParsed.tokenAdmin;
+        role = "admin";
+        roomId = `${socket.handshake.auth.roomId}`
+      } else if(cookieParsed.tokenUser) {
+        token = cookieParsed.tokenUser;
+        role = "user";
+      }
+
+      if(token && role) {
+        const decoded = jwt.verify(token, `${process.env.JWT_SECRET}`) as JwtPayload;
+        
+        if(decoded && decoded.id && decoded.email) {
+          socket.data.account = {
+            id: decoded.id,
+            email: decoded.email,
+            role: role,
+            roomId: roomId
+          };
+          console.log(socket.data.account)
+        }
       }
     }
+    next();
+  } catch (error) {
+    console.log(error);
   }
-  next()
- } catch (error) {
-  console.log(error)
- }
 }

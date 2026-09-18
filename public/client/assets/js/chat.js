@@ -1,12 +1,12 @@
-
-// Khởi tạo socketIO
+// Khởi tạo SocketIO bên Client
 const socket = io();
 
 const chatButton = document.querySelector("#chat-button");
-if(chatButton){
+
+if(chatButton) {
   const chatPopup = document.querySelector("#chat-popup");
   const chatClose = document.querySelector("#chat-close");
-  const chatBody = document.querySelector(".chat-body")
+    const chatBody = document.querySelector("#chat-body");
 
   // Đóng/mở chat
   chatButton.addEventListener("click", () => {
@@ -18,10 +18,9 @@ if(chatButton){
     chatPopup.classList.add("hidden");
   });
   // Gửi tin nhắn lên server
-  const chatSend = document.querySelector('#chat-send');
-  const chatInput = document.querySelector('#chat-input');
-
-  chatSend.addEventListener('click', (event) => {
+  const chatInput = document.querySelector("#chat-input");
+  const chatSend = document.querySelector("#chat-send");
+  chatSend.addEventListener("click", () => {
     const content = chatInput.value.trim();
     if (content) {
       socket.emit("CLIENT_SEND_MESSAGE", {
@@ -30,14 +29,15 @@ if(chatButton){
       chatInput.value = "";
     }
   });
-  // Nhận tin nhắn từ server - lắng nghe từ sever
+  // Nhận tin nhắn từ server
   socket.on("SERVER_SEND_MESSAGE", (data) => {
-    const elementMessage = document.createElement("div")
-    elementMessage.classList.add("message")
-    elementMessage.classList.add(data.senderRole)
+    const elementMessage = document.createElement("div");
+    elementMessage.classList.add("message");
+    elementMessage.classList.add(data.senderRole);
     elementMessage.innerHTML = `
       <div class="bubble">${data.content}</div>
-    `
-    chatBody.appendChild(elementMessage)
+    `;
+    chatBody.appendChild(elementMessage);
+
   });
 }

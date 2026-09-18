@@ -3,16 +3,17 @@ import ChatRoom from "../models/chat-room.model";
 import ChatMessage from "../models/chat-message.model";
 
 export const chatSocket = async (io: Server, socket: Socket) => {
-  const account = socket.data.account
-  if (!account) return;
+   const account = socket.data.account;
+  if(!account) return;
+
   // Tạo phòng chat cho user nếu chưa có
   let chatRoom: any = null;
-  if(account.role == "user"){
+  if(account.role === 'user') {
     chatRoom = await ChatRoom.findOne({
       userId: account.id
-    })
-    if(!chatRoom){
-       // Tạo phòng chat cho user
+    });
+    if(!chatRoom) {
+      // Tạo phòng chat cho user
       chatRoom = await ChatRoom.create({
         userId: account.id,
         adminId: '6a71a26582b1d89718f4d827',
@@ -22,17 +23,19 @@ export const chatSocket = async (io: Server, socket: Socket) => {
         },
         status: 'open'
       });
-
     }
-  }else if (account.role == "admin"){
-     chatRoom = await ChatRoom.findOne({
-        adminId: account.id
-    })
+  }else if(account.role === 'admin') {
+    chatRoom = await ChatRoom.findOne({
+      adminId: account.id,
+      _id: account.roomId
+    });
   }
+  // Thêm vào đúng phòng chat
+  socket.join(chatRoom.id) 
 
   // Lắng nghe sự kiện CLIENT_SEND_MESSAGE
-  socket.on('CLIENT_SEND_MESSAGE',async  (data) => {
-    // Lưu tin nhắn vào csdl
+  socket.on('CLIENT_SEND_MESSAGE', async (data) => {
+    // Lưu tin nhắn vào CSDL
     const message = {
       roomId: chatRoom.id,
       senderId: account.id,
@@ -42,27 +45,33 @@ export const chatSocket = async (io: Server, socket: Socket) => {
     }
     const newMessage = new ChatMessage(message);
     await newMessage.save();
-    // Cập nhật số tin nhắn chưa đọc Admin
-    if(account.role == "user"){
+
+    // Cập nhật số tin nhắn chưa đọc
+    if(account.role === 'user') {
       await ChatRoom.updateOne({
         _id: chatRoom.id
       }, {
         $inc: {
-          "unreadCount.admin": 1
+          'unreadCount.admin': 1
         }
       })
-    }else if (account.role == "admin"){
-       await ChatRoom.updateOne({
+    }else if(account.role === 'admin') {
+      await ChatRoom.updateOne({
         _id: chatRoom.id
       }, {
         $inc: {
-          "unreadCount.user": 1
+          'unreadCount.user': 1
         }
       })
     }
-    // Phản hồi về cho tất cả mọi người
-    io.emit('SERVER_SEND_MESSAGE', {
+    // Phản hồi về đúng phòng chat
+    io.to(chatRoom.id).emit('SERVER_SEND_MESSAGE', {
       ...message
     });
+
+    // Phản hồi về cho tất cả mọi người
+    // io.emit('SERVER_SEND_MESSAGE', {
+    //   ...message
+    // });
   });
 }
