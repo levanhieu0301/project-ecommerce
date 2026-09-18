@@ -31,7 +31,7 @@ export const authSocket = (socket: Socket, next: any) => {
             role: role,
             roomId: roomId
           };
-          console.log(socket.data.account)
+          // console.log(socket.data.account)
         }
       }
     }
