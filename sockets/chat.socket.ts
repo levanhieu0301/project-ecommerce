@@ -112,5 +112,16 @@ export const chatSocket = async (io: Server, socket: Socket, listAdminOnline: an
   socket.on("ADMIN_TYPING", (data) => {
     io.to(chatRoom.id).emit("SERVER_SEND_ADMIN_TYPING", data);
   });
+  // Lắng nghe sự kiện CLIENT_OPEN_CHAT
+  socket.on('CLIENT_OPEN_CHAT', async (data) => {
+    if(data.isOpen) {
+      await ChatRoom.updateOne({
+        _id: chatRoom.id
+      }, {
+        "unreadCount.user": 0
+      });
+    }
+  });
+
 
 }

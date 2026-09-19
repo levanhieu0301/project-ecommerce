@@ -23,3 +23,16 @@ export const getChatMessage = async (req: Request, res: Response, next: NextFunc
   
   next();
 }
+export const getChatMessageTotal = async (req: Request, res: Response, next: NextFunction) => {
+  if(res.locals.accountUser) {
+    // Lấy thông tin phòng chat
+    const chatRoom = await ChatRoom.findOne({
+      userId: res.locals.accountUser.id
+    });
+    if(chatRoom) {
+      res.locals.chatMessageTotal = chatRoom.unreadCount?.user;
+    }
+  }
+  
+  next();
+}
