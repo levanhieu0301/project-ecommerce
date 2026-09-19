@@ -102,5 +102,13 @@ if(chatButton) {
     }
   });
 
+  
+  // Lắng nghe sự kiện SERVER_SEND_ADMIN_TYPING
+    socket.on("SERVER_SEND_ADMIN_TYPING", (data) => {
+      const { isTyping } = data;
+      const chatTyping = document.querySelector("#chat-typing");
+      chatTyping.style.display = isTyping ? "block" : "none";
+    });
+
 
 }
