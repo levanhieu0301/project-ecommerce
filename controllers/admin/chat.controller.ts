@@ -16,9 +16,6 @@ export const myChatList = async (req: Request, res: Response) => {
 }
 export const detail = async (req: Request, res: Response) => {
   try {
-    // Danh sách phòng chat
-    const chatRoomList: any = await getChatRoomList(res.locals.accountAdmin.id);
-
     // Chi tiết phòng chat
     const id = req.params.id;
     const chatRoomDetail = await ChatRoom.findOne({
@@ -48,6 +45,16 @@ export const detail = async (req: Request, res: Response) => {
     for (const item of chatMessages) {
       item.createdAtFormat = timeAgo(item.createdAt);
     }
+    // Cập nhật số tin nhắn chưa đọc = 0
+    await ChatRoom.updateOne({
+      _id: id
+    }, {
+      "unreadCount.admin": 0
+    });
+
+    // Danh sách phòng chat
+    const chatRoomList: any = await getChatRoomList(res.locals.accountAdmin.id);
+
   
     res.render("admin/pages/chat-detail", {
       pageTitle: "Chi tiết tin nhắn",
