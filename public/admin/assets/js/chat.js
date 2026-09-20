@@ -64,6 +64,11 @@ if(formChat) {
     }
     elementMessage.setAttribute("id", item._id);
      let html = "";
+     // Thêm nút xóa
+    if (item.senderRole == "admin") {
+      html += `<span class="delete-message" data-id="${item._id}" title="Xóa tin nhắn">✕</span>`;
+    }
+
     // Hiển thị content
     if (item.content) {
       html += `
@@ -307,7 +312,15 @@ if(formChat) {
       messageItem.remove();
     }
   });
-
-
-
+   // Xóa tin nhắn
+  chatBody.addEventListener("click", (event) => {
+    if (event.target.classList.contains("delete-message")) {
+      const isConfirm = confirm("Bạn có chắc muốn xóa tin nhắn này?");
+      if (!isConfirm) return;
+      const messageId = event.target.getAttribute("data-id");
+      socket.emit("CLIENT_DELETE_MESSAGE", {
+        messageId: messageId
+      });
+    }
+  });
 }
