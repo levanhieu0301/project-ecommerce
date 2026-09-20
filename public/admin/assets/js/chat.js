@@ -82,6 +82,8 @@ if(formChat) {
     socket.on("SERVER_SEND_MESSAGE", (data) => {
       if(chatRoomId == data.roomId) {
         appendMessage(data)
+         // Khi mở chat scroll xuống tin nhắn mới nhất
+       chatBody.scrollTop = chatBody.scrollHeight;
         // const elementMessage = document.createElement("div");
         // if(data.senderRole === 'user') {
         //   elementMessage.classList.add("d-flex");
