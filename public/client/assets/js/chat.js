@@ -232,6 +232,15 @@ if(chatButton) {
 
     chatFile.value = ""; // Xóa file khỏi input
   });
+  // Lắng nghe sự kiện SERVER_SEND_STATUS
+  socket.on("SERVER_SEND_STATUS", (data) => {
+    const { code, message } = data;
+    if (code === 'success') {
+      notyf.success(message);
+    } else if (code === 'error') {
+      notyf.error(message);
+    }
+  });
 
 
 
