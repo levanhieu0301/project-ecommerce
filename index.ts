@@ -14,6 +14,7 @@ import { loginGoogle } from './configs/googleOauth.config';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 import { initSocket } from "./sockets/index.socket"
+import { startJobs } from "./jobs/index.job"
 
 const app = express()
 const port = 5000
@@ -74,6 +75,9 @@ app.use('/', clientRoute)
 app.use(`/${pathAdmin}`, adminRoute)
 // Khởi tạo Socket bên Server
 initSocket(io);
+
+// Gọi job
+startJobs();
 
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
