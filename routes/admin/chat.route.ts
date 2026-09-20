@@ -27,5 +27,6 @@ router.post(
 
 router.patch('/change-status', chatController.changeStatusPatch);
 
+router.get('/rate/:id', chatController.rate);
 
 export default router;
